@@ -3,8 +3,8 @@
 
 vendor/*
 
-app/config/cache/*
-app/config/logs/*
+app/cache/*
+app/logs/*
 app/config/deploy.rb
 app/config/db.yml
 app/config/security.yml
