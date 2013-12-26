@@ -3,7 +3,7 @@
 
 vendor/
 
-config/cache
-config/logs
-config/*.rb
-config/*.yml
+app/config/cache
+app/config/logs
+app/config/*.rb
+app/config/*.yml
