@@ -1,9 +1,9 @@
 .DS_Store
 .idea
 
-vendor/
+vendor/*
 
-app/config/cache
-app/config/logs
+app/config/cache/*
+app/config/logs/*
 app/config/*.rb
 app/config/*.yml
