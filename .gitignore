@@ -5,5 +5,6 @@ vendor/*
 
 app/config/cache/*
 app/config/logs/*
-app/config/*.rb
-app/config/*.yml
+app/config/deploy.rb
+app/config/db.yml
+app/config/security.yml
