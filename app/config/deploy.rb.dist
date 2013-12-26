@@ -32,3 +32,15 @@ set :shared_children,       [
                                 "vendor",
                                 "config"
                             ]
+
+namespace :regidium do
+
+    task :permissions, :roles => :app do
+        run "sudo chown -R root:root #{release_path} #{release_path}/../../current"
+        run "sudo chmod -R 770 #{release_path} #{release_path}/../../current"
+        run "sudo chmod -R 777 #{release_path} #{release_path}/../../current/app/cache/"
+        run "sudo chmod -R 777 #{release_path} #{release_path}/../../current/app/cache/"
+        run "sudo service php5-fpm restart"
+    end
+
+end
