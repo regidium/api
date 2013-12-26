@@ -2,7 +2,6 @@
 
 namespace Regidium\UserBundle\DataFixtures\MongoDB;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Regidium\UserBundle\Document\User;
 
