@@ -9,12 +9,12 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 
 /**
- * appDevDebugProjectContainer
+ * appTestDebugProjectContainer
  *
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  */
-class appDevDebugProjectContainer extends Container
+class appTestDebugProjectContainer extends Container
 {
     private $parameters;
 
@@ -244,6 +244,10 @@ class appDevDebugProjectContainer extends Container
             'templating.loader' => 'getTemplating_LoaderService',
             'templating.locator' => 'getTemplating_LocatorService',
             'templating.name_parser' => 'getTemplating_NameParserService',
+            'test.client' => 'getTest_ClientService',
+            'test.client.cookiejar' => 'getTest_Client_CookiejarService',
+            'test.client.history' => 'getTest_Client_HistoryService',
+            'test.session.listener' => 'getTest_Session_ListenerService',
             'translation.dumper.csv' => 'getTranslation_Dumper_CsvService',
             'translation.dumper.ini' => 'getTranslation_Dumper_IniService',
             'translation.dumper.json' => 'getTranslation_Dumper_JsonService',
@@ -284,7 +288,6 @@ class appDevDebugProjectContainer extends Container
             'web_profiler.controller.exception' => 'getWebProfiler_Controller_ExceptionService',
             'web_profiler.controller.profiler' => 'getWebProfiler_Controller_ProfilerService',
             'web_profiler.controller.router' => 'getWebProfiler_Controller_RouterService',
-            'web_profiler.debug_toolbar' => 'getWebProfiler_DebugToolbarService',
         );
         $this->aliases = array(
             'debug.templating.engine.twig' => 'templating',
@@ -299,7 +302,7 @@ class appDevDebugProjectContainer extends Container
             'jms_serializer' => 'fos_rest.serializer',
             'sensio.distribution.webconfigurator' => 'sensio_distribution.webconfigurator',
             'serializer' => 'fos_rest.serializer',
-            'session.storage' => 'session.storage.native',
+            'session.storage' => 'session.storage.filesystem',
         );
     }
 
@@ -313,7 +316,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getAnnotationReaderService()
     {
-        return $this->services['annotation_reader'] = new \Doctrine\Common\Annotations\FileCacheReader(new \Doctrine\Common\Annotations\AnnotationReader(), '/home/alexey/www/regidium.loc/api/app/cache/dev/annotations', true);
+        return $this->services['annotation_reader'] = new \Doctrine\Common\Annotations\FileCacheReader(new \Doctrine\Common\Annotations\AnnotationReader(), '/home/alexey/www/regidium.loc/api/app/cache/test/annotations', true);
     }
 
     /**
@@ -463,6 +466,7 @@ class appDevDebugProjectContainer extends Container
         $instance->addSubscriberService('locale_listener', 'Symfony\\Component\\HttpKernel\\EventListener\\LocaleListener');
         $instance->addSubscriberService('debug.emergency_logger_listener', 'Symfony\\Component\\HttpKernel\\EventListener\\ErrorsLoggerListener');
         $instance->addSubscriberService('debug.deprecation_logger_listener', 'Symfony\\Component\\HttpKernel\\EventListener\\ErrorsLoggerListener');
+        $instance->addSubscriberService('test.session.listener', 'Symfony\\Bundle\\FrameworkBundle\\EventListener\\TestSessionListener');
         $instance->addSubscriberService('session_listener', 'Symfony\\Bundle\\FrameworkBundle\\EventListener\\SessionListener');
         $instance->addSubscriberService('fragment.listener', 'Symfony\\Component\\HttpKernel\\EventListener\\FragmentListener');
         $instance->addSubscriberService('profiler_listener', 'Symfony\\Component\\HttpKernel\\EventListener\\ProfilerListener');
@@ -476,7 +480,6 @@ class appDevDebugProjectContainer extends Container
         $instance->addSubscriberService('sensio_framework_extra.converter.listener', 'Sensio\\Bundle\\FrameworkExtraBundle\\EventListener\\ParamConverterListener');
         $instance->addSubscriberService('sensio_framework_extra.cache.listener', 'Sensio\\Bundle\\FrameworkExtraBundle\\EventListener\\CacheListener');
         $instance->addSubscriberService('fos_rest.access_denied_listener', 'FOS\\RestBundle\\EventListener\\AccessDeniedListener');
-        $instance->addSubscriberService('web_profiler.debug_toolbar', 'Symfony\\Bundle\\WebProfilerBundle\\EventListener\\WebDebugToolbarListener');
 
         return $instance;
     }
@@ -552,7 +555,7 @@ class appDevDebugProjectContainer extends Container
     protected function getDoctrineMongodb_Odm_DefaultConfigurationService()
     {
         $a = new \Doctrine\Common\Cache\ArrayCache();
-        $a->setNamespace('sf2mongodb_default_f8d4858d88024d1485b7d9e03e922e10c4505582d3ababd22b46793ff6506284');
+        $a->setNamespace('sf2mongodb_default_06fff69788dc2aab3b4929e6601228d90014c2b268417895cf6a052791b4c2a6');
 
         $b = new \Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain();
         $b->addDriver(new \Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver($this->get('annotation_reader'), array(0 => '/home/alexey/www/regidium.loc/api/src/Regidium/UserBundle/Document')), 'Regidium\\UserBundle\\Document');
@@ -565,10 +568,10 @@ class appDevDebugProjectContainer extends Container
         $instance->setDocumentNamespaces(array('RegidiumUserBundle' => 'Regidium\\UserBundle\\Document'));
         $instance->setMetadataCacheImpl($a);
         $instance->setMetadataDriverImpl($b);
-        $instance->setProxyDir('/home/alexey/www/regidium.loc/api/app/cache/dev/doctrine/odm/mongodb/Proxies');
+        $instance->setProxyDir('/home/alexey/www/regidium.loc/api/app/cache/test/doctrine/odm/mongodb/Proxies');
         $instance->setProxyNamespace('MongoDBODMProxies');
         $instance->setAutoGenerateProxyClasses(false);
-        $instance->setHydratorDir('/home/alexey/www/regidium.loc/api/app/cache/dev/doctrine/odm/mongodb/Hydrators');
+        $instance->setHydratorDir('/home/alexey/www/regidium.loc/api/app/cache/test/doctrine/odm/mongodb/Hydrators');
         $instance->setHydratorNamespace('Hydrators');
         $instance->setAutoGenerateHydratorClasses(false);
         $instance->setDefaultDB('regidium');
@@ -1335,7 +1338,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getFosRest_AllowedMethodsLoaderService()
     {
-        return $this->services['fos_rest.allowed_methods_loader'] = new \FOS\RestBundle\Response\AllowedMethodsLoader\AllowedMethodsRouterLoader($this->get('router'), '/home/alexey/www/regidium.loc/api/app/cache/dev/fos_rest', true);
+        return $this->services['fos_rest.allowed_methods_loader'] = new \FOS\RestBundle\Response\AllowedMethodsLoader\AllowedMethodsRouterLoader($this->get('router'), '/home/alexey/www/regidium.loc/api/app/cache/test/fos_rest', true);
     }
 
     /**
@@ -2043,7 +2046,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getMonolog_Handler_MainService()
     {
-        return $this->services['monolog.handler.main'] = new \Monolog\Handler\StreamHandler('/home/alexey/www/regidium.loc/api/app/logs/dev.log', 100, true);
+        return $this->services['monolog.handler.main'] = new \Monolog\Handler\StreamHandler('/home/alexey/www/regidium.loc/api/app/logs/test.log', 100, true);
     }
 
     /**
@@ -2412,8 +2415,9 @@ class appDevDebugProjectContainer extends Container
             $c->setKernel($b);
         }
 
-        $this->services['profiler'] = $instance = new \Symfony\Component\HttpKernel\Profiler\Profiler(new \Symfony\Component\HttpKernel\Profiler\FileProfilerStorage('file:/home/alexey/www/regidium.loc/api/app/cache/dev/profiler', '', '', 86400), $a);
+        $this->services['profiler'] = $instance = new \Symfony\Component\HttpKernel\Profiler\Profiler(new \Symfony\Component\HttpKernel\Profiler\FileProfilerStorage('file:/home/alexey/www/regidium.loc/api/app/cache/test/profiler', '', '', 86400), $a);
 
+        $instance->disable();
         $instance->add($c);
         $instance->add($this->get('data_collector.request'));
         $instance->add(new \Symfony\Component\HttpKernel\DataCollector\ExceptionDataCollector());
@@ -2522,7 +2526,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getRouterService()
     {
-        return $this->services['router'] = new \Symfony\Bundle\FrameworkBundle\Routing\Router($this, '/home/alexey/www/regidium.loc/api/app/config/routing_dev.yml', array('cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/dev', 'debug' => true, 'generator_class' => 'Symfony\\Component\\Routing\\Generator\\UrlGenerator', 'generator_base_class' => 'Symfony\\Component\\Routing\\Generator\\UrlGenerator', 'generator_dumper_class' => 'Symfony\\Component\\Routing\\Generator\\Dumper\\PhpGeneratorDumper', 'generator_cache_class' => 'appDevUrlGenerator', 'matcher_class' => 'Symfony\\Bundle\\FrameworkBundle\\Routing\\RedirectableUrlMatcher', 'matcher_base_class' => 'Symfony\\Bundle\\FrameworkBundle\\Routing\\RedirectableUrlMatcher', 'matcher_dumper_class' => 'Symfony\\Component\\Routing\\Matcher\\Dumper\\PhpMatcherDumper', 'matcher_cache_class' => 'appDevUrlMatcher', 'strict_requirements' => true), $this->get('router.request_context', ContainerInterface::NULL_ON_INVALID_REFERENCE), $this->get('monolog.logger.router', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+        return $this->services['router'] = new \Symfony\Bundle\FrameworkBundle\Routing\Router($this, '/home/alexey/www/regidium.loc/api/app/config/routing_dev.yml', array('cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/test', 'debug' => true, 'generator_class' => 'Symfony\\Component\\Routing\\Generator\\UrlGenerator', 'generator_base_class' => 'Symfony\\Component\\Routing\\Generator\\UrlGenerator', 'generator_dumper_class' => 'Symfony\\Component\\Routing\\Generator\\Dumper\\PhpGeneratorDumper', 'generator_cache_class' => 'appTestUrlGenerator', 'matcher_class' => 'Symfony\\Bundle\\FrameworkBundle\\Routing\\RedirectableUrlMatcher', 'matcher_base_class' => 'Symfony\\Bundle\\FrameworkBundle\\Routing\\RedirectableUrlMatcher', 'matcher_dumper_class' => 'Symfony\\Component\\Routing\\Matcher\\Dumper\\PhpMatcherDumper', 'matcher_cache_class' => 'appTestUrlMatcher', 'strict_requirements' => true), $this->get('router.request_context', ContainerInterface::NULL_ON_INVALID_REFERENCE), $this->get('monolog.logger.router', ContainerInterface::NULL_ON_INVALID_REFERENCE));
     }
 
     /**
@@ -2664,7 +2668,7 @@ class appDevDebugProjectContainer extends Container
 
         $f = new \Symfony\Component\Security\Http\EntryPoint\BasicAuthenticationEntryPoint('You should have a user name and password');
 
-        return $this->services['security.firewall.map.context.secured_area'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => new \Symfony\Component\Security\Http\Firewall\ChannelListener($e, new \Symfony\Component\Security\Http\EntryPoint\RetryAuthenticationEntryPoint(80, 443), $a), 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($b, array(0 => $this->get('security.user.provider.concrete.in_memory')), 'secured_area', $a, $this->get('debug.event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE)), 2 => new \Symfony\Component\Security\Http\Firewall\BasicAuthenticationListener($b, $c, 'secured_area', $f, $a), 3 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($b, '52bcb5f9d1d13', $a), 4 => new \Symfony\Component\Security\Http\Firewall\AccessListener($b, $this->get('security.access.decision_manager'), $e, $c)), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($b, $this->get('security.authentication.trust_resolver'), new \Symfony\Component\Security\Http\HttpUtils($d, $d), 'secured_area', $f, NULL, NULL, $a));
+        return $this->services['security.firewall.map.context.secured_area'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => new \Symfony\Component\Security\Http\Firewall\ChannelListener($e, new \Symfony\Component\Security\Http\EntryPoint\RetryAuthenticationEntryPoint(80, 443), $a), 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($b, array(0 => $this->get('security.user.provider.concrete.in_memory')), 'secured_area', $a, $this->get('debug.event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE)), 2 => new \Symfony\Component\Security\Http\Firewall\BasicAuthenticationListener($b, $c, 'secured_area', $f, $a), 3 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($b, '52bcb09edcb2e', $a), 4 => new \Symfony\Component\Security\Http\Firewall\AccessListener($b, $this->get('security.access.decision_manager'), $e, $c)), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($b, $this->get('security.authentication.trust_resolver'), new \Symfony\Component\Security\Http\HttpUtils($d, $d), 'secured_area', $f, NULL, NULL, $a));
     }
 
     /**
@@ -2690,7 +2694,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getSecurity_SecureRandomService()
     {
-        return $this->services['security.secure_random'] = new \Symfony\Component\Security\Core\Util\SecureRandom('/home/alexey/www/regidium.loc/api/app/cache/dev/secure_random.seed', $this->get('monolog.logger.security', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+        return $this->services['security.secure_random'] = new \Symfony\Component\Security\Core\Util\SecureRandom('/home/alexey/www/regidium.loc/api/app/cache/test/secure_random.seed', $this->get('monolog.logger.security', ContainerInterface::NULL_ON_INVALID_REFERENCE));
     }
 
     /**
@@ -2838,7 +2842,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getSessionService()
     {
-        return $this->services['session'] = new \Symfony\Component\HttpFoundation\Session\Session($this->get('session.storage.native'), new \Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag(), new \Symfony\Component\HttpFoundation\Session\Flash\FlashBag());
+        return $this->services['session'] = new \Symfony\Component\HttpFoundation\Session\Session($this->get('session.storage.filesystem'), new \Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag(), new \Symfony\Component\HttpFoundation\Session\Flash\FlashBag());
     }
 
     /**
@@ -2851,7 +2855,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getSession_HandlerService()
     {
-        return $this->services['session.handler'] = new \Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler('/home/alexey/www/regidium.loc/api/app/cache/dev/sessions');
+        return $this->services['session.handler'] = new \Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler('/home/alexey/www/regidium.loc/api/app/cache/test/sessions');
     }
 
     /**
@@ -2864,7 +2868,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getSession_Storage_FilesystemService()
     {
-        return $this->services['session.storage.filesystem'] = new \Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage('/home/alexey/www/regidium.loc/api/app/cache/dev/sessions', 'MOCKSESSID', $this->get('session.storage.metadata_bag'));
+        return $this->services['session.storage.filesystem'] = new \Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage('/home/alexey/www/regidium.loc/api/app/cache/test/sessions', 'MOCKSESSID', $this->get('session.storage.metadata_bag'));
     }
 
     /**
@@ -3161,6 +3165,49 @@ class appDevDebugProjectContainer extends Container
     protected function getTemplating_NameParserService()
     {
         return $this->services['templating.name_parser'] = new \Symfony\Bundle\FrameworkBundle\Templating\TemplateNameParser($this->get('kernel'));
+    }
+
+    /**
+     * Gets the 'test.client' service.
+     *
+     * @return Symfony\Bundle\FrameworkBundle\Client A Symfony\Bundle\FrameworkBundle\Client instance.
+     */
+    protected function getTest_ClientService()
+    {
+        return new \Symfony\Bundle\FrameworkBundle\Client($this->get('kernel'), array(), new \Symfony\Component\BrowserKit\History(), new \Symfony\Component\BrowserKit\CookieJar());
+    }
+
+    /**
+     * Gets the 'test.client.cookiejar' service.
+     *
+     * @return Symfony\Component\BrowserKit\CookieJar A Symfony\Component\BrowserKit\CookieJar instance.
+     */
+    protected function getTest_Client_CookiejarService()
+    {
+        return new \Symfony\Component\BrowserKit\CookieJar();
+    }
+
+    /**
+     * Gets the 'test.client.history' service.
+     *
+     * @return Symfony\Component\BrowserKit\History A Symfony\Component\BrowserKit\History instance.
+     */
+    protected function getTest_Client_HistoryService()
+    {
+        return new \Symfony\Component\BrowserKit\History();
+    }
+
+    /**
+     * Gets the 'test.session.listener' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return Symfony\Bundle\FrameworkBundle\EventListener\TestSessionListener A Symfony\Bundle\FrameworkBundle\EventListener\TestSessionListener instance.
+     */
+    protected function getTest_Session_ListenerService()
+    {
+        return $this->services['test.session.listener'] = new \Symfony\Bundle\FrameworkBundle\EventListener\TestSessionListener($this);
     }
 
     /**
@@ -3546,7 +3593,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getTranslator_DefaultService()
     {
-        return $this->services['translator.default'] = new \Symfony\Bundle\FrameworkBundle\Translation\Translator($this, $this->get('translator.selector'), array('translation.loader.php' => array(0 => 'php'), 'translation.loader.yml' => array(0 => 'yml'), 'translation.loader.xliff' => array(0 => 'xlf', 1 => 'xliff'), 'translation.loader.po' => array(0 => 'po'), 'translation.loader.mo' => array(0 => 'mo'), 'translation.loader.qt' => array(0 => 'ts'), 'translation.loader.csv' => array(0 => 'csv'), 'translation.loader.res' => array(0 => 'res'), 'translation.loader.dat' => array(0 => 'dat'), 'translation.loader.ini' => array(0 => 'ini'), 'translation.loader.json' => array(0 => 'json')), array('cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/dev/translations', 'debug' => true));
+        return $this->services['translator.default'] = new \Symfony\Bundle\FrameworkBundle\Translation\Translator($this, $this->get('translator.selector'), array('translation.loader.php' => array(0 => 'php'), 'translation.loader.yml' => array(0 => 'yml'), 'translation.loader.xliff' => array(0 => 'xlf', 1 => 'xliff'), 'translation.loader.po' => array(0 => 'po'), 'translation.loader.mo' => array(0 => 'mo'), 'translation.loader.qt' => array(0 => 'ts'), 'translation.loader.csv' => array(0 => 'csv'), 'translation.loader.res' => array(0 => 'res'), 'translation.loader.dat' => array(0 => 'dat'), 'translation.loader.ini' => array(0 => 'ini'), 'translation.loader.json' => array(0 => 'json')), array('cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/test/translations', 'debug' => true));
     }
 
     /**
@@ -3559,7 +3606,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getTwigService()
     {
-        $this->services['twig'] = $instance = new \Twig_Environment($this->get('twig.loader'), array('debug' => true, 'strict_variables' => true, 'exception_controller' => 'twig.controller.exception:showAction', 'autoescape_service' => NULL, 'autoescape_service_method' => NULL, 'cache' => '/home/alexey/www/regidium.loc/api/app/cache/dev/twig', 'charset' => 'UTF-8', 'paths' => array()));
+        $this->services['twig'] = $instance = new \Twig_Environment($this->get('twig.loader'), array('debug' => true, 'strict_variables' => true, 'exception_controller' => 'twig.controller.exception:showAction', 'autoescape_service' => NULL, 'autoescape_service_method' => NULL, 'cache' => '/home/alexey/www/regidium.loc/api/app/cache/test/twig', 'charset' => 'UTF-8', 'paths' => array()));
 
         $instance->addExtension(new \Symfony\Bundle\SecurityBundle\Twig\Extension\LogoutUrlExtension($this->get('templating.helper.logout_url')));
         $instance->addExtension(new \Symfony\Bridge\Twig\Extension\SecurityExtension($this->get('security.context', ContainerInterface::NULL_ON_INVALID_REFERENCE)));
@@ -3723,19 +3770,6 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'web_profiler.debug_toolbar' service.
-     *
-     * This service is shared.
-     * This method always returns the same instance of the service.
-     *
-     * @return Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener A Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener instance.
-     */
-    protected function getWebProfiler_DebugToolbarService()
-    {
-        return $this->services['web_profiler.debug_toolbar'] = new \Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener($this->get('twig'), false, 2, 'bottom', $this->get('router', ContainerInterface::NULL_ON_INVALID_REFERENCE));
-    }
-
-    /**
      * Gets the 'controller_name_converter' service.
      *
      * This service is shared.
@@ -3789,7 +3823,7 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['jms_serializer.metadata_factory'] = $instance = new \Metadata\MetadataFactory(new \Metadata\Driver\LazyLoadingDriver($this, 'jms_serializer.metadata_driver'), 'Metadata\\ClassHierarchyMetadata', true);
 
-        $instance->setCache(new \Metadata\Cache\FileCache('/home/alexey/www/regidium.loc/api/app/cache/dev/jms_serializer'));
+        $instance->setCache(new \Metadata\Cache\FileCache('/home/alexey/www/regidium.loc/api/app/cache/test/jms_serializer'));
 
         return $instance;
     }
@@ -3863,7 +3897,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getSecurity_Authentication_ManagerService()
     {
-        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($this->get('security.user.provider.concrete.in_memory'), new \Symfony\Component\Security\Core\User\UserChecker(), 'secured_area', $this->get('security.encoder_factory'), true), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('52bcb5f9d1d13')), true);
+        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($this->get('security.user.provider.concrete.in_memory'), new \Symfony\Component\Security\Core\User\UserChecker(), 'secured_area', $this->get('security.encoder_factory'), true), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('52bcb09edcb2e')), true);
 
         $instance->setEventDispatcher($this->get('debug.event_dispatcher'));
 
@@ -3940,7 +3974,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getTemplating_LocatorService()
     {
-        return $this->services['templating.locator'] = new \Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator($this->get('file_locator'), '/home/alexey/www/regidium.loc/api/app/cache/dev');
+        return $this->services['templating.locator'] = new \Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator($this->get('file_locator'), '/home/alexey/www/regidium.loc/api/app/cache/test');
     }
 
     /**
@@ -4029,10 +4063,10 @@ class appDevDebugProjectContainer extends Container
     {
         return array(
             'kernel.root_dir' => '/home/alexey/www/regidium.loc/api/app',
-            'kernel.environment' => 'dev',
+            'kernel.environment' => 'test',
             'kernel.debug' => true,
             'kernel.name' => 'app',
-            'kernel.cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/dev',
+            'kernel.cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/test',
             'kernel.logs_dir' => '/home/alexey/www/regidium.loc/api/app/logs',
             'kernel.bundles' => array(
                 'FrameworkBundle' => 'Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle',
@@ -4052,9 +4086,7 @@ class appDevDebugProjectContainer extends Container
                 'SensioGeneratorBundle' => 'Sensio\\Bundle\\GeneratorBundle\\SensioGeneratorBundle',
             ),
             'kernel.charset' => 'UTF-8',
-            'kernel.container_class' => 'appDevDebugProjectContainer',
-            'mongodb_server' => 'mongodb://localhost:27017',
-            'mongodb_database' => 'regidium',
+            'kernel.container_class' => 'appTestDebugProjectContainer',
             'secret' => 'c5a03c6c9cd213e81661f2baf0e6640940aa35da',
             'controller_resolver.class' => 'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerResolver',
             'controller_name_converter.class' => 'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerNameParser',
@@ -4107,7 +4139,7 @@ class appDevDebugProjectContainer extends Container
             'debug.errors_logger_listener.class' => 'Symfony\\Component\\HttpKernel\\EventListener\\ErrorsLoggerListener',
             'debug.event_dispatcher.class' => 'Symfony\\Component\\HttpKernel\\Debug\\TraceableEventDispatcher',
             'debug.stopwatch.class' => 'Symfony\\Component\\Stopwatch\\Stopwatch',
-            'debug.container.dump' => '/home/alexey/www/regidium.loc/api/app/cache/dev/appDevDebugProjectContainer.xml',
+            'debug.container.dump' => '/home/alexey/www/regidium.loc/api/app/cache/test/appTestDebugProjectContainer.xml',
             'debug.controller_resolver.class' => 'Symfony\\Component\\HttpKernel\\Controller\\TraceableControllerResolver',
             'kernel.secret' => 'c5a03c6c9cd213e81661f2baf0e6640940aa35da',
             'kernel.http_method_override' => true,
@@ -4118,6 +4150,13 @@ class appDevDebugProjectContainer extends Container
 
             ),
             'kernel.default_locale' => 'en',
+            'test.client.class' => 'Symfony\\Bundle\\FrameworkBundle\\Client',
+            'test.client.parameters' => array(
+
+            ),
+            'test.client.history.class' => 'Symfony\\Component\\BrowserKit\\History',
+            'test.client.cookiejar.class' => 'Symfony\\Component\\BrowserKit\\CookieJar',
+            'test.session.listener.class' => 'Symfony\\Bundle\\FrameworkBundle\\EventListener\\TestSessionListener',
             'session.class' => 'Symfony\\Component\\HttpFoundation\\Session\\Session',
             'session.flashbag.class' => 'Symfony\\Component\\HttpFoundation\\Session\\Flash\\FlashBag',
             'session.attribute_bag.class' => 'Symfony\\Component\\HttpFoundation\\Session\\Attribute\\AttributeBag',
@@ -4132,7 +4171,7 @@ class appDevDebugProjectContainer extends Container
             'session.storage.options' => array(
 
             ),
-            'session.save_path' => '/home/alexey/www/regidium.loc/api/app/cache/dev/sessions',
+            'session.save_path' => '/home/alexey/www/regidium.loc/api/app/cache/test/sessions',
             'session.metadata.update_threshold' => '0',
             'security.secure_random.class' => 'Symfony\\Component\\Security\\Core\\Util\\SecureRandom',
             'form.resolved_type_factory.class' => 'Symfony\\Component\\Form\\ResolvedFormTypeFactory',
@@ -4215,7 +4254,7 @@ class appDevDebugProjectContainer extends Container
             'data_collector.form.extractor.class' => 'Symfony\\Component\\Form\\Extension\\DataCollector\\FormDataExtractor',
             'profiler_listener.only_exceptions' => false,
             'profiler_listener.only_master_requests' => false,
-            'profiler.storage.dsn' => 'file:/home/alexey/www/regidium.loc/api/app/cache/dev/profiler',
+            'profiler.storage.dsn' => 'file:/home/alexey/www/regidium.loc/api/app/cache/test/profiler',
             'profiler.storage.username' => '',
             'profiler.storage.password' => '',
             'profiler.storage.lifetime' => 86400,
@@ -4233,14 +4272,14 @@ class appDevDebugProjectContainer extends Container
             'router.options.matcher_base_class' => 'Symfony\\Bundle\\FrameworkBundle\\Routing\\RedirectableUrlMatcher',
             'router.options.matcher_dumper_class' => 'Symfony\\Component\\Routing\\Matcher\\Dumper\\PhpMatcherDumper',
             'router.cache_warmer.class' => 'Symfony\\Bundle\\FrameworkBundle\\CacheWarmer\\RouterCacheWarmer',
-            'router.options.matcher.cache_class' => 'appDevUrlMatcher',
-            'router.options.generator.cache_class' => 'appDevUrlGenerator',
+            'router.options.matcher.cache_class' => 'appTestUrlMatcher',
+            'router.options.generator.cache_class' => 'appTestUrlGenerator',
             'router_listener.class' => 'Symfony\\Component\\HttpKernel\\EventListener\\RouterListener',
             'router.request_context.host' => 'localhost',
             'router.request_context.scheme' => 'http',
             'router.request_context.base_url' => '',
             'router.resource' => '/home/alexey/www/regidium.loc/api/app/config/routing_dev.yml',
-            'router.cache_class_prefix' => 'appDev',
+            'router.cache_class_prefix' => 'appTest',
             'request_listener.http_port' => 80,
             'request_listener.https_port' => 443,
             'annotations.reader.class' => 'Doctrine\\Common\\Annotations\\AnnotationReader',
@@ -4360,7 +4399,7 @@ class appDevDebugProjectContainer extends Container
                 'exception_controller' => 'twig.controller.exception:showAction',
                 'autoescape_service' => NULL,
                 'autoescape_service_method' => NULL,
-                'cache' => '/home/alexey/www/regidium.loc/api/app/cache/dev/twig',
+                'cache' => '/home/alexey/www/regidium.loc/api/app/cache/test/twig',
                 'charset' => 'UTF-8',
                 'paths' => array(
 
@@ -4450,10 +4489,10 @@ class appDevDebugProjectContainer extends Container
             'doctrine_mongodb.odm.default_connection' => 'default',
             'doctrine_mongodb.odm.default_document_manager' => 'default',
             'doctrine_mongodb.odm.proxy_namespace' => 'MongoDBODMProxies',
-            'doctrine_mongodb.odm.proxy_dir' => '/home/alexey/www/regidium.loc/api/app/cache/dev/doctrine/odm/mongodb/Proxies',
+            'doctrine_mongodb.odm.proxy_dir' => '/home/alexey/www/regidium.loc/api/app/cache/test/doctrine/odm/mongodb/Proxies',
             'doctrine_mongodb.odm.auto_generate_proxy_classes' => false,
             'doctrine_mongodb.odm.hydrator_namespace' => 'Hydrators',
-            'doctrine_mongodb.odm.hydrator_dir' => '/home/alexey/www/regidium.loc/api/app/cache/dev/doctrine/odm/mongodb/Hydrators',
+            'doctrine_mongodb.odm.hydrator_dir' => '/home/alexey/www/regidium.loc/api/app/cache/test/doctrine/odm/mongodb/Hydrators',
             'doctrine_mongodb.odm.auto_generate_hydrator_classes' => false,
             'doctrine_mongodb.odm.default_commit_options' => array(
                 'safe' => true,
@@ -4485,7 +4524,7 @@ class appDevDebugProjectContainer extends Container
             'fos_rest.request.param_fetcher.reader.class' => 'FOS\\RestBundle\\Request\\ParamReader',
             'fos_rest.form.extension.csrf_disable.class' => 'FOS\\RestBundle\\Form\\Extension\\DisableCSRFExtension',
             'fos_rest.disable_csrf_role' => 'ROLE_API',
-            'fos_rest.cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/dev/fos_rest',
+            'fos_rest.cache_dir' => '/home/alexey/www/regidium.loc/api/app/cache/test/fos_rest',
             'fos_rest.serializer.serialize_null' => false,
             'fos_rest.formats' => array(
                 'xml' => false,
@@ -4600,9 +4639,6 @@ class appDevDebugProjectContainer extends Container
             'web_profiler.controller.router.class' => 'Symfony\\Bundle\\WebProfilerBundle\\Controller\\RouterController',
             'web_profiler.controller.exception.class' => 'Symfony\\Bundle\\WebProfilerBundle\\Controller\\ExceptionController',
             'web_profiler.debug_toolbar.position' => 'bottom',
-            'web_profiler.debug_toolbar.class' => 'Symfony\\Bundle\\WebProfilerBundle\\EventListener\\WebDebugToolbarListener',
-            'web_profiler.debug_toolbar.intercept_redirects' => false,
-            'web_profiler.debug_toolbar.mode' => 2,
             'sensio_distribution.webconfigurator.class' => 'Sensio\\Bundle\\DistributionBundle\\Configurator\\Configurator',
             'data_collector.templates' => array(
                 'data_collector.config' => array(

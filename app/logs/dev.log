@@ -10202,3 +10202,7 @@
 [2013-12-26 20:42:47] event.DEBUG: Notified event "console.terminate" to listener "Symfony\Bridge\Monolog\Handler\ConsoleHandler::onTerminate". [] []
 [2013-12-26 20:42:54] event.DEBUG: Notified event "console.command" to listener "Symfony\Bridge\Monolog\Handler\ConsoleHandler::onCommand". [] []
 [2013-12-26 20:42:54] event.DEBUG: Notified event "console.terminate" to listener "Symfony\Bridge\Monolog\Handler\ConsoleHandler::onTerminate". [] []
+[2013-12-27 01:04:27] event.DEBUG: Notified event "console.command" to listener "Symfony\Bridge\Monolog\Handler\ConsoleHandler::onCommand". [] []
+[2013-12-27 01:04:28] doctrine.INFO: MongoDB query: {"drop":true,"db":"regidium","collection":"users"} [] []
+[2013-12-27 01:04:28] doctrine.INFO: MongoDB query: {"batchInsert":true,"num":1,"data":{"000000001b8955ed0000000045a1b42a":{"_id":{"$id":"52bcb5fcddeb49220b8b4567"},"name":"user"}},"options":{"safe":true,"fsync":false,"timeout":30000},"db":"regidium","collection":"users"} [] []
+[2013-12-27 01:04:30] event.DEBUG: Notified event "console.terminate" to listener "Symfony\Bridge\Monolog\Handler\ConsoleHandler::onTerminate". [] []
