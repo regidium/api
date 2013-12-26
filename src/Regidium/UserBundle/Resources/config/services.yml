@@ -1,0 +1,8 @@
+parameters:
+    regidium_user.user.handler.class: Regidium\UserBundle\Handler\UserHandler
+    regidium_user.user.document.class: Regidium\UserBundle\Document\User
+
+services:
+    regidium_user.user.handler:
+        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium_user.user.document.class% ]
+        class: %regidium_user.user.handler.class%

@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+
+vendor/
+
+config/cache
+config/logs
+config/*.rb
+config/*.yml

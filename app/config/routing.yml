@@ -1,0 +1,16 @@
+# ApiDoc
+nelmio_api_doc_bundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
+
+# RegidiumCoreBundle
+regidium_core:
+    type: rest
+    prefix: /api
+    resource: "@RegidiumCoreBundle/Resources/config/routing.yml"
+
+# RegidiumUserBundle
+regidium_user:
+    type: rest
+    prefix: /api
+    resource: "@RegidiumUserBundle/Resources/config/routing.yml"

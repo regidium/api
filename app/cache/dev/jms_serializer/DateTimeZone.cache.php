@@ -1,0 +1,1 @@
+<?php return unserialize('C:37:"JMS\\Serializer\\Metadata\\ClassMetadata":201:{a:13:{i:0;a:0:{}i:1;a:0:{}i:2;a:0:{}i:3;N;i:4;N;i:5;N;i:6;a:0:{}i:7;b:0;i:8;N;i:9;N;i:10;N;i:11;a:0:{}i:12;s:85:"a:5:{i:0;s:12:"DateTimeZone";i:1;a:0:{}i:2;a:0:{}i:3;a:1:{i:0;b:0;}i:4;i:1388060928;}";}}');
