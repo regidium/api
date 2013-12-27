@@ -22,6 +22,11 @@ set :use_composer,          true
 set :update_vendors,        true
 set :vendors_mode,          "install"
 
+set :shared_files,          [
+                                app_path + "/config/parameters.yml",
+                                app_path + "/config/db.yml",
+                            ]
+
 
 set :shared_children,       [
                                 app_path + "/cache",
