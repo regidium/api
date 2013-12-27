@@ -23,8 +23,8 @@ set :update_vendors,        true
 set :vendors_mode,          "install"
 
 set :shared_files,          [
-                                app_path + "config/parameters.yml",
-                                app_path + "config/db.yml",
+                                app_path + "/config/parameters.yml",
+                                app_path + "/config/db.yml",
                             ]
 
 set :shared_children,       [
@@ -40,4 +40,4 @@ set :writable_dirs,         [
                             ]
 set :webserver_user,        "www-data"
 set :permission_method,     :acl
-set :use_set_permissions,   false
+set :use_set_permissions,   true
