@@ -43,3 +43,4 @@ set :writable_dirs,         [
 set :webserver_user,        "www-data"
 set :permission_method,     :acl
 set :use_set_permissions,   true
+logger.level = Logger::MAX_LEVEL

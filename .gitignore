@@ -9,4 +9,4 @@ app/config/deploy.rb
 app/config/db.yml
 app/config/security.yml
 
-web/bundles
+web/bundles/*
