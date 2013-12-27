@@ -28,6 +28,7 @@
         "jms/serializer-bundle": "@dev",
         "willdurand/rest-extra-bundle": "@dev",
         "willdurand/hateoas-bundle": "@dev",
+        "hautelook/templated-uri-bundle": "@dev",
         "nelmio/api-doc-bundle": "@dev"
     },
     "require-dev": {

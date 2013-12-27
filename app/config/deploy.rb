@@ -18,13 +18,18 @@ set :keep_releases,         3
 set :ssh_options,           {:forward_agent => true, :port => 22}
 set :user,                  "deployer"
 set :use_sudo,              false
-set :use_composer,          false
-set :update_vendors,        false
+set :use_composer,          true
+set :update_vendors,        true
+set :vendors_mode,          "install"
+
+set :shared_files,          [
+                                app_path + "config/parameters.yml",
+                                app_path + "config/db.yml",
+                            ]
 
 set :shared_children,       [
                                 app_path + "/cache",
                                 app_path + "/logs",
-                                app_path + "/config",
                                 web_path + "/bundles",
                                 "vendor"
                             ]
