@@ -1,3 +1,11 @@
+# Regidium
+regidium:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /api/doc
+        permanent: true
+
 # ApiDoc
 nelmio_api_doc_bundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"

@@ -8,6 +8,13 @@ use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+
+/**
+ * Core controller
+ *
+ * @package Regidium\CoreBundle\Controller
+ * @author Alexey Volkov <alexey.wild88@gmail.com>
+ */
 class CoreController extends FOSRestController
 {
     /**

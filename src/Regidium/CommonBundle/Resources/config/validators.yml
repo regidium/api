@@ -1,0 +1,9 @@
+parameters:
+    validator.unique_document.class: Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocumentValidator
+
+services:
+    validator.unique.unique_document:
+        class: %validator.unique_document.class%
+        arguments: [ "@service_container" ]
+        tags:
+            - { name: validator.constraint_validator, alias: unique_document }

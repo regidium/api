@@ -1,22 +1,21 @@
-set :application,           "api.regidium.com"
-set :domain,                "api.regidium.com"
-set :deploy_to,             "/var/www/regidium.com/api"
+set :application,           "APPLICATION_NAME"
+set :domain,                "SERVER_DOMAIN"
+set :deploy_to,             "SERVER_PATH_TO_PROJECT"
 set :app_path,              "app"
 set :web_path,              "web"
 
-set :repository,            "git@github.com:regidium/api.git"
-set :branch,                "master"
+set :repository,            "GIT_REPOSITARY"
+set :branch,                "GIT_BRANCH"
 set :scm,                   :git
 set :deploy_via,            :copy
 
-role :web,        domain
-role :app,        domain, :primary => true
+role :app,                  domain, :primary => true
 
 default_run_options[:pty] = true
 
 set :keep_releases,         3
 set :ssh_options,           {:forward_agent => true, :port => 22}
-set :user,                  "root"
+set :user,                  "SERVER_USER"
 set :use_sudo,              false
 set :use_composer,          true
 set :update_vendors,        true
@@ -24,7 +23,7 @@ set :vendors_mode,          "install"
 
 set :shared_files,          [
                                 app_path + "/config/parameters.yml",
-                                app_path + "/config/db.yml",
+                                app_path + "/config/db/db.yml",
                             ]
 
 
@@ -40,7 +39,7 @@ set :writable_dirs,         [
                                 app_path + "/logs"
                             ]
 
-set :webserver_user,        "root"
+set :webserver_user,        "SERVER_WEB_USER"
 set :permission_method,     :acl
 set :use_set_permissions,   true
 logger.level = Logger::MAX_LEVEL

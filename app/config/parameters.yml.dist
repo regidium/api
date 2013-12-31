@@ -1,2 +1,5 @@
 parameters:
+    # UID generator
+    uid_machine_id: 111111
+
     secret:            ThisTokenIsNotSoSecretChangeIt

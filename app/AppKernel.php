@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Bazinga\Bundle\RestExtraBundle\BazingaRestExtraBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
 
+            new Regidium\CommonBundle\RegidiumCommonBundle(),
             new Regidium\CoreBundle\RegidiumCoreBundle(),
             new Regidium\UserBundle\RegidiumUserBundle()
         );

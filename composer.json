@@ -1,8 +1,8 @@
 {
     "name": "regidium/regidium-api",
     "type": "project",
-    "description": "Api for Regidium",
-    "homepage": "http://regidium.com",
+    "description": "Regidium API",
+    "homepage": "http://api.regidium.com",
     "version": "dev",
     "authors": [
         {

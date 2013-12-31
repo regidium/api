@@ -6,16 +6,20 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Regidium\CommonBundle\Document\Interfaces\IdableInterface;
+use Regidium\CommonBundle\Document\Interfaces\UidableInterface;
 use Regidium\CommonBundle\Document\Interfaces\StatebleInteface;
 
 /**
  * @MongoDB\Document(
  *      repositoryClass="Regidium\UserBundle\Repository\UserRepository",
  *      collection="users",
+ *      indexes={
+ *          @MongoDB\Index(keys={"uid"="desc"}, options={"unique"=true})
+ *      },
  *      requireIndexes=true
  *  )
  */
-class User implements IdableInterface, StatebleInteface
+class User implements IdableInterface, UidableInterface, StatebleInteface
 {
     /**
      * @MongoDB\Id
@@ -23,12 +27,16 @@ class User implements IdableInterface, StatebleInteface
     protected $id;
 
     /**
+     * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
+     */
+    protected $uid;
+
+    /**
      * @MongoDB\String
      */
     protected $fullname;
 
     /**
-     * @Assert\NotBlank
      * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
      */
     protected $email;
@@ -39,14 +47,18 @@ class User implements IdableInterface, StatebleInteface
     protected $password;
 
     /**
-     * @Assert\NotBlank
+     * @MongoDB\String
+     */
+    protected $salt;
+
+    /**
      * @MongoDB\Int
      */
     protected $state;
 
-    const STATE_DEFAULT = 1;
-    const STATE_BLOCKED = 2;
-    const STATE_DELETED = 3;
+    const STATE_DEFAULT      = 0;
+    const STATE_BLOCKED      = 1;
+    const STATE_DELETED      = 2;
 
     static public function getStates()
     {
@@ -57,9 +69,11 @@ class User implements IdableInterface, StatebleInteface
             );
     }
 
-    public function __construct()
+    public function __constract()
     {
         $this->setState(self::STATE_DEFAULT);
+        $this->setUid(uniqid());
+        $this->setSalt(md5(time()));
     }
 
     public function __toString()
@@ -87,6 +101,28 @@ class User implements IdableInterface, StatebleInteface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set uid
+     *
+     * @param string $uid
+     * @return self
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+    /**
+     * Get uid
+     *
+     * @return string $uid
+     */
+    public function getUid()
+    {
+        return $this->uid;
     }
 
     /**
@@ -119,7 +155,7 @@ class User implements IdableInterface, StatebleInteface
      */
     public function setEmail($email)
     {
-        $this->email = strtolower($email);
+        $this->email = $email;
         return $this;
     }
 
@@ -153,6 +189,28 @@ class User implements IdableInterface, StatebleInteface
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     * @return self
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string $salt
+     */
+    public function getSalt()
+    {
+        return $this->salt;
     }
 
     /**

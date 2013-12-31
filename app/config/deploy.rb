@@ -9,8 +9,7 @@ set :branch,                "master"
 set :scm,                   :git
 set :deploy_via,            :copy
 
-role :web,        domain
-role :app,        domain, :primary => true
+role :app,                  domain, :primary => true
 
 default_run_options[:pty] = true
 
@@ -24,7 +23,7 @@ set :vendors_mode,          "install"
 
 set :shared_files,          [
                                 app_path + "/config/parameters.yml",
-                                app_path + "/config/db.yml",
+                                app_path + "/config/db/db.yml",
                             ]
 
 

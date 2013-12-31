@@ -5,8 +5,7 @@ namespace Regidium\UserBundle\Handler;
 use Symfony\Component\Form\FormFactoryInterface;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Regidium\CoreBundle\Exception\InvalidFormException;
-use Regidium\UserBundle\Form\Type\UserType;
+use Regidium\UserBundle\Form\UserForm;
 use Regidium\UserBundle\Document\User;
 
 class UserHandler implements UserHandlerInterface
@@ -112,13 +111,12 @@ class UserHandler implements UserHandlerInterface
      * @param array  $parameters
      * @param string $method
      *
-     * @return User
+     * @return User|\Symfony\Component\Form\FormError[]
      *
-     * @throws \Regidium\CoreBundle\Exception\InvalidFormException
      */
     private function processForm(User $user, array $parameters, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new UserType(), $user, array('method' => $method));
+        $form = $this->formFactory->create(new UserForm(), $user, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
             $user = $form->getData();
@@ -127,7 +125,7 @@ class UserHandler implements UserHandlerInterface
             return $user;
         }
 
-        throw new InvalidFormException('Invalid submitted data', $form);
+        return $form->getErrors();
     }
 
     private function createUser()
