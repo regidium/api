@@ -1,6 +1,6 @@
 <?php
 
-namespace Regidium\UserBundle\Form;
+namespace Regidium\AgentBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,7 +11,7 @@ use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 /**
  * @todo В проверке уникальности email исключать текущий email
 */
-class UserForm extends AbstractType
+class AgentForm extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -43,7 +43,7 @@ class UserForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\UserBundle\Document\User'
+            'data_class' => 'Regidium\AgentBundle\Document\Agent'
         ));
     }
 
@@ -52,6 +52,6 @@ class UserForm extends AbstractType
      */
     public function getName()
     {
-        return 'user';
+        return 'agent';
     }
 }

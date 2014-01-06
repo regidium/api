@@ -24,8 +24,9 @@ class AppKernel extends Kernel
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
 
             new Regidium\CommonBundle\RegidiumCommonBundle(),
-            new Regidium\CoreBundle\RegidiumCoreBundle(),
-            new Regidium\UserBundle\RegidiumUserBundle()
+            new Regidium\AgentBundle\RegidiumAgentBundle(),
+            new Regidium\UserBundle\RegidiumUserBundle(),
+            new Regidium\AuthBundle\RegidiumAuthBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

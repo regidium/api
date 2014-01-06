@@ -36,6 +36,12 @@
         "liip/functional-test-bundle":"dev-master",
         "guzzle/plugin": "3.7.*"
     },
+    "repositories": [
+        {
+          "type": "vcs",
+          "url": "git://github.com/alexey-wild/FOSRestBundle.git"
+        }
+    ],
     "scripts": {
         "post-install-cmd": [
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",

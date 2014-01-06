@@ -1,13 +1,13 @@
 <?php
 
-namespace Regidium\UserBundle\Handler;
+namespace Regidium\AgentBundle\Handler;
 
-use Regidium\UserBundle\Document\User;
+use Regidium\AgentBundle\Document\Agent;
 
-interface UserHandlerInterface
+interface AgentHandlerInterface
 {
     /**
-     * Get a User given the uid
+     * Get a Agent given the uid
      *
      * @api
      *
@@ -18,7 +18,7 @@ interface UserHandlerInterface
     public function get(array $criteria);
 
     /**
-     * Get list of users
+     * Get list of agents
      *
      * @param int $limit  the limit of the result
      * @param int $offset starting from the offset
@@ -28,37 +28,37 @@ interface UserHandlerInterface
     public function all($limit = 5, $offset = 0);
 
     /**
-     * Post User, creates a new User.
+     * Post Agent, creates a new Agent.
      *
      * @api
      *
      * @param array $parameters
      *
-     * @return User
+     * @return Agent
      */
     public function post(array $parameters);
 
     /**
-     * Edit a User.
+     * Edit a Agent.
      *
      * @api
      *
-     * @param User  $user
+     * @param Agent  $agent
      * @param array $parameters
      *
-     * @return User
+     * @return Agent
      */
-    public function put(User $user, array $parameters);
+    public function put(Agent $agent, array $parameters);
 
     /**
-     * Partially update a User.
+     * Partially update a Agent.
      *
      * @api
      *
-     * @param User  $user
+     * @param Agent  $agent
      * @param array $parameters
      *
-     * @return User
+     * @return Agent
      */
-    public function patch(User $user, array $parameters);
+    public function patch(Agent $agent, array $parameters);
 }

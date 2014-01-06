@@ -1,13 +1,13 @@
 <?php
 
-namespace Regidium\CoreBundle\DependencyInjection;
+namespace Regidium\AgentBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 
-class RegidiumCoreExtension extends Extension
+class RegidiumAgentExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -17,6 +17,6 @@ class RegidiumCoreExtension extends Extension
 
     public function getAlias()
     {
-        return 'regidium_core';
+        return 'regidium_agent';
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Regidium\UserBundle\Document;
+namespace Regidium\AgentBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,12 +12,12 @@ use Regidium\AuthBundle\Document\Auth;
 
 /**
  * @MongoDB\Document(
- *      repositoryClass="Regidium\UserBundle\Repository\UserRepository",
- *      collection="users",
- *      requireIndexes=true
+ *      repositoryClass="Regidium\AgentBundle\Repository\AgentRepository",
+ *      collection="agents",
+ *      requireIndexes=false
  *  )
  */
-class User implements IdableInterface, StatebleInteface
+class Agent implements IdableInterface, StatebleInteface
 {
     /**
      * @MongoDB\Id
@@ -35,6 +35,7 @@ class User implements IdableInterface, StatebleInteface
     protected $fullname;
 
     /**
+     * @Assert\NotBlank
      * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
      */
     protected $email;
@@ -220,6 +221,28 @@ class User implements IdableInterface, StatebleInteface
     public function getState()
     {
         return $this->state;
+    }
+
+    /**
+     * Set externalService
+     *
+     * @param array $externalService
+     * @return self
+     */
+    public function setExternalService($externalService)
+    {
+        $this->external_service = $externalService;
+        return $this;
+    }
+
+    /**
+     * Get externalService
+     *
+     * @return array $externalService
+     */
+    public function getExternalService()
+    {
+        return $this->external_service;
     }
 
     /**

@@ -1,0 +1,5 @@
+regidium_auth:
+    type: rest
+    prefix: /v1
+    resource: Regidium\AuthBundle\Controller\AuthController
+    name_prefix:  api_1_

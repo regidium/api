@@ -1,5 +1,0 @@
-regidium_core_index:
-    type: rest
-    prefix: /v1
-    resource: Regidium\CoreBundle\Controller\CoreController
-    name_prefix:  api_1_

@@ -1,5 +1,9 @@
 parameters:
+
     # UID generator
-    uid_machine_id: 111111
+    uid_machine_id: ChangeItUID
+
+    session:
+        max_age: 3600000 # 1 hour
 
     secret:            ThisTokenIsNotSoSecretChangeIt

@@ -1,0 +1,5 @@
+regidium_agent:
+    type: rest
+    prefix: /v1
+    resource: Regidium\AgentBundle\Controller\AgentController
+    name_prefix:  api_1_

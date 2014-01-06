@@ -1,0 +1,16 @@
+parameters:
+    regidium.auth.handler.class: Regidium\AuthBundle\Handler\AuthHandler
+    regidium.auth.document.class: Regidium\AuthBundle\Document\Auth
+    regidium.auth.repository.class: Regidium\AuthBundle\Repository\AuthRepository
+
+services:
+    regidium.auth.handler:
+        class: %regidium.auth.handler.class%
+        arguments: [ "@form.factory", "@doctrine_mongodb", "%regidium.auth.document.class%" ]
+
+    regidium.auth.repository:
+        class: %regidium.auth.handler.class%
+        factory_service: doctrine_mongodb.odm.default_document_manager
+        factory_method: getRepository
+        public: true
+        arguments: [ "%regidium.auth.document.class%" ]

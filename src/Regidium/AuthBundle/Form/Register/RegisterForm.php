@@ -1,6 +1,6 @@
 <?php
 
-namespace Regidium\UserBundle\Form;
+namespace Regidium\AuthBundle\Form\Register;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,10 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 
-/**
- * @todo В проверке уникальности email исключать текущий email
-*/
-class UserForm extends AbstractType
+class RegisterForm extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -24,14 +21,14 @@ class UserForm extends AbstractType
                     'required' => false
                 ])
             ->add('email', 'email', [
-                    'required' => false,
                     'constraints' => array(
-//                        new Constraints\Email(array('message' => 'Wrong Email')),
-//                        new Constraints\NotBlank(array('message' => 'Blank Email')),
+                        new Constraints\Email(array('message' => 'Wrong Email')),
+                        new Constraints\NotBlank(array('message' => 'Blank Email')),
                         new UniqueDocument(array('repository' => 'regidium.user.repository', 'property' => 'email'))
                     )
                 ])
-            ->add('password', 'password', [
+            ->add('password', 'password')
+            ->add('remember', 'radio', [
                 'required' => false
             ])
         ;
@@ -43,7 +40,7 @@ class UserForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\UserBundle\Document\User'
+            'data_class' => 'Regidium\AuthBundle\Document\Auth'
         ));
     }
 
@@ -52,6 +49,6 @@ class UserForm extends AbstractType
      */
     public function getName()
     {
-        return 'user';
+        return 'register';
     }
 }

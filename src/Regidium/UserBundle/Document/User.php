@@ -8,11 +8,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Regidium\CommonBundle\Document\Interfaces\IdableInterface;
 use Regidium\CommonBundle\Document\Interfaces\StatebleInteface;
 
+use Regidium\AuthBundle\Document\Auth;
+
 /**
  * @MongoDB\Document(
  *      repositoryClass="Regidium\UserBundle\Repository\UserRepository",
  *      collection="users",
- *      requireIndexes=true
+ *      requireIndexes=false
  *  )
  */
 class User implements IdableInterface, StatebleInteface
@@ -23,12 +25,16 @@ class User implements IdableInterface, StatebleInteface
     protected $id;
 
     /**
+     * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
+     */
+    protected $uid;
+
+    /**
      * @MongoDB\String
      */
     protected $fullname;
 
     /**
-     * @Assert\NotBlank
      * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
      */
     protected $email;
@@ -43,6 +49,16 @@ class User implements IdableInterface, StatebleInteface
      * @MongoDB\Int
      */
     protected $state;
+
+    /**
+     * @MongoDB\Hash
+     */
+    protected $external_service;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\AuthBundle\Document\Auth", mappedBy="user")
+    */
+    protected $auths;
 
     const STATE_DEFAULT = 1;
     const STATE_BLOCKED = 2;
@@ -59,7 +75,9 @@ class User implements IdableInterface, StatebleInteface
 
     public function __construct()
     {
+        $this->setUid(uniqid());
         $this->setState(self::STATE_DEFAULT);
+        $this->setExternalService([]);
     }
 
     public function __toString()
@@ -87,6 +105,28 @@ class User implements IdableInterface, StatebleInteface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set uid
+     *
+     * @param int $uid
+     * @return self
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+    /**
+     * Get uid
+     *
+     * @return uid $uid
+     */
+    public function getUid()
+    {
+        return $this->uid;
     }
 
     /**
@@ -180,5 +220,57 @@ class User implements IdableInterface, StatebleInteface
     public function getState()
     {
         return $this->state;
+    }
+
+    /**
+     * Set externalService
+     *
+     * @param hash $externalService
+     * @return self
+     */
+    public function setExternalService($externalService)
+    {
+        $this->external_service = $externalService;
+        return $this;
+    }
+
+    /**
+     * Get externalService
+     *
+     * @return hash $externalService
+     */
+    public function getExternalService()
+    {
+        return $this->external_service;
+    }
+
+    /**
+     * Add auth
+     *
+     * @param Auth $auth
+     */
+    public function addAuth(Auth $auth)
+    {
+        $this->auths[] = $auth;
+    }
+
+    /**
+     * Remove auth
+     *
+     * @param Auth $auth
+     */
+    public function removeAuth(Auth $auth)
+    {
+        $this->auths->removeElement($auth);
+    }
+
+    /**
+     * Get auths
+     *
+     * @return \Doctrine\Common\Collections\Collection $auths
+     */
+    public function getAuths()
+    {
+        return $this->auths;
     }
 }

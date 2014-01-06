@@ -2,6 +2,8 @@
 
 namespace Regidium\UserBundle\DataFixtures\MongoDB;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Regidium\UserBundle\Document\User;
 
@@ -13,7 +15,10 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $dummyUser = new User();
-        $dummyUser->setFullname('dummy');
+        $dummyUser->setFullname('Dummy User');
+        $dummyUser->setEmail('dummy.user@email.com');
+        $dummyUser->setPassword(sha1('123456'));
+        $dummyUser->setState(User::STATE_DEFAULT);
 
         $manager->persist($dummyUser);
         $manager->flush();
@@ -26,6 +31,6 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function getOrder()
     {
-        return 1;
+        return 2;
     }
 }

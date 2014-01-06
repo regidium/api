@@ -1,0 +1,19 @@
+imports:
+    - { resource: forms.yml }
+
+parameters:
+    regidium.agent.handler.class: Regidium\AgentBundle\Handler\AgentHandler
+    regidium.agent.document.class: Regidium\AgentBundle\Document\Agent
+    regidium.agent.repository.class: Regidium\AgentBundle\Repository\AgentRepository
+
+services:
+    regidium.agent.handler:
+        class: %regidium.agent.handler.class%
+        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.agent.document.class% ]
+
+    regidium.agent.repository:
+        class: %regidium.agent.handler.class%
+        factory_service: doctrine_mongodb.odm.default_document_manager
+        factory_method: getRepository
+        public: true
+        arguments: [ %regidium.agent.document.class% ]

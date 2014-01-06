@@ -1,3 +1,8 @@
+# ApiDoc
+nelmio_api_doc_bundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
+
 # Regidium
 regidium:
     path: /
@@ -6,19 +11,21 @@ regidium:
         path: /api/doc
         permanent: true
 
-# ApiDoc
-nelmio_api_doc_bundle:
-    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
-    prefix:   /api/doc
 
-# RegidiumCoreBundle
-regidium_core:
+# RegidiumAgentBundle
+regidium_agent:
     type: rest
     prefix: /api
-    resource: "@RegidiumCoreBundle/Resources/config/routing.yml"
+    resource: "@RegidiumAgentBundle/Resources/config/routing.yml"
 
 # RegidiumUserBundle
 regidium_user:
     type: rest
     prefix: /api
     resource: "@RegidiumUserBundle/Resources/config/routing.yml"
+
+# RegidiumAuthBundle
+regidium_auth:
+    type: rest
+    prefix: /api
+    resource: "@RegidiumAuthBundle/Resources/config/routing.yml"

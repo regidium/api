@@ -1,0 +1,8 @@
+parameters:
+    regidium.agent.form.type.class: Regidium\AgentBundle\Form\AgentForm
+
+services:
+    regidium.agent.form.type:
+        class: %regidium.agent.form.type.class%
+        tags:
+            - { name: form.type, alias: "agent" }

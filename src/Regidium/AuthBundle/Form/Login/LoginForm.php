@@ -1,17 +1,14 @@
 <?php
 
-namespace Regidium\UserBundle\Form;
+namespace Regidium\AuthBundle\Form\Login;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
-use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
+use Regidium\CommonBundle\Validator\Constraints\ExistDocument\ExistDocument;
 
-/**
- * @todo В проверке уникальности email исключать текущий email
-*/
-class UserForm extends AbstractType
+class LoginForm extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -20,18 +17,15 @@ class UserForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fullname', 'text', [
-                    'required' => false
-                ])
             ->add('email', 'email', [
-                    'required' => false,
                     'constraints' => array(
-//                        new Constraints\Email(array('message' => 'Wrong Email')),
-//                        new Constraints\NotBlank(array('message' => 'Blank Email')),
-                        new UniqueDocument(array('repository' => 'regidium.user.repository', 'property' => 'email'))
+                        new Constraints\Email(array('message' => 'Wrong Email')),
+                        new Constraints\NotBlank(array('message' => 'Blank Email')),
+                        new ExistDocument(array('repository' => 'regidium.user.repository', 'property' => 'email'))
                     )
                 ])
-            ->add('password', 'password', [
+            ->add('password', 'password')
+            ->add('remember', 'radio', [
                 'required' => false
             ])
         ;
@@ -43,7 +37,7 @@ class UserForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\UserBundle\Document\User'
+            'data_class' => 'Regidium\AuthBundle\Document\Auth'
         ));
     }
 
@@ -52,6 +46,6 @@ class UserForm extends AbstractType
      */
     public function getName()
     {
-        return 'user';
+        return 'login';
     }
 }

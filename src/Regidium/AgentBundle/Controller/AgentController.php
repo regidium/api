@@ -1,6 +1,6 @@
 <?php
 
-namespace Regidium\UserBundle\Controller;
+namespace Regidium\AgentBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -11,22 +11,22 @@ use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 
-use Regidium\UserBundle\Form\UserForm;
-use Regidium\UserBundle\Document\User;
+use Regidium\AgentBundle\Form\AgentForm;
+use Regidium\AgentBundle\Document\Agent;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
- * User controller
+ * Agent controller
  *
  * @todo Update response for HTML format
  *
- * @package Regidium\UserBundle\Controller
+ * @package Regidium\AgentBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
- * @Annotations\RouteResource("User")
+ * @Annotations\RouteResource("Agent")
  */
-class UserController extends FOSRestController
+class AgentController extends FOSRestController
 {
 
     /**
@@ -45,7 +45,7 @@ class UserController extends FOSRestController
     }
 
     /**
-     * List all users.
+     * List all agents.
      *
      * @ApiDoc(
      *   resource = true,
@@ -54,11 +54,11 @@ class UserController extends FOSRestController
      *   }
      * )
      *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing users.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many users to return.")
+     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing agents.")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many agents to return.")
      *
      * @Annotations\View(
-     *  templateVar="users"
+     *  templateVar="agents"
      * )
      *
      * @param Request               $request      the request object
@@ -69,48 +69,44 @@ class UserController extends FOSRestController
     public function getAllAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
         $return = [];
-        $users = $this->get('regidium.user.handler')->all();
-        foreach ($users as $user) {
-            $return[] = [
-                'uid' => $user->getUid(),
-                'fullname' => $user->getFullname(),
-                'email' => $user->getEmail(),
-                'state' => $user->getState()
-            ];
+        $agent = $this->get('regidium.agent.handler')->all()->toArray();
+        foreach ($agent as $agent) {
+            $return[] = $agent;
         }
-        return $return;
+        $view = new View($return, Codes::HTTP_OK);
+        return $this->handleView($view);
     }
 
     /**
-     * Get single user.
+     * Get single agent.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Gets a users for a given uid",
-     *   output = "Regidium\UserBundle\Document\User",
+     *   description = "Gets a agents for a given uid",
+     *   output = "Regidium\AgentBundle\Document\Agent",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     404 = "Returned when the user is not found"
+     *     404 = "Returned when the agent is not found"
      *   }
      * )
      *
-     * @Annotations\View(templateVar="user")
+     * @Annotations\View(templateVar="agent")
      *
-     * @param int     $uid      the user uid
+     * @param int     $uid      the agent uid
      *
      * @return array
      *
-     * @throws NotFoundHttpException when user not exist
+     * @throws NotFoundHttpException when agent not exist
      */
     public function getAction($uid)
     {
-        $user = $this->getOr404(['uid' => $uid]);
+        $agent = $this->getOr404(['uid' => $uid]);
 
-        return $user;
+        return $agent;
     }
 
     /**
-     * Presents the form to use to create a new user.
+     * Presents the form to use to create a new agent.
      *
      * @ApiDoc(
      *   resource = true,
@@ -127,16 +123,16 @@ class UserController extends FOSRestController
      */
     public function newAction()
     {
-        return $this->createForm(new UserForm());
+        return $this->createForm(new AgentForm());
     }
 
     /**
-     * Create a user from the submitted data.
+     * Create a agent from the submitted data.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Creates a new user from the submitted data.",
-     *   input = "Regidium\UserBundle\Form\UserForm",
+     *   description = "Creates a new agent from the submitted data.",
+     *   input = "Regidium\AgentBundle\Form\AgentForm",
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors"
@@ -144,7 +140,7 @@ class UserController extends FOSRestController
      * )
      *
      * @Annotations\View(
-     *  template = "RegidiumUserBundle:User:newUser.html.twig",
+     *  template = "RegidiumAgentBundle:Agent:newAgent.html.twig",
      *  statusCode = Codes::HTTP_BAD_REQUEST,
      *  templateVar = "form"
      * )
@@ -155,11 +151,11 @@ class UserController extends FOSRestController
      */
     public function postAction(Request $request)
     {
-        $result = $this->get('regidium.user.handler')->post(
+        $result = $this->get('regidium.agent.handler')->post(
             $request->request->all()
         );
 
-        if (!$result instanceof User) {
+        if (!$result instanceof Agent) {
             return $this->view(['errors' => $result]);
         }
 
@@ -168,25 +164,25 @@ class UserController extends FOSRestController
             '_format' => $request->get('_format')
         );
 
-        return $this->routeRedirectView('api_1_get_user', $routeOptions, Codes::HTTP_CREATED);
+        return $this->routeRedirectView('api_1_get_agent', $routeOptions, Codes::HTTP_CREATED);
 
     }
 
     /**
-     * Update existing user from the submitted data or create a new user at a specific location.
+     * Update existing agent from the submitted data or create a new agent at a specific location.
      *
      * @ApiDoc(
      *   resource = true,
-     *   input = "Regidium\UserBundle\Form\UserForm",
+     *   input = "Regidium\AgentBundle\Form\AgentForm",
      *   statusCodes = {
-     *     201 = "Returned when the user is created",
+     *     201 = "Returned when the agent is created",
      *     204 = "Returned when successful",
      *     400 = "Returned when the form has errors"
      *   }
      * )
      *
      * @Annotations\View(
-     *  template = "RegidiumUserBundle:User:editUser.html.twig",
+     *  template = "RegidiumAgentBundle:Agent:editAgent.html.twig",
      *  templateVar = "form"
      * )
      *
@@ -195,34 +191,34 @@ class UserController extends FOSRestController
      * @deprecated Will be updated
      *
      * @param Request $request the request object
-     * @param int     $uid      the user uid
+     * @param int     $uid      the agent uid
      *
      * @return FormTypeInterface|View
      *
-     * @throws NotFoundHttpException when user not exist
+     * @throws NotFoundHttpException when agent not exist
      */
     public function putAction(Request $request, $uid)
     {
         try {
-            if (!($user = $this->get('regidium.user.handler')->get(['uid' => $uid]))) {
+            if (!($agent = $this->get('regidium.agent.handler')->get(['uid' => $uid]))) {
                 $statusCode = Codes::HTTP_CREATED;
-                $user = $this->get('regidium.user.handler')->post(
+                $agent = $this->get('regidium.agent.handler')->post(
                     $request->request->all()
                 );
             } else {
                 $statusCode = Codes::HTTP_NO_CONTENT;
-                $user = $this->get('regidium.user.handler')->put(
-                    $user,
+                $agent = $this->get('regidium.agent.handler')->put(
+                    $agent,
                     $request->request->all()
                 );
             }
 
             $routeOptions = array(
-                'uid' => $user->getUid(),
+                'uid' => $agent->getUid(),
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_user', $routeOptions, $statusCode);
+            return $this->routeRedirectView('api_1_get_agent', $routeOptions, $statusCode);
 
         } catch (InvalidFormException $exception) {
 
@@ -231,12 +227,12 @@ class UserController extends FOSRestController
     }
 
     /**
-     * Update existing user from the submitted data or create a new user at a specific location.
+     * Update existing agent from the submitted data or create a new agent at a specific location.
      *
      *
      * @ApiDoc(
      *   resource = true,
-     *   input = "Regidium\UserBundle\Form\Type\UserType",
+     *   input = "Regidium\AgentBundle\Form\Type\AgentType",
      *   statusCodes = {
      *     204 = "Returned when successful",
      *     400 = "Returned when the form has errors"
@@ -244,7 +240,7 @@ class UserController extends FOSRestController
      * )
      *
      * @Annotations\View(
-     *  template = "RegidiumUserBundle:User:editUser.html.twig",
+     *  template = "RegidiumAgentBundle:Agent:editAgent.html.twig",
      *  templateVar = "form"
      * )
      *
@@ -253,26 +249,26 @@ class UserController extends FOSRestController
      * @deprecated Will be removed
      *
      * @param Request $request the request object
-     * @param int     $uid      the user uid
+     * @param int     $uid      the agent uid
      *
      * @return FormTypeInterface|View
      *
-     * @throws NotFoundHttpException when user not exist
+     * @throws NotFoundHttpException when agent not exist
      */
     public function patchAction(Request $request, $uid)
     {
         try {
-            $user = $this->get('regidium.user.handler')->patch(
+            $agent = $this->get('regidium.agent.handler')->patch(
                 $this->getOr404(['uid' => $uid]),
                 $request->request->all()
             );
 
             $routeOptions = array(
-                'uid' => $user->getUid(),
+                'uid' => $agent->getUid(),
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_user', $routeOptions, Codes::HTTP_NO_CONTENT);
+            return $this->routeRedirectView('api_1_get_agent', $routeOptions, Codes::HTTP_NO_CONTENT);
 
         } catch (InvalidFormException $exception) {
 
@@ -281,20 +277,20 @@ class UserController extends FOSRestController
     }
 
     /**
-     * Fetch a user or throw an 404 Exception.
+     * Fetch a agent or throw an 404 Exception.
      *
      * @param array $criteria
      *
-     * @return User
+     * @return Agent
      *
      * @throws NotFoundHttpException
      */
     protected function getOr404(array $criteria)
     {
-        if (!($user = $this->get('regidium.user.handler')->one($criteria))) {
+        if (!($agent = $this->get('regidium.agent.handler')->one($criteria))) {
             throw new NotFoundHttpException(sprintf('The resource was not found.'));
         }
 
-        return $user;
+        return $agent;
     }
 }
