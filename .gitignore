@@ -6,7 +6,7 @@ vendor/*
 app/cache/*
 app/logs/*
 app/config/deploy.rb
-app/config/db/parameters.yml
+app/config/parameters.yml
 app/config/db/db.yml
 app/config/security.yml
 
