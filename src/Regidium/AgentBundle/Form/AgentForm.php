@@ -25,11 +25,17 @@ class AgentForm extends AbstractType
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
+     *
+     * @todo type, state перевести в array;
+     * @todo integer перевести в boolean
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('fullname', 'text', [
+                    'required' => false
+                ])
+            ->add('avatar', 'text', [
                     'required' => false
                 ])
             ->add('email', 'email', [
@@ -43,7 +49,13 @@ class AgentForm extends AbstractType
             ->add('password', 'password', [
                 'required' => false
             ])
+            ->add('type', 'integer', [
+                'required' => false
+            ])
             ->add('state', 'integer', [
+                'required' => false
+            ])
+            ->add('accept_chats', 'checkbox', [
                 'required' => false
             ])
         ;

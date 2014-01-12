@@ -157,7 +157,13 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
             return $agent;
         }
 
-        return $form->getErrors();
+        $return = [];
+        $errors = $form->getErrors();
+        foreach ($errors as $error) {
+            $return[] = $error->getCause();
+        }
+
+        return $return;
     }
 
     private function createAgent()

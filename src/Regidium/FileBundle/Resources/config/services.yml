@@ -1,0 +1,16 @@
+parameters:
+    regidium.file.handler.class: Regidium\FileBundle\Handler\FileHandler
+    regidium.file.document.class: Regidium\FileBundle\Document\File
+    regidium.file.repository.class: Regidium\FileBundle\Repository\FileRepository
+
+services:
+    regidium.file.handler:
+        class: %regidium.file.handler.class%
+        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.file.document.class% ]
+
+    regidium.file.repository:
+        class: %regidium.file.handler.class%
+        factory_service: doctrine_mongodb.odm.default_document_manager
+        factory_method: getRepository
+        public: true
+        arguments: [ %regidium.file.document.class% ]

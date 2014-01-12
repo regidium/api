@@ -1,0 +1,5 @@
+files:
+    type: rest
+    prefix: /v1
+    resource: Regidium\FileBundle\Controller\FileController
+    name_prefix:  api_1_

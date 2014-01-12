@@ -58,9 +58,13 @@ class AgentController extends AbstractController
         foreach ($agents as $agent) {
             $return[] = [
                 'uid' => $agent->getUid(),
+                'avatar' => $agent->getAvatar(),
                 'fullname' => $agent->getFullname(),
                 'email' => $agent->getEmail(),
-                'state' => $agent->getState()
+                'state' => $agent->getState(),
+                'type' => $agent->getType(),
+                'accept_chats' => $agent->getAcceptChats(),
+                'amount_chats' => $agent->getAmountChats()
             ];
         }
         return $this->view($return);
@@ -140,9 +144,15 @@ class AgentController extends AbstractController
      */
     public function postAction(Request $request)
     {
-        $result = $this->get('regidium.agent.handler')->post(
-            $request->request->all()
-        );
+        $result = $this->get('regidium.agent.handler')->post([
+            'email' => $request->request->get('email', null),
+            'fullname' => $request->request->get('fullname', null),
+            'avatar' => $request->request->get('avatar', null),
+            'password' => $request->request->get('password', null),
+            'type' => $request->request->get('type', Agent::TYPE_OPERATOR),
+            'state' => $request->request->get('state', Agent::STATE_DEFAULT),
+            'accept_chats' => $request->request->get('accept_chats', true),
+        ]);
 
         if (!$result instanceof Agent) {
             return $this->view(['errors' => $result]);
@@ -194,8 +204,11 @@ class AgentController extends AbstractController
                 $post = [
                     'email' => $request->request->get('email', null),
                     'fullname' => $request->request->get('fullname', null),
+                    'avatar' => $request->request->get('avatar', null),
                     'password' => $request->request->get('password', null),
-                    'state' => $request->request->get('state', 2)
+                    'type' => (int)$request->request->get('type', Agent::TYPE_OPERATOR),
+                    'state' => (int)$request->request->get('state', Agent::STATE_DEFAULT),
+                    'accept_chats' => (bool)$request->request->get('accept_chats', true),
                 ];
                 $agent = $this->get('regidium.agent.handler')->post(
                     $post
@@ -209,8 +222,11 @@ class AgentController extends AbstractController
                 $put = [
                     'email' => $request->request->get('email', null),
                     'fullname' => $request->request->get('fullname', null),
+                    'avatar' => $request->request->get('avatar', null),
                     'password' => $password,
-                    'state' => $request->request->get('state', 2)
+                    'type' => (int)$request->request->get('type', Agent::TYPE_OPERATOR),
+                    'state' => (int)$request->request->get('state', Agent::STATE_DEFAULT),
+                    'accept_chats' => (bool)$request->request->get('accept_chats', true),
                 ];
                 $agent = $this->get('regidium.agent.handler')->put(
                     $agent,
