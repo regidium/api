@@ -61,7 +61,15 @@ class UserController extends AbstractController
                 'uid' => $user->getUid(),
                 'fullname' => $user->getFullname(),
                 'email' => $user->getEmail(),
-                'state' => $user->getState()
+                'state' => $user->getState(),
+                'country' => $user->getCountry(),
+                'city' => $user->getCity(),
+                'ip' => $user->getIp(),
+                'amount_returned' => $user->getAmountReturned(),
+                'amount_chats' => $user->getAmountChats(),
+                'os' => $user->getOs(),
+                'browser' => $user->getBrowser(),
+                'keyword' => $user->getKeyword(),
             ];
         }
         return $this->view($return);

@@ -16,44 +16,87 @@ use Regidium\AuthBundle\Document\Auth;
  *      collection="users",
  *      requireIndexes=false
  *  )
+ *
+ * @todo Country, City перевести в модели
+ * @todo Динамическую информацию перевести в Session
  */
 class User implements IdableInterface, StatebleInteface
 {
     /**
      * @MongoDB\Id
      */
-    protected $id;
+    private $id;
 
     /**
      * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
      */
-    protected $uid;
+    private $uid;
 
     /**
      * @MongoDB\String
      */
-    protected $fullname;
+    private $fullname;
 
     /**
      * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
      */
-    protected $email;
+    private $email;
 
     /**
      * @MongoDB\String
      */
-    protected $password;
+    private $password;
 
     /**
      * @Assert\NotBlank
      * @MongoDB\Int
      */
-    protected $state;
+    private $state;
+
+    /**
+     * @MongoDB\String
+     */
+    private $country;
+
+    /**
+     * @MongoDB\String
+     */
+    private $city;
+
+    /**
+     * @MongoDB\String
+     */
+    private $ip;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $amount_returned;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $amount_chats;
+
+    /**
+     * @MongoDB\String
+     */
+    private $os;
+
+    /**
+     * @MongoDB\String
+     */
+    private $browser;
+
+    /**
+     * @MongoDB\String
+     */
+    private $keyword;
 
     /**
      * @MongoDB\Hash
      */
-    protected $external_service;
+    private $external_service;
 
     /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\AuthBundle\Document\Auth", mappedBy="user")
@@ -220,6 +263,183 @@ class User implements IdableInterface, StatebleInteface
     public function getState()
     {
         return $this->state;
+    }
+
+
+    /**
+     * Set country
+     *
+     * @param string $country
+     * @return self
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+        return $this;
+    }
+
+    /**
+     * Get country
+     *
+     * @return string $country
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     * @return self
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string $city
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set ip
+     *
+     * @param string $ip
+     * @return self
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+        return $this;
+    }
+
+    /**
+     * Get ip
+     *
+     * @return string $ip
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * Set amountReturned
+     *
+     * @param int $amountReturned
+     * @return self
+     */
+    public function setAmountReturned($amountReturned)
+    {
+        $this->amount_returned = $amountReturned;
+        return $this;
+    }
+
+    /**
+     * Get amountReturned
+     *
+     * @return int $amountReturned
+     */
+    public function getAmountReturned()
+    {
+        return $this->amount_returned;
+    }
+
+    /**
+     * Set amountChats
+     *
+     * @param int $amountChats
+     * @return self
+     */
+    public function setAmountChats($amountChats)
+    {
+        $this->amount_chats = $amountChats;
+        return $this;
+    }
+
+    /**
+     * Get amountChats
+     *
+     * @return int $amountChats
+     */
+    public function getAmountChats()
+    {
+        return $this->amount_chats;
+    }
+
+    /**
+     * Set os
+     *
+     * @param string $os
+     * @return self
+     */
+    public function setOs($os)
+    {
+        $this->os = $os;
+        return $this;
+    }
+
+    /**
+     * Get os
+     *
+     * @return string $os
+     */
+    public function getOs()
+    {
+        return $this->os;
+    }
+
+    /**
+     * Set browser
+     *
+     * @param string $browser
+     * @return self
+     */
+    public function setBrowser($browser)
+    {
+        $this->browser = $browser;
+        return $this;
+    }
+
+    /**
+     * Get browser
+     *
+     * @return string $browser
+     */
+    public function getBrowser()
+    {
+        return $this->browser;
+    }
+
+    /**
+     * Set keyword
+     *
+     * @param string $keyword
+     * @return self
+     */
+    public function setKeyword($keyword)
+    {
+        $this->keyword = $keyword;
+        return $this;
+    }
+
+    /**
+     * Get keyword
+     *
+     * @return string $keyword
+     */
+    public function getKeyword()
+    {
+        return $this->keyword;
     }
 
     /**

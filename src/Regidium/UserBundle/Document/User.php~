@@ -14,46 +14,88 @@ use Regidium\AuthBundle\Document\Auth;
  * @MongoDB\Document(
  *      repositoryClass="Regidium\UserBundle\Repository\UserRepository",
  *      collection="users",
- *      requireIndexes=true
+ *      requireIndexes=false
  *  )
+ *
+ * @todo Country, City перевести в модели
  */
 class User implements IdableInterface, StatebleInteface
 {
     /**
      * @MongoDB\Id
      */
-    protected $id;
+    private $id;
 
     /**
      * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
      */
-    protected $uid;
+    private $uid;
 
     /**
      * @MongoDB\String
      */
-    protected $fullname;
+    private $fullname;
 
     /**
      * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
      */
-    protected $email;
+    private $email;
 
     /**
      * @MongoDB\String
      */
-    protected $password;
+    private $password;
 
     /**
      * @Assert\NotBlank
      * @MongoDB\Int
      */
-    protected $state;
+    private $state;
+
+    /**
+     * @MongoDB\String
+     */
+    private $country;
+
+    /**
+     * @MongoDB\String
+     */
+    private $city;
+
+    /**
+     * @MongoDB\String
+     */
+    private $ip;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $amount_returned;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $amount_chats;
+
+    /**
+     * @MongoDB\String
+     */
+    private $os;
+
+    /**
+     * @MongoDB\String
+     */
+    private $browser;
+
+    /**
+     * @MongoDB\String
+     */
+    private $keyword;
 
     /**
      * @MongoDB\Hash
      */
-    protected $external_service;
+    private $external_service;
 
     /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\AuthBundle\Document\Auth", mappedBy="user")
@@ -220,6 +262,28 @@ class User implements IdableInterface, StatebleInteface
     public function getState()
     {
         return $this->state;
+    }
+
+    /**
+     * Set externalService
+     *
+     * @param hash $externalService
+     * @return self
+     */
+    public function setExternalService($externalService)
+    {
+        $this->external_service = $externalService;
+        return $this;
+    }
+
+    /**
+     * Get externalService
+     *
+     * @return hash $externalService
+     */
+    public function getExternalService()
+    {
+        return $this->external_service;
     }
 
     /**
