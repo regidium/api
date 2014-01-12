@@ -13,19 +13,19 @@ regidium:
 
 
 # RegidiumAgentBundle
-regidium_agent:
+agents:
     type: rest
     prefix: /api
     resource: "@RegidiumAgentBundle/Resources/config/routing.yml"
 
 # RegidiumUserBundle
-regidium_user:
+users:
     type: rest
     prefix: /api
     resource: "@RegidiumUserBundle/Resources/config/routing.yml"
 
 # RegidiumAuthBundle
-regidium_auth:
+auths:
     type: rest
     prefix: /api
     resource: "@RegidiumAuthBundle/Resources/config/routing.yml"

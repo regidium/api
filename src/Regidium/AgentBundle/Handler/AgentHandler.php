@@ -86,6 +86,28 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
     }
 
     /**
+     * Remove exist Agent
+     *
+     * @param string $criteria
+     *
+     * @return bool|int
+     */
+    public function delete($criteria) {
+        $agent = $this->one($criteria);
+        if (!$agent instanceof Agent) {
+            return 404;
+        }
+
+        try {
+            $this->dm->remove($agent);
+            $this->dm->flush();
+            return 200;
+        } catch (\Exception $e) {
+            return 500;
+        }
+    }
+
+    /**
      * Save edit Agent
      *
      * @param Agent $agent
@@ -126,7 +148,7 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
      */
     private function processForm(Agent $agent, array $parameters, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new AgentForm(), $agent, array('method' => $method));
+        $form = $this->formFactory->create(new AgentForm([ 'email_exclusion' => $agent->getEmail() ]), $agent, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
             $agent = $form->getData();

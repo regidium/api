@@ -6,10 +6,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormTypeInterface;
 
-use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+
+use Regidium\CommonBundle\Controller\AbstractController;
 
 use Regidium\AgentBundle\Form\AgentForm;
 use Regidium\AgentBundle\Document\Agent;
@@ -26,24 +27,8 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  *
  * @Annotations\RouteResource("Agent")
  */
-class AgentController extends FOSRestController
+class AgentController extends AbstractController
 {
-
-    /**
-     * @ApiDoc(
-     *   resource = false,
-     *   statusCodes = {
-     *     200 = "Always returned"
-     *   }
-     * )
-     *
-     * @return bool
-     */
-    public function optionsAction()
-    {
-        return true;
-    }
-
     /**
      * List all agents.
      *
@@ -66,15 +51,19 @@ class AgentController extends FOSRestController
      *
      * @return array
      */
-    public function getAllAction(Request $request, ParamFetcherInterface $paramFetcher)
+    public function cgetAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
         $return = [];
-        $agent = $this->get('regidium.agent.handler')->all()->toArray();
-        foreach ($agent as $agent) {
-            $return[] = $agent;
+        $agents = $this->get('regidium.agent.handler')->all();
+        foreach ($agents as $agent) {
+            $return[] = [
+                'uid' => $agent->getUid(),
+                'fullname' => $agent->getFullname(),
+                'email' => $agent->getEmail(),
+                'state' => $agent->getState()
+            ];
         }
-        $view = new View($return, Codes::HTTP_OK);
-        return $this->handleView($view);
+        return $this->view($return);
     }
 
     /**
@@ -200,17 +189,37 @@ class AgentController extends FOSRestController
     public function putAction(Request $request, $uid)
     {
         try {
-            if (!($agent = $this->get('regidium.agent.handler')->get(['uid' => $uid]))) {
+            if (!($agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]))) {
                 $statusCode = Codes::HTTP_CREATED;
+                $post = [
+                    'email' => $request->request->get('email', null),
+                    'fullname' => $request->request->get('fullname', null),
+                    'password' => $request->request->get('password', null),
+                    'state' => $request->request->get('state', 2)
+                ];
                 $agent = $this->get('regidium.agent.handler')->post(
-                    $request->request->all()
+                    $post
                 );
             } else {
-                $statusCode = Codes::HTTP_NO_CONTENT;
+                $statusCode = Codes::HTTP_OK;
+                $password = $request->request->get('password', null);
+                if ($agent->getPassword() != null && $password == null) {
+                    $password = $agent->getPassword();
+                }
+                $put = [
+                    'email' => $request->request->get('email', null),
+                    'fullname' => $request->request->get('fullname', null),
+                    'password' => $password,
+                    'state' => $request->request->get('state', 2)
+                ];
                 $agent = $this->get('regidium.agent.handler')->put(
                     $agent,
-                    $request->request->all()
+                    $put
                 );
+            }
+
+            if (!$agent instanceof Agent) {
+                return  $this->view(['errors' => $agent]);
             }
 
             $routeOptions = array(
@@ -274,6 +283,35 @@ class AgentController extends FOSRestController
 
             return $exception->getForm();
         }
+    }
+
+    /**
+     * Remove existing agent.
+     *
+     *
+     * @ApiDoc(
+     *   resource = false,
+     *   statusCodes = {
+     *     200 = "Always returned",
+     *   }
+     * )
+     *
+     * @param int   $uid  Agent uid
+     *
+     * @return View
+     *
+     */
+    public function deleteAction($uid)
+    {
+        $result = $this->get('regidium.agent.handler')->delete([ 'uid' => $uid ]);
+
+        if ($result === 404) {
+            return $this->view(['errors' => ['Agent not found!']]);
+        } elseif ($result === 500) {
+            return $this->view(['errors' => ['Server error!']]);
+        }
+
+        return $this->view(['success' => true]);
     }
 
     /**

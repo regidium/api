@@ -13,6 +13,16 @@ use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 */
 class UserForm extends AbstractType
 {
+
+    protected $email_exclusion;
+
+    public function __construct($options = array())
+    {
+        if (array_key_exists('email_exclusion', $options)) {
+            $this->email_exclusion = $options['email_exclusion'];
+        }
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -28,10 +38,13 @@ class UserForm extends AbstractType
                     'constraints' => array(
 //                        new Constraints\Email(array('message' => 'Wrong Email')),
 //                        new Constraints\NotBlank(array('message' => 'Blank Email')),
-                        new UniqueDocument(array('repository' => 'regidium.user.repository', 'property' => 'email'))
+                        new UniqueDocument(array('repository' => 'regidium.user.repository', 'property' => 'email', 'exclusion' => $this->email_exclusion))
                     )
                 ])
             ->add('password', 'password', [
+                'required' => false
+            ])
+            ->add('state', 'checkbox', [
                 'required' => false
             ])
         ;

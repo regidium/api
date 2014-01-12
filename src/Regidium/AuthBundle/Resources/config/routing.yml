@@ -1,5 +1,29 @@
-regidium_auth:
+#auths:
+#    type: rest
+#    prefix: /v1
+#    resource: Regidium\AuthBundle\Controller\AuthController
+#    name_prefix:  api_1_
+
+register:
     type: rest
     prefix: /v1
-    resource: Regidium\AuthBundle\Controller\AuthController
+    resource: Regidium\AuthBundle\Controller\RegisterController
+    name_prefix:  api_1_
+
+login:
+    type: rest
+    prefix: /v1
+    resource: Regidium\AuthBundle\Controller\LoginController
+    name_prefix:  api_1_
+
+logout:
+    type: rest
+    prefix: /v1
+    resource: Regidium\AuthBundle\Controller\LogoutController
+    name_prefix:  api_1_
+
+externalservice:
+    type: rest
+    prefix: /v1
+    resource: Regidium\AuthBundle\Controller\ExternalServiceController
     name_prefix:  api_1_

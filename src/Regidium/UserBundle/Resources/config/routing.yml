@@ -1,4 +1,4 @@
-regidium_user:
+users:
     type: rest
     prefix: /v1
     resource: Regidium\UserBundle\Controller\UserController

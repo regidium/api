@@ -86,6 +86,28 @@ class UserHandler extends AbstractHandler implements UserHandlerInterface
     }
 
     /**
+     * Remove exist User
+     *
+     * @param string $criteria
+     *
+     * @return bool|int
+     */
+    public function delete($criteria) {
+        $user = $this->one($criteria);
+        if (!$user instanceof User) {
+            return 404;
+        }
+
+        try {
+            $this->dm->remove($user);
+            $this->dm->flush();
+            return 200;
+        } catch (\Exception $e) {
+            return 500;
+        }
+    }
+
+    /**
      * Save edit User
      *
      * @param User  $user
@@ -126,7 +148,7 @@ class UserHandler extends AbstractHandler implements UserHandlerInterface
      */
     private function processForm(User $user, array $parameters, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new UserForm(), $user, array('method' => $method));
+        $form = $this->formFactory->create(new UserForm([ 'email_exclusion' => $user->getEmail() ]), $user, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
             $user = $form->getData();
