@@ -44,7 +44,7 @@ class UserForm extends AbstractType
             ->add('password', 'password', [
                 'required' => false
             ])
-            ->add('state', 'checkbox', [
+            ->add('state', 'integer', [
                 'required' => false
             ])
         ;
