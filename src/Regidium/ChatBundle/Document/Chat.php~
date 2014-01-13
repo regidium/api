@@ -1,0 +1,102 @@
+<?php
+
+namespace Regidium\ChatBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use Regidium\CommonBundle\Document\Interfaces\IdInterface;
+use Regidium\CommonBundle\Document\Interfaces\UidInterface;
+use Regidium\CommonBundle\Document\Interfaces\StatusInteface;
+use Regidium\CommonBundle\Document\Interfaces\PreiodInterface;
+
+use Regidium\UserBundle\Document\User;
+use Regidium\AgentBundle\Document\Agent;
+
+/**
+ * @MongoDB\Document(
+ *      repositoryClass="Regidium\ChatBundle\Repository\ChatRepository",
+ *      collection="users",
+ *      requireIndexes=false
+ *  )
+ *
+ */
+class Chat
+//    implements IdInterface, UidInterface, StatusInteface, PreiodInterface
+{
+    /**
+     * @MongoDB\Id
+     */
+    private $id;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $uid;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="ChatMessage", mappedBy="chat")
+     */
+    private $chat_messages;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    private $started;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    private $ended;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\UserBundle\Document\User", cascade={"refresh"}, inversedBy="chats")
+     */
+    private $user;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\AgentBundle\Document\Agent", cascade={"refresh"}, inversedBy="chats")
+     */
+    private $agent;
+
+    /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $user_status;
+
+    /**
+     * @MongoDB\String
+     */
+    private $agent_status;
+
+    const STATUS_DEFAULT = 1;
+    const STATUS_ARCHIVED = 2;
+    const STATUS_DELETED = 3;
+
+    static public function getStatuses()
+    {
+        return array(
+                self::STATUS_DEFAULT,
+                self::STATUS_ARCHIVED,
+                self::STATUS_DELETED
+            );
+    }
+
+    public function __construct()
+    {
+        //$this->setUid(uniqid());
+        //$this->setStarted(time());
+        //$this->setUserStatus(self::STATUS_DEFAULT);
+        //$this->setAgentStatus(self::STATUS_DEFAULT);
+        //$this->setChatMessages([]);
+    }
+
+    public function __toString()
+    {
+        return $this->uid;
+    }
+}

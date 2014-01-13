@@ -26,7 +26,8 @@ class AppKernel extends Kernel
             new Regidium\CommonBundle\RegidiumCommonBundle(),
             new Regidium\AgentBundle\RegidiumAgentBundle(),
             new Regidium\UserBundle\RegidiumUserBundle(),
-            new Regidium\AuthBundle\RegidiumAuthBundle()
+            new Regidium\AuthBundle\RegidiumAuthBundle(),
+            new Regidium\ChatBundle\RegidiumChatBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

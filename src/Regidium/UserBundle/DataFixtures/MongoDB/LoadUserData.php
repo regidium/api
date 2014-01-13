@@ -18,7 +18,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $dummyUser->setFullname('Dummy User');
         $dummyUser->setEmail('dummy.user@email.com');
         $dummyUser->setPassword(sha1('123456'));
-        $dummyUser->setState(User::STATE_DEFAULT);
+        $dummyUser->setStatus(User::STATUS_DEFAULT);
 
         $manager->persist($dummyUser);
         $manager->flush();

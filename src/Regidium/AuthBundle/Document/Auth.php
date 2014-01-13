@@ -5,8 +5,8 @@ namespace Regidium\AuthBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Regidium\CommonBundle\Document\Interfaces\IdableInterface;
-use Regidium\CommonBundle\Document\Interfaces\PreiodableInterface;
+use Regidium\CommonBundle\Document\Interfaces\IdInterface;
+use Regidium\CommonBundle\Document\Interfaces\PeriodInterface;
 
 use Regidium\UserBundle\Document\User;
 use Regidium\AgentBundle\Document\Agent;
@@ -18,7 +18,7 @@ use Regidium\AgentBundle\Document\Agent;
  *      requireIndexes=false
  *  )
  */
-class Auth implements IdableInterface, PreiodableInterface
+class Auth implements IdInterface, PeriodInterface
 {
     /**
      * @MongoDB\Id
@@ -125,7 +125,7 @@ class Auth implements IdableInterface, PreiodableInterface
     /**
      * Get started
      *
-     * @return timestamp $started
+     * @return array $started
      */
     public function getStarted()
     {
@@ -156,7 +156,7 @@ class Auth implements IdableInterface, PreiodableInterface
     /**
      * Get ended
      *
-     * @return timestamp ended
+     * @return array ended
      */
     public function getEnded()
     {

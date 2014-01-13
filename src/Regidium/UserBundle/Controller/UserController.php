@@ -61,7 +61,7 @@ class UserController extends AbstractController
                 'uid' => $user->getUid(),
                 'fullname' => $user->getFullname(),
                 'email' => $user->getEmail(),
-                'state' => $user->getState(),
+                'status' => $user->getStatus(),
                 'country' => $user->getCountry(),
                 'city' => $user->getCity(),
                 'ip' => $user->getIp(),
@@ -202,7 +202,7 @@ class UserController extends AbstractController
                     'email' => $request->request->get('email', null),
                     'fullname' => $request->request->get('fullname', null),
                     'password' => $request->request->get('password', null),
-                    'state' => $request->request->get('state', 2)
+                    'status' => $request->request->get('status', 2)
                 ];
                 $user = $this->get('regidium.user.handler')->post(
                     $post
@@ -217,7 +217,7 @@ class UserController extends AbstractController
                     'email' => $request->request->get('email', null),
                     'fullname' => $request->request->get('fullname', null),
                     'password' => $password,
-                    'state' => $request->request->get('state', 2)
+                    'status' => $request->request->get('status', 2)
                 ];
                 $user = $this->get('regidium.user.handler')->put(
                     $user,

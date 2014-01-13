@@ -61,7 +61,7 @@ class AgentController extends AbstractController
                 'avatar' => $agent->getAvatar(),
                 'fullname' => $agent->getFullname(),
                 'email' => $agent->getEmail(),
-                'state' => $agent->getState(),
+                'status' => $agent->getStatus(),
                 'type' => $agent->getType(),
                 'accept_chats' => $agent->getAcceptChats(),
                 'amount_chats' => $agent->getAmountChats()
@@ -150,7 +150,7 @@ class AgentController extends AbstractController
             'avatar' => $request->request->get('avatar', null),
             'password' => $request->request->get('password', null),
             'type' => $request->request->get('type', Agent::TYPE_OPERATOR),
-            'state' => $request->request->get('state', Agent::STATE_DEFAULT),
+            'status' => $request->request->get('status', Agent::STATUS_DEFAULT),
             'accept_chats' => $request->request->get('accept_chats', true),
         ]);
 
@@ -207,7 +207,7 @@ class AgentController extends AbstractController
                     'avatar' => $request->request->get('avatar', null),
                     'password' => $request->request->get('password', null),
                     'type' => (int)$request->request->get('type', Agent::TYPE_OPERATOR),
-                    'state' => (int)$request->request->get('state', Agent::STATE_DEFAULT),
+                    'status' => (int)$request->request->get('status', Agent::STATUS_DEFAULT),
                     'accept_chats' => (bool)$request->request->get('accept_chats', true),
                 ];
                 $agent = $this->get('regidium.agent.handler')->post(
@@ -225,7 +225,7 @@ class AgentController extends AbstractController
                     'avatar' => $request->request->get('avatar', null),
                     'password' => $password,
                     'type' => (int)$request->request->get('type', Agent::TYPE_OPERATOR),
-                    'state' => (int)$request->request->get('state', Agent::STATE_DEFAULT),
+                    'status' => (int)$request->request->get('status', Agent::STATUS_DEFAULT),
                     'accept_chats' => (bool)$request->request->get('accept_chats', true),
                 ];
                 $agent = $this->get('regidium.agent.handler')->put(

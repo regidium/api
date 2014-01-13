@@ -5,10 +5,12 @@ namespace Regidium\UserBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Regidium\CommonBundle\Document\Interfaces\IdableInterface;
-use Regidium\CommonBundle\Document\Interfaces\StatebleInteface;
+use Regidium\CommonBundle\Document\Interfaces\IdInterface;
+use Regidium\CommonBundle\Document\Interfaces\UidInterface;
+use Regidium\CommonBundle\Document\Interfaces\StatusInterface;
 
 use Regidium\AuthBundle\Document\Auth;
+use Regidium\ChatBundle\Document\Chat;
 
 /**
  * @MongoDB\Document(
@@ -19,8 +21,9 @@ use Regidium\AuthBundle\Document\Auth;
  *
  * @todo Country, City перевести в модели
  * @todo Динамическую информацию перевести в Session
+ * @todo Увеличивать кол-во чатов при добавлении чата
  */
-class User implements IdableInterface, StatebleInteface
+class User implements IdInterface, UidInterface, StatusInterface
 {
     /**
      * @MongoDB\Id
@@ -51,7 +54,7 @@ class User implements IdableInterface, StatebleInteface
      * @Assert\NotBlank
      * @MongoDB\Int
      */
-    private $state;
+    private $status;
 
     /**
      * @MongoDB\String
@@ -103,23 +106,28 @@ class User implements IdableInterface, StatebleInteface
     */
     protected $auths;
 
-    const STATE_DEFAULT = 1;
-    const STATE_BLOCKED = 2;
-    const STATE_DELETED = 3;
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\ChatBundle\Document\Chat", mappedBy="user")
+     */
+    protected $chats;
 
-    static public function getStates()
+    const STATUS_DEFAULT = 1;
+    const STATUS_BLOCKED = 2;
+    const STATUS_DELETED = 3;
+
+    static public function getStatuses()
     {
         return array(
-                self::STATE_DEFAULT,
-                self::STATE_BLOCKED,
-                self::STATE_DELETED
+                self::STATUS_DEFAULT,
+                self::STATUS_BLOCKED,
+                self::STATUS_DELETED
             );
     }
 
     public function __construct()
     {
         $this->setUid(uniqid());
-        $this->setState(self::STATE_DEFAULT);
+        $this->setStatus(self::STATUS_DEFAULT);
         $this->setExternalService([]);
     }
 
@@ -239,30 +247,30 @@ class User implements IdableInterface, StatebleInteface
     }
 
     /**
-     * Set state
+     * Set status
      *
-     * @param string $state
+     * @param string $status
      *
      * @throws \InvalidArgumentException
      * @return self
      */
-    public function setState($state)
+    public function setStatus($status)
     {
-        if (!in_array($state, self::getStates())) {
-            throw new \InvalidArgumentException("Invalid state: {$state}");
+        if (!in_array($status, self::getStatuses())) {
+            throw new \InvalidArgumentException("Invalid status: {$status}");
         }
-        $this->state = $state;
+        $this->status = $status;
         return $this;
     }
 
     /**
-     * Get state
+     * Get status
      *
-     * @return int $state
+     * @return int $status
      */
-    public function getState()
+    public function getStatus()
     {
-        return $this->state;
+        return $this->status;
     }
 
 
@@ -492,5 +500,35 @@ class User implements IdableInterface, StatebleInteface
     public function getAuths()
     {
         return $this->auths;
+    }
+
+    /**
+     * Add chat
+     *
+     * @param Chat $chat
+     */
+    public function addChat(Chat $chat)
+    {
+        $this->chats[] = $chat;
+    }
+
+    /**
+     * Remove chat
+     *
+     * @param Chat $chat
+     */
+    public function removeChat(Chat $chat)
+    {
+        $this->chats->removeElement($chat);
+    }
+
+    /**
+     * Get auths
+     *
+     * @return \Doctrine\Common\Collections\Collection $chats
+     */
+    public function getChats()
+    {
+        return $this->chats;
     }
 }

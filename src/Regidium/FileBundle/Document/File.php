@@ -5,7 +5,7 @@ namespace Regidium\FileBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Regidium\CommonBundle\Document\Interfaces\IdableInterface;
+use Regidium\CommonBundle\Document\Interfaces\IdInterface;
 
 /**
  * @MongoDB\Document(
@@ -14,7 +14,7 @@ use Regidium\CommonBundle\Document\Interfaces\IdableInterface;
  *      requireIndexes=false
  *  )
  */
-class File implements IdableInterface
+class File implements IdInterface
 {
     /**
      * @MongoDB\Id

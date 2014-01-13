@@ -2,7 +2,7 @@
 
 namespace Regidium\CommonBundle\Document\Interfaces;
 
-interface PreiodableInterface
+interface PeriodInterface
 {
 
     public function getStarted();

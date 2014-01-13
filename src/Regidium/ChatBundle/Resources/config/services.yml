@@ -1,0 +1,16 @@
+parameters:
+    regidium.chat.handler.class: Regidium\ChatBundle\Handler\ChatHandler
+    regidium.chat.document.class: Regidium\ChatBundle\Document\Chat
+    regidium.chat.repository.class: Regidium\ChatBundle\Repository\ChatRepository
+
+services:
+    regidium.chat.handler:
+        class: %regidium.chat.handler.class%
+        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.chat.document.class% ]
+
+    regidium.chat.repository:
+        class: %regidium.chat.handler.class%
+        factory_service: doctrine_mongodb.odm.default_document_manager
+        factory_method: getRepository
+        public: true
+        arguments: [ %regidium.chat.document.class% ]

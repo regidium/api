@@ -18,7 +18,7 @@ class LoadAgentData extends AbstractFixture implements OrderedFixtureInterface
         $dummyAgent->setFullname('Dummy Agent');
         $dummyAgent->setEmail('dummy.agent@email.com');
         $dummyAgent->setPassword(sha1('123456'));
-        $dummyAgent->setState(Agent::STATE_DEFAULT);
+        $dummyAgent->setStatus(Agent::STATUS_DEFAULT);
 
         $manager->persist($dummyAgent);
         $manager->flush();

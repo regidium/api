@@ -2,7 +2,7 @@
 
 namespace Regidium\CommonBundle\Document\Interfaces;
 
-interface IdableInterface
+interface IdInterface
 {
 
 	public function getId();
