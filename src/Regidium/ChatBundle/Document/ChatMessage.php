@@ -15,7 +15,7 @@ use Regidium\AgentBundle\Document\Agent;
 /**
  * @MongoDB\Document(
  *      repositoryClass="Regidium\ChatBundle\Repository\ChatMessageRepository",
- *      collection="users",
+ *      collection="chat_messages",
  *      requireIndexes=false
  *  )
  *

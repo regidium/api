@@ -15,7 +15,7 @@ use Regidium\AgentBundle\Document\Agent;
 /**
  * @MongoDB\Document(
  *      repositoryClass="Regidium\ChatBundle\Repository\ChatRepository",
- *      collection="users",
+ *      collection="chats",
  *      requireIndexes=false
  *  )
  *
@@ -71,13 +71,15 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
      */
     private $agent_status;
 
-    const STATUS_DEFAULT = 1;
-    const STATUS_ARCHIVED = 2;
-    const STATUS_DELETED = 3;
+    const STATUS_PENDING = 1;
+    const STATUS_DEFAULT = 2;
+    const STATUS_ARCHIVED = 3;
+    const STATUS_DELETED = 4;
 
     static public function getStatuses()
     {
         return array(
+                self::STATUS_PENDING,
                 self::STATUS_DEFAULT,
                 self::STATUS_ARCHIVED,
                 self::STATUS_DELETED
@@ -89,7 +91,7 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
         $this->setUid(uniqid());
         $this->setStarted(time());
         $this->setUserStatus(self::STATUS_DEFAULT);
-        $this->setAgentStatus(self::STATUS_DEFAULT);
+        $this->setAgentStatus(self::STATUS_PENDING);
     }
 
     public function __toString()
