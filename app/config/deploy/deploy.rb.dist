@@ -22,6 +22,7 @@ set :vendors_mode,          "install"
 set :shared_files,          [
                                 "app/config/parameters.yml",
                                 "app/config/db/db.yml",
+                                "app/config/redis/redis.yml",
                                 "app/config/security.yml",
                             ]
 
