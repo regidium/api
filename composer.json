@@ -30,6 +30,9 @@
         "hautelook/templated-uri-bundle": "@dev",
         "nelmio/api-doc-bundle": "@dev",
 
+        "predis/predis": "0.8.*",
+        "snc/redis-bundle": "1.1.*@dev",
+
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "phpunit/phpunit": "3.7.*",
         "liip/functional-test-bundle":"dev-master",

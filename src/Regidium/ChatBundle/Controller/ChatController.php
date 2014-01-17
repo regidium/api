@@ -97,14 +97,6 @@ class ChatController extends AbstractController
         }
 
         return $this->view($result);
-
-/*        $routeOptions = array(
-            'uid' => $result->getUid(),
-            '_format' => $request->get('_format')
-        );
-
-        return $this->routeRedirectView('api_1_get_chat', $routeOptions, Codes::HTTP_CREATED);*/
-
     }
 
     /**

@@ -36,7 +36,7 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
     /**
      * @MongoDB\ReferenceMany(targetDocument="ChatMessage", mappedBy="chat")
      */
-    private $chat_messages;
+    private $messages;
 
     /**
      * @MongoDB\Timestamp
@@ -146,31 +146,31 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
     /**
      * Add chat message
      *
-     * @param ChatMessage $chat_message
+     * @param ChatMessage $message
      */
-    public function addChatMessage(ChatMessage $chat_message)
+    public function addChatMessage(ChatMessage $message)
     {
-        $this->chat_messages[] = $chat_message;
+        $this->messages[] = $message;
     }
 
     /**
      * Remove chat message
      *
-     * @param ChatMessage $chat_message
+     * @param ChatMessage $message
      */
-    public function removeChatMessage(ChatMessage $chat_message)
+    public function removeChatMessage(ChatMessage $message)
     {
-        $this->chat_messages->removeElement($chat_message);
+        $this->messages->removeElement($message);
     }
 
     /**
      * Get chatMessages
      *
-     * @return \Doctrine\Common\Collections\Collection $chat_messages
+     * @return \Doctrine\Common\Collections\Collection $messages
      */
     public function getChatMessages()
     {
-        return $this->chat_messages;
+        return $this->messages;
     }
 
     /**

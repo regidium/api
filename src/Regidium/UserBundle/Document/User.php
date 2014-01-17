@@ -97,6 +97,11 @@ class User implements IdInterface, UidInterface, StatusInterface
     private $keyword;
 
     /**
+     * @MongoDB\String
+     */
+    private $model_type;
+
+    /**
      * @MongoDB\Hash
      */
     private $external_service;
@@ -128,6 +133,7 @@ class User implements IdInterface, UidInterface, StatusInterface
     {
         $this->setUid(uniqid());
         $this->setStatus(self::STATUS_DEFAULT);
+        $this->setModelType('user');
         $this->setExternalService([]);
     }
 
@@ -448,6 +454,28 @@ class User implements IdInterface, UidInterface, StatusInterface
     public function getKeyword()
     {
         return $this->keyword;
+    }
+
+    /**
+     * Set model type
+     *
+     * @param string $model_type
+     * @return self
+     */
+    public function setModelType($model_type)
+    {
+        $this->model_type = $model_type;
+        return $this;
+    }
+
+    /**
+     * Get model type
+     *
+     * @return string $model_type
+     */
+    public function getModelType()
+    {
+        return $this->model_type;
     }
 
     /**

@@ -35,7 +35,7 @@ class ChatMessage implements IdInterface, UidInterface, TimestampInterface
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\ChatBundle\Document\Chat", cascade={"refresh"}, inversedBy="chat_messages")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\ChatBundle\Document\Chat", cascade={"refresh"}, inversedBy="messages")
      */
     private $chat;
 
@@ -78,19 +78,15 @@ class ChatMessage implements IdInterface, UidInterface, TimestampInterface
      */
     private $receiver_status;
 
-    /**
-     * @Assert\NotBlank
-     * @MongoDB\Boolean
-     */
-    private $readed;
-
-    const STATUS_DEFAULT = 1;
-    const STATUS_ARCHIVED = 2;
-    const STATUS_DELETED = 3;
+    const STATUS_NOT_READED = 1;
+    const STATUS_DEFAULT = 2;
+    const STATUS_ARCHIVED = 3;
+    const STATUS_DELETED = 4;
 
     static public function getStatuses()
     {
         return array(
+            self::STATUS_NOT_READED,
             self::STATUS_DEFAULT,
             self::STATUS_ARCHIVED,
             self::STATUS_DELETED
@@ -103,8 +99,7 @@ class ChatMessage implements IdInterface, UidInterface, TimestampInterface
         $this->setCreated(time());
         $this->setUpdated(time());
         $this->setSenderStatus(self::STATUS_DEFAULT);
-        $this->setReceiverStatus(self::STATUS_DEFAULT);
-        $this->setReaded(false);
+        $this->setReceiverStatus(self::STATUS_NOT_READED);
     }
 
     public function __toString()
@@ -372,27 +367,5 @@ class ChatMessage implements IdInterface, UidInterface, TimestampInterface
     public function getReceiverStatus()
     {
         return $this->receiver_status;
-    }
-
-    /**
-     * Set readed
-     *
-     * @param boolean $readed
-     * @return self
-     */
-    public function setReaded($readed = false)
-    {
-        $this->readed = $readed;
-        return $this;
-    }
-
-    /**
-     * Get readed
-     *
-     * @return boolean $readed
-     */
-    public function getReaded()
-    {
-        return $this->readed;
     }
 }

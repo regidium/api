@@ -84,6 +84,11 @@ class Agent implements IdInterface, UidInterface, StatusInterface
     protected $external_service;
 
     /**
+     * @MongoDB\String
+     */
+    private $model_type;
+
+    /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\AuthBundle\Document\Auth", mappedBy="user")
      */
     protected $auths;
@@ -124,6 +129,7 @@ class Agent implements IdInterface, UidInterface, StatusInterface
         $this->setStatus(self::STATUS_DEFAULT);
         $this->setAcceptChats(true);
         $this->setAmountChats(0);
+        $this->setModelType('agent');
         $this->setExternalService([]);
     }
 
@@ -362,6 +368,28 @@ class Agent implements IdInterface, UidInterface, StatusInterface
     public function getAmountChats()
     {
         return $this->amount_chats;
+    }
+
+    /**
+     * Set model type
+     *
+     * @param string $model_type
+     * @return self
+     */
+    public function setModelType($model_type)
+    {
+        $this->model_type = $model_type;
+        return $this;
+    }
+
+    /**
+     * Get model type
+     *
+     * @return string $model_type
+     */
+    public function getModelType()
+    {
+        return $this->model_type;
     }
 
     /**

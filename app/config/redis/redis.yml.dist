@@ -1,0 +1,2 @@
+parameters:
+    redis.dsn: "redis://localhost"

@@ -5,9 +5,13 @@ vendor/*
 
 app/cache/*
 app/logs/*
-app/config/deploy/deploy.rb
-app/config/parameters.yml
-app/config/db/db.yml
+
 app/config/security.yml
+app/config/parameters.yml
+
+app/config/db/db.yml
+app/config/redis/redis.yml
+
+app/config/deploy/deploy.rb
 
 web/bundles/*
