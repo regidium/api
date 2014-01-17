@@ -30,7 +30,6 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  */
 class ChatController extends AbstractController
 {
-
     /**
      * Get single chat.
      *

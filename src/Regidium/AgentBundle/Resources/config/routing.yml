@@ -3,3 +3,8 @@ agents:
     prefix: /v1
     resource: Regidium\AgentBundle\Controller\AgentController
     name_prefix:  api_1_
+
+chats:
+    type:     rest
+    parent:   agents
+    resource: Regidium\AgentBundle\Controller\AgentChatController

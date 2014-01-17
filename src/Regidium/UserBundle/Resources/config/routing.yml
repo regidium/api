@@ -3,3 +3,8 @@ users:
     prefix: /v1
     resource: Regidium\UserBundle\Controller\UserController
     name_prefix:  api_1_
+
+chats:
+    type:     rest
+    parent:   users
+    resource: Regidium\UserBundle\Controller\UserChatController
