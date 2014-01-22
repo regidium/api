@@ -57,9 +57,10 @@ class ClientPlanController extends AbstractController
             return $this->view(['errors' => ['Not enough money!']]);
         }
 
+        $client->setPlan($plan);
         $client->setBalance($client->getBalance() - $plan->getCost());
-        $client->setAvailableAgents($client->getAvailableAgents() + $plan->getCountAgents());
-        $client->setAvailableChats($client->getAvailableChats() + $plan->getCountChats());
+        $client->setAvailableAgents($plan->getCountAgents());
+        $client->setAvailableChats($plan->getCountChats());
         $this->get('regidium.client.handler')->edit($client);
 
         return $this->view($client);
