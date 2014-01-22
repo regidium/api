@@ -50,13 +50,13 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\UserBundle\Document\User", cascade={"refresh"}, inversedBy="chats")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\UserBundle\Document\User", cascade={"all"}, inversedBy="chats")
      */
     private $user;
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\AgentBundle\Document\Agent", cascade={"refresh"}, inversedBy="chats")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\AgentBundle\Document\Agent", cascade={"all"}, inversedBy="chats")
      */
     private $agent;
 
@@ -70,6 +70,14 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
      * @MongoDB\String
      */
     private $agent_status;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\ClientBundle\Document\Client", cascade={"all"}, inversedBy="chats")
+     */
+    protected $client;
+
+    /* =============== Constants =============== */
 
     const STATUS_PENDING = 1;
     const STATUS_DEFAULT = 2;
@@ -86,6 +94,8 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
             );
     }
 
+    /* =============== General =============== */
+
     public function __construct()
     {
         $this->setUid(uniqid());
@@ -98,6 +108,8 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
     {
         return $this->uid;
     }
+
+    /* =============== Get/Set=============== */
 
     /**
      * Set id
@@ -331,5 +343,57 @@ class Chat implements IdInterface, UidInterface, PeriodInterface
     public function getAgentStatus()
     {
         return $this->agent_status;
+    }
+
+    /**
+     * Add message
+     *
+     * @param Regidium\ChatBundle\Document\ChatMessage $message
+     */
+    public function addMessage(\Regidium\ChatBundle\Document\ChatMessage $message)
+    {
+        $this->messages[] = $message;
+    }
+
+    /**
+     * Remove message
+     *
+     * @param Regidium\ChatBundle\Document\ChatMessage $message
+     */
+    public function removeMessage(\Regidium\ChatBundle\Document\ChatMessage $message)
+    {
+        $this->messages->removeElement($message);
+    }
+
+    /**
+     * Get messages
+     *
+     * @return Doctrine\Common\Collections\Collection $messages
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+
+    /**
+     * Set client
+     *
+     * @param Regidium\ClientBundle\Document\Client $client
+     * @return self
+     */
+    public function setClient(\Regidium\ClientBundle\Document\Client $client)
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    /**
+     * Get client
+     *
+     * @return Regidium\ClientBundle\Document\Client $client
+     */
+    public function getClient()
+    {
+        return $this->client;
     }
 }

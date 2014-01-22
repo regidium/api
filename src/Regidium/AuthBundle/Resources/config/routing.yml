@@ -4,10 +4,10 @@
 #    resource: Regidium\AuthBundle\Controller\AuthController
 #    name_prefix:  api_1_
 
-register:
+registration:
     type: rest
     prefix: /v1
-    resource: Regidium\AuthBundle\Controller\RegisterController
+    resource: Regidium\AuthBundle\Controller\RegistrationController
     name_prefix:  api_1_
 
 login:

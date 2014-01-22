@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Regidium\CommonBundle\Document\Interfaces\IdInterface;
 use Regidium\CommonBundle\Document\Interfaces\UidInterface;
 use Regidium\CommonBundle\Document\Interfaces\StatusInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Regidium\AuthBundle\Document\Auth;
 use Regidium\ChatBundle\Document\Chat;
@@ -30,7 +31,8 @@ class Agent implements IdInterface, UidInterface, StatusInterface
     protected $id;
 
     /**
-     * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
      */
     protected $uid;
 
@@ -46,7 +48,8 @@ class Agent implements IdInterface, UidInterface, StatusInterface
 
     /**
      * @Assert\NotBlank
-     * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
      */
     protected $email;
 
@@ -98,7 +101,15 @@ class Agent implements IdInterface, UidInterface, StatusInterface
      */
     protected $chats;
 
-    const TYPE_OPERATOR       = 1;
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\ClientBundle\Document\Client", cascade={"all"}, inversedBy="agents")
+     */
+    protected $client;
+
+    /* =============== Constants =============== */
+
+    const TYPE_OPERATOR      = 1;
     const TYPE_ADMINISTRATOR = 2;
 
     static public function getTypes()
@@ -122,6 +133,8 @@ class Agent implements IdInterface, UidInterface, StatusInterface
         );
     }
 
+    /* =============== General =============== */
+
     public function __construct()
     {
         $this->setUid(uniqid());
@@ -129,14 +142,18 @@ class Agent implements IdInterface, UidInterface, StatusInterface
         $this->setStatus(self::STATUS_DEFAULT);
         $this->setAcceptChats(true);
         $this->setAmountChats(0);
-        $this->setModelType('agent');
         $this->setExternalService([]);
+        $this->setModelType('agent');
+        $this->auths = new ArrayCollection();
+        $this->chats = new ArrayCollection();
     }
 
     public function __toString()
     {
         return $this->fullname;
     }
+
+    /* =============== Get/Set=============== */
 
     /**
      * Set id
@@ -472,5 +489,27 @@ class Agent implements IdInterface, UidInterface, StatusInterface
     public function getChats()
     {
         return $this->chats;
+    }
+
+    /**
+     * Set client
+     *
+     * @param Regidium\ClientBundle\Document\Client $client
+     * @return self
+     */
+    public function setClient(\Regidium\ClientBundle\Document\Client $client)
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    /**
+     * Get client
+     *
+     * @return Regidium\ClientBundle\Document\Client $client
+     */
+    public function getClient()
+    {
+        return $this->client;
     }
 }

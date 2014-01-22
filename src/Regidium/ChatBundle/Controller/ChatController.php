@@ -80,6 +80,20 @@ class ChatController extends AbstractController
      */
     public function postAction(Request $request)
     {
+        $client = null;
+        if (!isset($_SERVER['HTTP_ORIGIN'])) {
+            return $this->view(['errors' => ['Client not found!']]);
+        }
+
+        $client = $this->get('regidium.client.handler')->one(['url' => $_SERVER['HTTP_ORIGIN']]);
+        if (!$client) {
+            return $this->view(['errors' => ['Client not found!']]);
+        }
+
+        if ($client->getAvailableChats() < 1) {
+            return $this->view(['errors' => ['Client is not available to create new chat!']]);
+        }
+
         $user = $this->get('regidium.user.handler')->one(['uid' => $request->request->get('user', null)]);
 
         if (!$user instanceof User) {
@@ -87,6 +101,7 @@ class ChatController extends AbstractController
         }
 
         $result = $this->get('regidium.chat.handler')->post(
+            $client,
             $user,
             $request->request->all()
         );
@@ -94,6 +109,9 @@ class ChatController extends AbstractController
         if (!$result instanceof Chat) {
             return $this->view(['errors' => $result]);
         }
+
+        $client->setAvailableChats($client->getAvailableChats() - 1);
+        $this->get('regidium.client.handler')->edit($client);
 
         return $this->view($result);
     }

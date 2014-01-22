@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
+use Regidium\UserBundle\Document\User;
 
 /**
  * @todo В проверке уникальности email исключать текущий email
@@ -14,7 +15,7 @@ use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 class UserForm extends AbstractType
 {
 
-    protected $email_exclusion;
+    protected $email_exclusion = null;
 
     public function __construct($options = array())
     {
@@ -42,9 +43,6 @@ class UserForm extends AbstractType
                     )
                 ])
             ->add('password', 'password', [
-                'required' => false
-            ])
-            ->add('status', 'integer', [
                 'required' => false
             ])
         ;

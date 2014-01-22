@@ -111,7 +111,7 @@ class ExternalServiceController extends AbstractAuthController
             if (isset($data['fullname'])) $object['fullname'] = $data['fullname'];
             if (isset($data['email'])) $object['email'] = $data['email'];
 
-            $object = $this->register($object);
+            $object = $this->registration($object);
             if ($object instanceof User || $object instanceof Agent) {
                 $object->setExternalService($external_service);
             }

@@ -15,7 +15,7 @@ class UserRepository extends DocumentRepository
      */
     public function count(array $criteria = array())
     {
-        return $this->findBy($criteria)->count(true);
+        return count($this->findBy($criteria));
     }
 
 }

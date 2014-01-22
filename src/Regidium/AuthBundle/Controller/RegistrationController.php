@@ -9,14 +9,14 @@ use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 
-use Regidium\AuthBundle\Form\Register\RegisterForm;
+use Regidium\AuthBundle\Form\Registration\RegistrationForm;
 use Regidium\UserBundle\Document\User;
 use Regidium\AgentBundle\Document\Agent;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
- * Register controller
+ * Registration controller
  *
  * @todo Обновление ключа авторизации
  * @todo Update response for HTML format
@@ -24,13 +24,13 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  * @package Regidium\AuthBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
- * @Annotations\RouteResource("Register")
+ * @Annotations\RouteResource("Registration")
  *
  */
-class RegisterController extends AbstractAuthController
+class RegistrationController extends AbstractAuthController
 {
     /**
-     * Presents the form to register a new user.
+     * Presents the form to registration a new user.
      *
      * @ApiDoc(
      *   resource = true,
@@ -47,16 +47,16 @@ class RegisterController extends AbstractAuthController
      */
     public function getAction()
     {
-        return $this->createForm(new RegisterForm());
+        return $this->createForm(new RegistrationForm());
     }
 
     /**
-     * Register a user from the submitted data.
+     * Registration a user from the submitted data.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Register a user from the submitted data.",
-     *   input = "Regidium\AuthBundle\Form\Register\RegisterForm",
+     *   description = "Registration a user from the submitted data.",
+     *   input = "Regidium\AuthBundle\Form\Registration\RegistrationForm",
      *   statusCodes = {
      *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors"
@@ -64,7 +64,7 @@ class RegisterController extends AbstractAuthController
      * )
      *
      * @Annotations\View(
-     *     template = "RegidiumAuthBundle:Register:index.html.twig",
+     *     template = "RegidiumAuthBundle:Registration:index.html.twig",
      *     statusCode = Codes::HTTP_BAD_REQUEST,
      *     templateVar = "form"
      * )
@@ -95,7 +95,7 @@ class RegisterController extends AbstractAuthController
             return  $this->view(['errors' => ['This email already registered!']]);
         }
 
-        $object = $this->register([
+        $object = $this->registration([
             'fullname' => $fullname,
             'email' => $email,
             'password' => $password
@@ -106,7 +106,7 @@ class RegisterController extends AbstractAuthController
         } elseif ($object instanceof Agent) {
             $returnOptions = ['agent' => $object];
         } else {
-            $returnOptions = ['errors' => ['Register service error!']];
+            $returnOptions = ['errors' => ['Registration service error!']];
         }
 
         return $this->view($returnOptions, Codes::HTTP_CREATED);

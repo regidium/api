@@ -23,7 +23,7 @@ class LoadAgentData extends AbstractFixture implements OrderedFixtureInterface
         $manager->persist($dummyAgent);
         $manager->flush();
 
-        $this->addReference('dummy-agent', $dummyAgent);
+        $this->addReference('agent', $dummyAgent);
     }
 
     /**

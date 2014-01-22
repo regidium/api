@@ -31,7 +31,8 @@ class User implements IdInterface, UidInterface, StatusInterface
     private $id;
 
     /**
-     * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
      */
     private $uid;
 
@@ -41,7 +42,8 @@ class User implements IdInterface, UidInterface, StatusInterface
     private $fullname;
 
     /**
-     * @MongoDB\String @MongoDB\UniqueIndex(safe="true")
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
      */
     private $email;
 
@@ -51,7 +53,6 @@ class User implements IdInterface, UidInterface, StatusInterface
     private $password;
 
     /**
-     * @Assert\NotBlank
      * @MongoDB\Int
      */
     private $status;
@@ -255,7 +256,7 @@ class User implements IdInterface, UidInterface, StatusInterface
     /**
      * Set status
      *
-     * @param string $status
+     * @param int $status
      *
      * @throws \InvalidArgumentException
      * @return self
@@ -265,6 +266,7 @@ class User implements IdInterface, UidInterface, StatusInterface
         if (!in_array($status, self::getStatuses())) {
             throw new \InvalidArgumentException("Invalid status: {$status}");
         }
+
         $this->status = $status;
         return $this;
     }

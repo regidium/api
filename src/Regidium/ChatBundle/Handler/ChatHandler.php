@@ -5,6 +5,7 @@ namespace Regidium\ChatBundle\Handler;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\ChatBundle\Document\Chat;
 use Regidium\UserBundle\Document\User;
+use Regidium\ClientBundle\Document\Client;
 
 class ChatHandler extends AbstractHandler implements ChatHandlerInterface
 {
@@ -35,15 +36,17 @@ class ChatHandler extends AbstractHandler implements ChatHandlerInterface
     /**
      * Create a new chat.
      *
+     * @param Client $client
      * @param User $user
      * @param array $parameters
      *
      * @return Chat
      */
-    public function post(User $user, array $parameters)
+    public function post(Client $client, User $user, array $parameters)
     {
         $chat = $this->createChat();
 
+        $chat->setClient($client);
         $chat->setUser($user);
 
         $this->dm->persist($chat);

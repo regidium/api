@@ -23,7 +23,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 abstract class AbstractAuthController extends AbstractController
 {
 
-    protected function register($data, $remember = false) {
+    protected function registration($data, $remember = false) {
         $object = $this->get('regidium.user.handler')->post($data);
 
         if ($object instanceof User || $object instanceof Agent) {

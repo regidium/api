@@ -26,12 +26,14 @@ class Auth implements IdInterface, PeriodInterface
     protected $id;
 
     /**
-     * @MongoDB\Index @MongoDB\ReferenceOne(targetDocument="Regidium\UserBundle\Document\User", cascade={"refresh"}, inversedBy="auths")
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\UserBundle\Document\User", cascade={"all"}, inversedBy="auths")
      */
     protected $user;
 
     /**
-     * @MongoDB\Index @MongoDB\ReferenceOne(targetDocument="Regidium\AgentBundle\Document\Agent", cascade={"refresh"}, inversedBy="auths")
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\AgentBundle\Document\Agent", cascade={"all"}, inversedBy="auths")
      */
     protected $agent;
 

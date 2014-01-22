@@ -35,3 +35,15 @@ chats:
     type: rest
     prefix: /api
     resource: "@RegidiumChatBundle/Resources/config/routing.yml"
+
+# RegidiumClientBundle
+clients:
+    type: rest
+    prefix: /api
+    resource: "@RegidiumClientBundle/Resources/config/routing.yml"
+
+# RegidiumBillingBundle
+billings:
+    type: rest
+    prefix: /api
+    resource: "@RegidiumBillingBundle/Resources/config/routing.yml"
