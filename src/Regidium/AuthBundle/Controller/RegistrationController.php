@@ -3,15 +3,14 @@
 namespace Regidium\AuthBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 
-use Regidium\AuthBundle\Form\Registration\RegistrationForm;
-use Regidium\UserBundle\Document\User;
-use Regidium\AgentBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\User;
+use Regidium\CommonBundle\Document\Agent;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -20,6 +19,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  *
  * @todo Обновление ключа авторизации
  * @todo Update response for HTML format
+ * @todo Security
  *
  * @package Regidium\AuthBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -30,46 +30,18 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 class RegistrationController extends AbstractAuthController
 {
     /**
-     * Presents the form to registration a new user.
+     * Registration person from the submitted data.
      *
      * @ApiDoc(
      *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *  templateVar = "form"
-     * )
-     *
-     * @return FormTypeInterface
-     */
-    public function getAction()
-    {
-        return $this->createForm(new RegistrationForm());
-    }
-
-    /**
-     * Registration a user from the submitted data.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Registration a user from the submitted data.",
+     *   description = "Registration person from the submitted data.",
      *   input = "Regidium\AuthBundle\Form\Registration\RegistrationForm",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     200 = "Always Returned"
      *   }
      * )
      *
-     * @Annotations\View(
-     *     template = "RegidiumAuthBundle:Registration:index.html.twig",
-     *     statusCode = Codes::HTTP_BAD_REQUEST,
-     *     templateVar = "form"
-     * )
-     *
-     * @param Request $request the request object
+     * @param Request $request Request object
      *
      * @return View
      */
@@ -81,34 +53,25 @@ class RegistrationController extends AbstractAuthController
         $remember = $request->request->get('remember', false);
 
         if (!$email || !$password) {
-            return  $this->view(['errors' => ['Login or password is null']]);
+            return  $this->sendError('Login or password is null');
         }
 
-        $user = $this->get('regidium.user.handler')->one([ 'email' => $email ]);
+        $person = $this->get('regidium.person.handler')->one([ 'email' => $email ]);
 
-        $agent = null;
-        if (!$user) {
-            $agent = $this->get('regidium.agent.handler')->one([ 'email' => $email ]);
+        if ($person instanceof Person) {
+            return  $this->sendError('This email already registered!');
         }
 
-        if ($user instanceof User || $agent instanceof Agent) {
-            return  $this->view(['errors' => ['This email already registered!']]);
-        }
-
-        $object = $this->registration([
+        $person = $this->registration([
             'fullname' => $fullname,
             'email' => $email,
             'password' => $password
         ], $remember);
 
-        if ($object instanceof User) {
-            $returnOptions = ['user' => $object];
-        } elseif ($object instanceof Agent) {
-            $returnOptions = ['agent' => $object];
+        if ($person instanceof Person) {
+            return $this->send($person, Codes::HTTP_CREATED);
         } else {
-            $returnOptions = ['errors' => ['Registration service error!']];
+            return $this->sendError('Registration error!');
         }
-
-        return $this->view($returnOptions, Codes::HTTP_CREATED);
     }
 }

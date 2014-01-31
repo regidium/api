@@ -7,8 +7,8 @@ use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-use Regidium\ClientBundle\Document\Client;
-use Regidium\BillingBundle\Document\Plan;
+use Regidium\CommonBundle\Document\Client;
+use Regidium\CommonBundle\Document\Plan;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 

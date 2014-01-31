@@ -3,6 +3,7 @@
 namespace Regidium\CommonBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\View\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -17,19 +18,69 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 abstract class AbstractController extends FOSRestController
 {
     /**
-     * HTTP OPTIONS method.
+     * Return array
      *
-     * @ApiDoc(
-     *   resource = false,
-     *   statusCodes = {
-     *     200 = "Always returned"
-     *   }
-     * )
+     * @param mixed   $data
+     * @param integer $statusCode
+     * @param array   $headers
      *
-     * @return bool
+     * @return View
      */
-    public function optionsAction()
+    protected function send($data = null, $statusCode = null, array $headers = array())
     {
-        return true;
+        return $this->view($data, $statusCode, $headers);
+    }
+
+    /**
+     * Return error
+     *
+     * @param array|string $errors     Text error
+     * @param int          $statusCode Status code
+     * @param array        $headers    Response headers
+     *
+     * @return View
+    */
+    protected function sendError($error, $statusCode = null, array $headers = array())
+    {
+        $errors = array();
+        if (!is_array($error)) {
+            $errors[] = $error;
+        } else {
+            $errors = $error;
+        }
+
+        return $this->send(['errors' => $errors], $statusCode, $headers);
+    }
+
+    /**
+     * Return success
+     *
+     * @param mixed $data       Return data
+     * @param int   $statusCode Status code
+     * @param array $headers    Response headers
+     *
+     * @return View
+     */
+    protected function sendSuccess($data = true, $statusCode = null, array $headers = array())
+    {
+        return $this->send(['success' => $data], $statusCode, $headers);
+    }
+
+    /**
+     * Return array
+     *
+     * @param mixed $data       Return data
+     * @param int   $statusCode Status code
+     * @param array $headers    Response headers
+     *
+     * @return View
+     */
+    protected function sendArray($data = true, $statusCode = null, array $headers = array())
+    {
+        if (!is_array($data)) {
+            $data[] = $data;
+        }
+
+        return $this->send($data, $statusCode, $headers);
     }
 }

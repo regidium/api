@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
+
 use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 
 class RegistrationForm extends AbstractType
@@ -40,7 +41,7 @@ class RegistrationForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\AuthBundle\Document\Auth'
+            'data_class' => 'Regidium\CommonBundle\Document\Auth'
         ));
     }
 
@@ -49,6 +50,6 @@ class RegistrationForm extends AbstractType
      */
     public function getName()
     {
-        return 'registration';
+        return '';
     }
 }

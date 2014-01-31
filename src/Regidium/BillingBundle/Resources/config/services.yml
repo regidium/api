@@ -1,47 +1,21 @@
 parameters:
     regidium.billing.plan.handler.class: Regidium\BillingBundle\Handler\PlanHandler
-    regidium.billing.plan.document.class: Regidium\BillingBundle\Document\Plan
-    regidium.billing.plan.repository.class: Regidium\BillingBundle\Repository\PlanRepository
-
-    regidium.billing.payment_method.handler.class: Regidium\BillingBundle\Handler\PaymentMethodHandler
-    regidium.billing.payment_method.document.class: Regidium\BillingBundle\Document\PaymentMethod
-    regidium.billing.payment_method.repository.class: Regidium\BillingBundle\Repository\PaymentMethodRepository
-
     regidium.billing.payment.handler.class: Regidium\BillingBundle\Handler\PaymentHandler
-    regidium.billing.payment.document.class: Regidium\BillingBundle\Document\Payment
-    regidium.billing.payment.repository.class: Regidium\BillingBundle\Repository\PaymentRepository
+    regidium.billing.payment_method.handler.class: Regidium\BillingBundle\Handler\PaymentMethodHandler
+
+    regidium.billing.plan.document.class: Regidium\CommonBundle\Document\Plan
+    regidium.billing.payment.document.class: Regidium\CommonBundle\Document\Payment
+    regidium.billing.payment_method.document.class: Regidium\CommonBundle\Document\PaymentMethod
 
 services:
     regidium.billing.plan.handler:
         class: %regidium.billing.plan.handler.class%
-        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.billing.plan.document.class% ]
-
-    regidium.billing.plan.repository:
-        class: %regidium.billing.plan.handler.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.billing.plan.document.class% ]
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.billing.plan.document.class% ]
 
     regidium.billing.payment_method.handler:
         class: %regidium.billing.payment_method.handler.class%
-        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.billing.payment_method.document.class% ]
-
-    regidium.billing.payment_method.repository:
-        class: %regidium.billing.payment_method.handler.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.billing.payment_method.document.class% ]
-
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.billing.payment_method.document.class% ]
 
     regidium.billing.payment.handler:
         class: %regidium.billing.payment.handler.class%
-        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.billing.payment.document.class% ]
-
-    regidium.billing.payment.repository:
-        class: %regidium.billing.payment.handler.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.billing.payment.document.class% ]
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.billing.payment.document.class% ]

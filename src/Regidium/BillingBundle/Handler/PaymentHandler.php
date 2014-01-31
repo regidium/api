@@ -4,11 +4,11 @@ namespace Regidium\BillingBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 
-use Regidium\ClientBundle\Document\Client;
-use Regidium\BillingBundle\Document\Payment;
-use Regidium\BillingBundle\Document\PaymentMethod;
+use Regidium\CommonBundle\Document\Client;
+use Regidium\CommonBundle\Document\Payment;
+use Regidium\CommonBundle\Document\PaymentMethod;
 
-class PaymentHandler extends AbstractHandler implements PlanHandlerInterface
+class PaymentHandler extends AbstractHandler
 {
     /**
      * Get one payment by criteria.

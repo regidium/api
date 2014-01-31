@@ -29,7 +29,7 @@ class ClientForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\ClientBundle\Document\Client'
+            'data_class' => 'Regidium\CommonBundle\Document\Client'
         ));
     }
 

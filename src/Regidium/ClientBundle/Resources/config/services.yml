@@ -3,17 +3,10 @@ imports:
 
 parameters:
     regidium.client.handler.class: Regidium\ClientBundle\Handler\ClientHandler
-    regidium.client.document.class: Regidium\ClientBundle\Document\Client
-    regidium.client.repository.class: Regidium\ClientBundle\Repository\ClientRepository
+    regidium.client.document.class: Regidium\CommonBundle\Document\Client
+
 
 services:
     regidium.client.handler:
         class: %regidium.client.handler.class%
-        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.client.document.class% ]
-
-    regidium.client.repository:
-        class: %regidium.client.handler.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.client.document.class% ]
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.client.document.class% ]

@@ -4,9 +4,9 @@ namespace Regidium\ClientBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\ClientBundle\Form\ClientForm;
-use Regidium\ClientBundle\Document\Client;
+use Regidium\CommonBundle\Document\Client;
 
-class ClientHandler extends AbstractHandler implements ClientHandlerInterface
+class ClientHandler extends AbstractHandler
 {
     /**
      * Get one client by criteria.

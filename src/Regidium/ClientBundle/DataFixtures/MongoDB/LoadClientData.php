@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Regidium\ClientBundle\Document\Client;
+use Regidium\CommonBundle\Document\Client;
 
 class LoadClientData extends AbstractFixture implements OrderedFixtureInterface
 {

@@ -1,2 +1,4 @@
 imports:
+    - { resource: handlers.yml }
+    - { resource: repositories.yml }
     - { resource: validators.yml }

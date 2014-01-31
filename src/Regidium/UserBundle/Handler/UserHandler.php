@@ -3,10 +3,12 @@
 namespace Regidium\UserBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
+use Regidium\CommonBundle\Form\PersonForm;
 use Regidium\UserBundle\Form\UserForm;
-use Regidium\UserBundle\Document\User;
+use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\User;
 
-class UserHandler extends AbstractHandler implements UserHandlerInterface
+class UserHandler extends AbstractHandler
 {
     /**
      * Get one user by criteria.
@@ -46,6 +48,34 @@ class UserHandler extends AbstractHandler implements UserHandlerInterface
     }
 
     /**
+     * Get a list of agent by criteria.
+     *
+     * @param array $criteria
+     * @param int   $limit    limit of the result
+     * @param int   $offset   starting from the offset
+     *
+     * @return array
+     */
+    public function allAgents($criteria = array(), $limit = 5, $offset = 0)
+    {
+        return $this->repository->findBy($criteria, null, $limit, $offset);
+    }
+
+    /**
+     * Get a list of users by criteria.
+     *
+     * @param array $criteria
+     * @param int   $limit    limit of the result
+     * @param int   $offset   starting from the offset
+     *
+     * @return array
+     */
+    public function allUsers($criteria = array(), $limit = 5, $offset = 0)
+    {
+        return $this->repository->findBy($criteria, null, $limit, $offset);
+    }
+
+    /**
      * Create a new user.
      *
      * @param array $parameters
@@ -54,7 +84,7 @@ class UserHandler extends AbstractHandler implements UserHandlerInterface
      */
     public function post(array $parameters)
     {
-        $user = $this->createUser();
+        $user = $this->createEntity();
 
         return $this->processForm($user, $parameters, 'POST');
     }
@@ -129,7 +159,7 @@ class UserHandler extends AbstractHandler implements UserHandlerInterface
      * @return User|null
      */
     public function oneByExternalService($provider, $id) {
-        return $this->dm->createQueryBuilder('Regidium\UserBundle\Document\User')
+        return $this->repository
             ->field("external_service.{$provider}.data.id")->equals($id)
             ->getQuery()
             ->getSingleResult()
@@ -148,20 +178,47 @@ class UserHandler extends AbstractHandler implements UserHandlerInterface
      */
     private function processForm(User $user, array $parameters, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new UserForm([ 'email_exclusion' => $user->getEmail() ]), $user, array('method' => $method));
-        $form->submit($parameters, 'PATCH' !== $method);
-        if ($form->isValid()) {
-            $user = $form->getData();
-            $this->dm->persist($user);
-            $this->dm->flush($user);
-            return $user;
+        $userParameters = [
+            'status' => isset($parameters['status']) ? $parameters['status'] : User::STATUS_DEFAULT
+        ];
+
+        $formUser = $this->formFactory->create(new UserForm(), $user, array('method' => $method));
+        $formUser->submit($userParameters, 'PATCH' !== $method);
+        if ($formUser->isValid()) {
+            $user = $formUser->getData();
+            $personParameters = [
+                'fullname' => isset($parameters['fullname']) ? $parameters['fullname'] : '',
+                'avatar' => isset($parameters['avatar']) ? $parameters['avatar'] : '',
+                'email' => isset($parameters['email']) ? $parameters['email'] : '',
+                'password' => isset($parameters['password']) ? $parameters['password'] : '',
+                'status' => isset($parameters['status']) ? $parameters['status'] : '',
+                'country' => isset($parameters['country']) ? $parameters['country'] : '',
+                'city' => isset($parameters['city']) ? $parameters['city'] : '',
+                'ip' => isset($parameters['ip']) ? $parameters['ip'] : '',
+                'os' => isset($parameters['os']) ? $parameters['os'] : '',
+                'browser' => isset($parameters['browser']) ? $parameters['browser'] : '',
+                'keyword' => isset($parameters['keyword']) ? $parameters['keyword'] : '',
+                'language' => isset($parameters['language']) ? $parameters['language'] : ''
+            ];
+
+            $formPerson = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $user->getEmail() ]), $user, array('method' => $method));
+            $formPerson->submit($personParameters, 'PATCH' !== $method);
+            if ($formPerson->isValid()) {
+                /** @var Person $person */
+                $person = $formPerson->getData();
+                $person->setUser($user);
+
+                $this->dm->persist($person);
+                $this->dm->persist($user);
+
+                $this->dm->flush();
+
+                return $person;
+            }
+
+            return $this->getFormErrors($formPerson);
         }
 
-        return $form->getErrors();
-    }
-
-    private function createUser()
-    {
-        return new $this->entityClass();
+        return $this->getFormErrors($formUser);
     }
 }

@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Regidium\BillingBundle\Document\Plan;
+use Regidium\CommonBundle\Document\Plan;
 
 class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
 {

@@ -4,12 +4,13 @@ namespace Regidium\AgentBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\AgentBundle\Form\AgentForm;
-use Regidium\AgentBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\Agent;
 
-class AgentHandler extends AbstractHandler implements AgentHandlerInterface
+class AgentHandler extends AbstractHandler
 {
     /**
-     * Get one agent  by criteria.
+     * Get one agent by criteria.
      *
      * @param array $criteria
      *
@@ -33,7 +34,7 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
     }
 
     /**
-     * Get a list of agents.
+     * Get list of agents.
      *
      * @param int $limit  the limit of the result
      * @param int $offset starting from the offset
@@ -46,7 +47,7 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
     }
 
     /**
-     * Create a new agent.
+     * Create new agent.
      *
      * @param array $parameters
      *
@@ -54,15 +55,15 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
      */
     public function post(array $parameters)
     {
-        $agent = $this->createAgent();
+        $agent = $this->createEntity();
 
         return $this->processForm($agent, $parameters, 'POST');
     }
 
     /**
-     * Edit a agent.
+     * Edit agent.
      *
-     * @param Agent  $agent
+     * @param Agent $agent
      * @param array $parameters
      *
      * @return Agent
@@ -70,19 +71,6 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
     public function put(Agent $agent, array $parameters)
     {
         return $this->processForm($agent, $parameters, 'PUT');
-    }
-
-    /**
-     * Partially update a agent.
-     *
-     * @param Agent  $agent
-     * @param array $parameters
-     *
-     * @return Agent
-     */
-    public function patch(Agent $agent, array $parameters)
-    {
-        return $this->processForm($agent, $parameters, 'PATCH');
     }
 
     /**
@@ -129,7 +117,7 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
      * @return Agent|null
      */
     public function oneByExternalService($provider, $id) {
-        return $this->dm->createQueryBuilder('Regidium\UserBundle\Document\User')
+        return $this->repository
             ->field("external_service.{$provider}.data.id")->equals($id)
             ->getQuery()
             ->getSingleResult()
@@ -148,26 +136,49 @@ class AgentHandler extends AbstractHandler implements AgentHandlerInterface
      */
     private function processForm(Agent $agent, array $parameters, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new AgentForm([ 'email_exclusion' => $agent->getEmail() ]), $agent, array('method' => $method));
-        $form->submit($parameters, 'PATCH' !== $method);
-        if ($form->isValid()) {
-            $agent = $form->getData();
-            $this->dm->persist($agent);
-            $this->dm->flush($agent);
-            return $agent;
+        $agentParameters = [
+            'job_title' => isset($parameters['job_title']) ? $parameters['job_title'] : '',
+            'accept_chats' => isset($parameters['accept_chats']) ? $parameters['accept_chats'] : true,
+            'status' => isset($parameters['status']) ? $parameters['status'] : Agent::STATUS_DEFAULT
+        ];
+
+        $formAgent = $this->formFactory->create(new AgentForm(), $agent, array('method' => $method));
+        $formAgent->submit($agentParameters, 'PATCH' !== $method);
+        if ($formAgent->isValid()) {
+            $agent = $formAgent->getData();
+            $personParameters = [
+                'fullname' => isset($parameters['fullname']) ? $parameters['fullname'] : '',
+                'avatar' => isset($parameters['avatar']) ? $parameters['avatar'] : '',
+                'email' => isset($parameters['email']) ? $parameters['email'] : '',
+                'password' => isset($parameters['password']) ? $parameters['password'] : '',
+                'status' => isset($parameters['status']) ? $parameters['status'] : '',
+                'country' => isset($parameters['country']) ? $parameters['country'] : '',
+                'city' => isset($parameters['city']) ? $parameters['city'] : '',
+                'ip' => isset($parameters['ip']) ? $parameters['ip'] : '',
+                'os' => isset($parameters['os']) ? $parameters['os'] : '',
+                'browser' => isset($parameters['browser']) ? $parameters['browser'] : '',
+                'keyword' => isset($parameters['keyword']) ? $parameters['keyword'] : '',
+                'language' => isset($parameters['language']) ? $parameters['language'] : ''
+            ];
+
+            $formPerson = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $agent->getEmail() ]), $agent, array('method' => $method));
+            $formPerson->submit($personParameters, 'PATCH' !== $method);
+            if ($formPerson->isValid()) {
+                /** @var Person $person */
+                $person = $formPerson->getData();
+                $person->setAgent($agent);
+
+                $this->dm->persist($person);
+                $this->dm->persist($agent);
+
+                $this->dm->flush();
+
+                return $person;
+            }
+
+            return $this->getFormErrors($formPerson);
         }
 
-        $return = [];
-        $errors = $form->getErrors();
-        foreach ($errors as $error) {
-            $return[] = $error->getCause();
-        }
-
-        return $return;
-    }
-
-    private function createAgent()
-    {
-        return new $this->entityClass();
+        return $this->getFormErrors($formAgent);
     }
 }

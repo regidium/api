@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Regidium\BillingBundle\Document\PaymentMethod;
+use Regidium\CommonBundle\Document\PaymentMethod;
 
 class LoadPaymentMethodData extends AbstractFixture implements OrderedFixtureInterface
 {

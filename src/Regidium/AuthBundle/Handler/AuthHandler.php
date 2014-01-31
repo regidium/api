@@ -3,11 +3,10 @@
 namespace Regidium\AuthBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
-use Regidium\AuthBundle\Document\Auth;
-use Regidium\UserBundle\Document\User;
-use Regidium\AgentBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Auth;
+use Regidium\CommonBundle\Document\Person;
 
-class AuthHandler extends AbstractHandler implements AuthHandlerInterface
+class AuthHandler extends AbstractHandler
 {
 
     /**
@@ -37,15 +36,16 @@ class AuthHandler extends AbstractHandler implements AuthHandlerInterface
     /**
      * Create a new auth.
      *
-     * @param User|Agent $owner
+     * @param Person $person
      * @param array $parameters
      *
      * @return Auth
      */
-    public function post($owner, array $parameters)
+    public function post($person, array $parameters)
     {
-        $auth = $this->createAuth();
-        $auth->setOwner($owner);
+        /** @var \Regidium\CommonBundle\Document\Auth $auth */
+        $auth = $this->createEntity();
+        $auth->setPerson($person);
 
         if (isset($parameters['remember']) && $parameters['remember']) {
             $auth->setRemember(true);
@@ -78,23 +78,19 @@ class AuthHandler extends AbstractHandler implements AuthHandlerInterface
     /**
      * Close auth session.
      *
-     * @param User|Agent $object
+     * @param Person $person
      *
      * @return bool
      */
-    public function close($object)
+    public function close($person)
     {
-        $auths = $object->getAuths();
+        /** @var \Regidium\CommonBundle\Document\Auth[] $auths */
+        $auths = $person->getAuths();
         foreach($auths as $auth) {
             $auth->setEnded(time());
         }
 
         $this->dm->flush();
         return true;
-    }
-
-    private function createAuth()
-    {
-        return new $this->entityClass();
     }
 }

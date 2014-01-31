@@ -5,7 +5,7 @@ namespace Regidium\BillingBundle\Handler;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\BillingBundle\Document\PaymentMethod;
 
-class PaymentMethodHandler extends AbstractHandler implements PaymentMethodHandlerInterface
+class PaymentMethodHandler extends AbstractHandler
 {
     /**
      * Get one billing payment method by criteria.

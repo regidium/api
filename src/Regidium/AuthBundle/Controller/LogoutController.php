@@ -9,6 +9,8 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 /**
  * Logout controller
  *
+ * @todo Security
+ *
  * @package Regidium\AuthBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
@@ -22,28 +24,24 @@ class LogoutController extends AbstractAuthController
      *
      * @todo Create real logout
      *
-     * @deprecated Will be updated
-     *
      * @ApiDoc(
      *   resource = false,
+     *   description = "Logout exist user or agent.",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @param int   $uid    the user uid
+     * @param string $uid Person UID
      *
      * @return bool
      */
     public function getAction($uid)
     {
-        $object = $this->get('regidium.user.handler')->one([ 'uid' => $uid ]);
-        if (!$object) {
-            $object = $this->get('regidium.agent.handler')->one([ 'uid' => $uid ]);
-        }
+        $person = $this->get('regidium.person.handler')->one([ 'uid' => $uid ]);
 
-        if ($object) {
-            $this->get('regidium.auth.handler')->close($object);
+        if ($person) {
+            $this->get('regidium.auth.handler')->close($person);
             return true;
         } else {
             return false;

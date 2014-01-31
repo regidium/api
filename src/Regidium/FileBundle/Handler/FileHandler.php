@@ -6,7 +6,7 @@ use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\FileBundle\Form\FileForm;
 use Regidium\FileBundle\Document\File;
 
-class FileHandler extends AbstractHandler implements FileHandlerInterface
+class FileHandler extends AbstractHandler
 {
     /**
      * Get one file by criteria.

@@ -3,11 +3,10 @@
 namespace Regidium\AuthBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/** @todo Update */
 class CloseOldAuthCommand extends ContainerAwareCommand
 {
 
@@ -28,7 +27,7 @@ class CloseOldAuthCommand extends ContainerAwareCommand
         $dm = $this->getContainer()->get('doctrine_mongodb')->getManager();
         $session_max_age = $this->getContainer()->getParameter('session')['max_age'];
 
-        $qb = $dm->createQueryBuilder('Regidium\AuthBundle\Document\Auth')
+        $qb = $dm->createQueryBuilder('Regidium\CommonBundle\Document\Auth')
             ->field('remember')->equals(false)
             ->field('ended')->exists(false)
             ->field('started.sec')->lte(time() - $session_max_age);

@@ -3,24 +3,21 @@
 namespace Regidium\AgentBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
+use FOS\RestBundle\View\View;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Request\ParamFetcherInterface;
-
-use Regidium\CommonBundle\Controller\AbstractController;
-
-use Regidium\AgentBundle\Form\AgentForm;
-use Regidium\AgentBundle\Document\Agent;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use Regidium\CommonBundle\Controller\AbstractController;
+use Regidium\CommonBundle\Document\Agent;
 
 /**
  * Agent controller
  *
  * @todo Update response for HTML format
+ * @todo Security
  *
  * @package Regidium\AgentBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -34,6 +31,7 @@ class AgentController extends AbstractController
      *
      * @ApiDoc(
      *   resource = true,
+     *   description = "List all agents.",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
@@ -42,32 +40,13 @@ class AgentController extends AbstractController
      * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing agents.")
      * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many agents to return.")
      *
-     * @Annotations\View(
-     *  templateVar="agents"
-     * )
-     *
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
      * @return array
      */
-    public function cgetAction(Request $request, ParamFetcherInterface $paramFetcher)
+    public function cgetAction()
     {
-        $return = [];
         $agents = $this->get('regidium.agent.handler')->all();
-        foreach ($agents as $agent) {
-            $return[] = [
-                'uid' => $agent->getUid(),
-                'avatar' => $agent->getAvatar(),
-                'fullname' => $agent->getFullname(),
-                'email' => $agent->getEmail(),
-                'status' => $agent->getStatus(),
-                'type' => $agent->getType(),
-                'accept_chats' => $agent->getAcceptChats(),
-                'amount_chats' => $agent->getAmountChats()
-            ];
-        }
-        return $this->view($return);
+
+        return $this->sendArray(array_values($agents));
     }
 
     /**
@@ -75,21 +54,17 @@ class AgentController extends AbstractController
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Gets a agents for a given uid",
-     *   output = "Regidium\AgentBundle\Document\Agent",
+     *   description = "Get single agent",
+     *   output = "Regidium\CommonBundle\Document\Agent",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when the agent is not found"
+     *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @Annotations\View(templateVar="agent")
-     *
-     * @param int     $uid      the agent uid
+     * @param string $uid Agent UID
      *
      * @return array
      *
-     * @throws NotFoundHttpException when agent not exist
      */
     public function getAction($uid)
     {
@@ -99,220 +74,93 @@ class AgentController extends AbstractController
     }
 
     /**
-     * Presents the form to use to create a new agent.
+     * Create agent from submitted data.
      *
      * @ApiDoc(
      *   resource = true,
+     *   description = "Create agent from submitted data.",
+     *   input = "Regidium\AgentBundle\Form\AgentForm",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @Annotations\View(
-     *  templateVar = "form"
-     * )
+     * @param Request $request Request object
      *
-     * @return FormTypeInterface
-     */
-    public function newAction()
-    {
-        return $this->createForm(new AgentForm());
-    }
-
-    /**
-     * Create a agent from the submitted data.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Creates a new agent from the submitted data.",
-     *   input = "Regidium\AgentBundle\Form\AgentForm",
-     *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *  template = "RegidiumAgentBundle:Agent:newAgent.html.twig",
-     *  statusCode = Codes::HTTP_BAD_REQUEST,
-     *  templateVar = "form"
-     * )
-     *
-     * @param Request $request the request object
-     *
-     * @return FormTypeInterface|View
+     * @return View
      */
     public function postAction(Request $request)
     {
-        $result = $this->get('regidium.agent.handler')->post([
-            'email' => $request->request->get('email', null),
-            'fullname' => $request->request->get('fullname', null),
-            'avatar' => $request->request->get('avatar', null),
-            'password' => $request->request->get('password', null),
-            'type' => $request->request->get('type', Agent::TYPE_OPERATOR),
-            'status' => $request->request->get('status', Agent::STATUS_DEFAULT),
-            'accept_chats' => $request->request->get('accept_chats', true),
-        ]);
+        $person = $this->get('regidium.agent.handler')->post($this->prepareAgentData($request, $request->request->get('password', null)));
 
-        if (!$result instanceof Agent) {
-            return $this->view(['errors' => $result]);
+        if (!$person instanceof Person) {
+            return $this->sendError($person);
         }
 
-        $routeOptions = array(
-            'uid' => $result->getUid(),
-            '_format' => $request->get('_format')
-        );
-
-        return $this->routeRedirectView('api_1_get_agent', $routeOptions, Codes::HTTP_CREATED);
-
+        return $this->send($person, Codes::HTTP_CREATED);
     }
 
     /**
-     * Update existing agent from the submitted data or create a new agent at a specific location.
+     * Update existing agent from submitted data or create new agent.
      *
      * @ApiDoc(
      *   resource = true,
+     *   description = "Update existing agent from submitted data or create new agent.",
      *   input = "Regidium\AgentBundle\Form\AgentForm",
      *   statusCodes = {
-     *     201 = "Returned when the agent is created",
-     *     204 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @Annotations\View(
-     *  template = "RegidiumAgentBundle:Agent:editAgent.html.twig",
-     *  templateVar = "form"
-     * )
+     * @param Request $request Request object
+     * @param string  $uid     Agent UID
      *
-     * @todo Update
+     * @return View
      *
-     * @deprecated Will be updated
-     *
-     * @param Request $request the request object
-     * @param int     $uid      the agent uid
-     *
-     * @return FormTypeInterface|View
-     *
-     * @throws NotFoundHttpException when agent not exist
      */
     public function putAction(Request $request, $uid)
     {
-        try {
-            if (!($agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]))) {
-                $statusCode = Codes::HTTP_CREATED;
-                $post = [
-                    'email' => $request->request->get('email', null),
-                    'fullname' => $request->request->get('fullname', null),
-                    'avatar' => $request->request->get('avatar', null),
-                    'password' => $request->request->get('password', null),
-                    'type' => (int)$request->request->get('type', Agent::TYPE_OPERATOR),
-                    'status' => (int)$request->request->get('status', Agent::STATUS_DEFAULT),
-                    'accept_chats' => (bool)$request->request->get('accept_chats', true),
-                ];
-                $agent = $this->get('regidium.agent.handler')->post(
-                    $post
-                );
-            } else {
-                $statusCode = Codes::HTTP_OK;
-                $password = $request->request->get('password', null);
-                if ($agent->getPassword() != null && $password == null) {
-                    $password = $agent->getPassword();
-                }
-                $put = [
-                    'email' => $request->request->get('email', null),
-                    'fullname' => $request->request->get('fullname', null),
-                    'avatar' => $request->request->get('avatar', null),
-                    'password' => $password,
-                    'type' => (int)$request->request->get('type', Agent::TYPE_OPERATOR),
-                    'status' => (int)$request->request->get('status', Agent::STATUS_DEFAULT),
-                    'accept_chats' => (bool)$request->request->get('accept_chats', true),
-                ];
-                $agent = $this->get('regidium.agent.handler')->put(
-                    $agent,
-                    $put
-                );
+        $person = $this->get('regidium.person.handler')->one(['uid' => $uid]);
+
+        if (!$person) {
+            $statusCode = Codes::HTTP_CREATED;
+
+            $person = $this->get('regidium.agent.handler')->post(
+                $this->prepareAgentData($request, $request->request->get('password', null))
+            );
+        } else {
+            $statusCode = Codes::HTTP_OK;
+
+            $password = $request->request->get('password', null);
+            if ($person->getPassword() != null && $password == null) {
+                $password = $person->getPassword();
             }
 
-            if (!$agent instanceof Agent) {
-                return  $this->view(['errors' => $agent]);
-            }
-
-            $routeOptions = array(
-                'uid' => $agent->getUid(),
-                '_format' => $request->get('_format')
+            $person = $this->get('regidium.agent.handler')->put(
+                $person->getAgent(),
+                $this->prepareAgentData($request, $password)
             );
-
-            return $this->routeRedirectView('api_1_get_agent', $routeOptions, $statusCode);
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
         }
-    }
 
-    /**
-     * Update existing agent from the submitted data or create a new agent at a specific location.
-     *
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   input = "Regidium\AgentBundle\Form\Type\AgentType",
-     *   statusCodes = {
-     *     204 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *  template = "RegidiumAgentBundle:Agent:editAgent.html.twig",
-     *  templateVar = "form"
-     * )
-     *
-     * @todo Remove
-     *
-     * @deprecated Will be removed
-     *
-     * @param Request $request the request object
-     * @param int     $uid      the agent uid
-     *
-     * @return FormTypeInterface|View
-     *
-     * @throws NotFoundHttpException when agent not exist
-     */
-    public function patchAction(Request $request, $uid)
-    {
-        try {
-            $agent = $this->get('regidium.agent.handler')->patch(
-                $this->getOr404(['uid' => $uid]),
-                $request->request->all()
-            );
-
-            $routeOptions = array(
-                'uid' => $agent->getUid(),
-                '_format' => $request->get('_format')
-            );
-
-            return $this->routeRedirectView('api_1_get_agent', $routeOptions, Codes::HTTP_NO_CONTENT);
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
+        if (!$person instanceof Person) {
+            return $this->sendError($person);
         }
+
+        return  $this->send($person, $statusCode);
     }
 
     /**
      * Remove existing agent.
      *
-     *
      * @ApiDoc(
      *   resource = false,
+     *   description = "Remove existing agent.",
      *   statusCodes = {
-     *     200 = "Always returned",
+     *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @param int   $uid  Agent uid
+     * @param string $uid Agent UID
      *
      * @return View
      *
@@ -322,29 +170,48 @@ class AgentController extends AbstractController
         $result = $this->get('regidium.agent.handler')->delete([ 'uid' => $uid ]);
 
         if ($result === 404) {
-            return $this->view(['errors' => ['Agent not found!']]);
+            return $this->sendError('Agent not found!');
         } elseif ($result === 500) {
-            return $this->view(['errors' => ['Server error!']]);
+            return $this->sendError('Server error!');
         }
 
-        return $this->view(['success' => true]);
+        return $this->sendSuccess();
     }
 
     /**
-     * Fetch a agent or throw an 404 Exception.
+     * Fetch a agent or throw an 404.
      *
      * @param array $criteria
      *
-     * @return Agent
+     * @return Agent|int
      *
-     * @throws NotFoundHttpException
      */
     protected function getOr404(array $criteria)
     {
-        if (!($agent = $this->get('regidium.agent.handler')->one($criteria))) {
-            throw new NotFoundHttpException(sprintf('The resource was not found.'));
+        $agent = $this->get('regidium.agent.handler')->one($criteria);
+        if (!$agent) {
+            return $this->sendError('The resource was not found.');
         }
 
         return $agent;
+    }
+
+    protected function prepareAgentData(Request $request, $password)
+    {
+        return [
+            'fullname' => $request->request->get('fullname', null),
+            'avatar' => $request->request->get('avatar', null),
+            'email' => $request->request->get('email', null),
+            'password' => $password,
+            'status' => $request->request->get('status', Agent::STATUS_DEFAULT),
+            'country' => $request->request->get('country', null),
+            'city' => $request->request->get('city', null),
+            'ip' => $request->request->get('ip', null),
+            'os' => $request->request->get('os', null),
+            'browser' => $request->request->get('browser', null),
+            'keyword' => $request->request->get('keyword', null),
+            'language' => $request->request->get('language', 'ru'),
+            'accept_chats' => $request->request->get('accept_chats', true)
+        ];
     }
 }

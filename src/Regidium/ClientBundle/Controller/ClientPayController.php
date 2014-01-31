@@ -7,9 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-use Regidium\ClientBundle\Document\Client;
-use Regidium\BillingBundle\Document\Payment;
-use Regidium\BillingBundle\Document\PaymentMethod;
+use Regidium\CommonBundle\Document\Client;
+use Regidium\CommonBundle\Document\Payment;
+use Regidium\CommonBundle\Document\PaymentMethod;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 

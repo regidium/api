@@ -3,19 +3,16 @@
 namespace Regidium\UserBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
+use FOS\RestBundle\View\View;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Request\ParamFetcherInterface;
+
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 
-use Regidium\UserBundle\Form\UserForm;
-use Regidium\UserBundle\Document\User;
-
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Regidium\CommonBundle\Document\User;
 
 /**
  * User controller
@@ -34,6 +31,7 @@ class UserController extends AbstractController
      *
      * @ApiDoc(
      *   resource = false,
+     *   description = "List all users",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
@@ -42,37 +40,13 @@ class UserController extends AbstractController
      * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing users.")
      * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many users to return.")
      *
-     * @Annotations\View(
-     *   templateVar="users",
-     *   statusCode=200
-     * )
-     *
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
      * @return array
      */
-    public function cgetAction(Request $request, ParamFetcherInterface $paramFetcher)
+    public function cgetAction()
     {
-        $return = [];
         $users = $this->get('regidium.user.handler')->all();
-        foreach ($users as $user) {
-            $return[] = [
-                'uid' => $user->getUid(),
-                'fullname' => $user->getFullname(),
-                'email' => $user->getEmail(),
-                'status' => $user->getStatus(),
-                'country' => $user->getCountry(),
-                'city' => $user->getCity(),
-                'ip' => $user->getIp(),
-                'amount_returned' => $user->getAmountReturned(),
-                'amount_chats' => $user->getAmountChats(),
-                'os' => $user->getOs(),
-                'browser' => $user->getBrowser(),
-                'keyword' => $user->getKeyword(),
-            ];
-        }
-        return $this->view($return);
+
+        return $this->returnArray(array_values($users));
     }
 
     /**
@@ -81,229 +55,113 @@ class UserController extends AbstractController
      * @ApiDoc(
      *   resource = false,
      *   description = "Gets a users for a given uid",
-     *   output = "Regidium\UserBundle\Document\User",
-     *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when the user is not found"
-     *   }
-     * )
-     *
-     *
-     * @Annotations\View(templateVar="user")
-     *
-     * @param int     $uid      the user uid
-     *
-     * @return array
-     *
-     * @throws NotFoundHttpException when user not exist
-     */
-    public function getAction($uid)
-    {
-        $user = $this->getOr404(['uid' => $uid]);
-
-        return $user;
-    }
-
-    /**
-     * Presents the form to use to create a new user.
-     *
-     * @ApiDoc(
-     *   resource = false,
+     *   output = "Regidium\CommonBundle\Document\User",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @Annotations\View(
-     *  templateVar = "form"
-     * )
+     * @param string $uid User UID
      *
-     * @return FormTypeInterface
+     * @return array
      */
-    public function newAction()
+    public function getAction($uid)
     {
-        return $this->createForm(new UserForm());
+        $user = $this->getOr404(['uid' => $uid]);
+
+        return $this->send($user);
     }
 
     /**
-     * Create a user from the submitted data.
+     * Create new user from the submitted data.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Creates a new user from the submitted data.",
+     *   description = "Create new user from the submitted data.",
      *   input = "Regidium\UserBundle\Form\UserForm",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @Annotations\View(
-     *  template = "RegidiumUserBundle:User:newUser.html.twig",
-     *  statusCode = Codes::HTTP_BAD_REQUEST,
-     *  templateVar = "form"
-     * )
+     * @param Request $request Request object
      *
-     * @param Request $request the request object
-     *
-     * @return FormTypeInterface|View
+     * @return View
      */
     public function postAction(Request $request)
     {
-        $result = $this->get('regidium.user.handler')->post(
-            $request->request->all()
-        );
+        $person = $this->get('regidium.user.handler')->post($this->prepareUserData($request, $request->request->get('password', null)));
 
-        if (!$result instanceof User) {
-            return $this->view(['errors' => $result]);
+        if (!$person instanceof Person) {
+            return $this->returnError($person);
         }
 
-        $routeOptions = array(
-            'uid' => $result->getUid(),
-            '_format' => $request->get('_format')
-        );
-
-        return $this->routeRedirectView('api_1_get_user', $routeOptions, Codes::HTTP_CREATED);
+        return $this->send($person, Codes::HTTP_CREATED);
 
     }
 
     /**
-     * Update existing user from the submitted data or create a new user at a specific location.
+     * Update existing user from submitted data or create new user at a specific location.
      *
      * @ApiDoc(
      *   resource = false,
+     *   description = "Update existing user from submitted data or create new user at a specific location.",
      *   input = "Regidium\UserBundle\Form\UserForm",
      *   statusCodes = {
-     *     201 = "Returned when the user is created",
-     *     204 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     201 = "Returned when user is created",
+     *     200 = "Returned when user is updated",
      *   }
      * )
      *
-     * @Annotations\View(
-     *  template = "RegidiumUserBundle:User:editUser.html.twig",
-     *  templateVar = "form"
-     * )
+     * @param Request $request Request object
+     * @param string  $uid     User UID
      *
+     * @return View
      *
-     * @param Request $request the request object
-     * @param int     $uid      the user uid
-     *
-     * @return FormTypeInterface|View
-     *
-     * @throws NotFoundHttpException when user not exist
      */
     public function putAction(Request $request, $uid)
     {
-        try {
-            if (!($user = $this->get('regidium.user.handler')->one(['uid' => $uid]))) {
-                $statusCode = Codes::HTTP_CREATED;
-                $post = [
-                    'email' => $request->request->get('email', null),
-                    'fullname' => $request->request->get('fullname', null),
-                    'password' => $request->request->get('password', null),
-                    'status' => $request->request->get('status', 2)
-                ];
-                $user = $this->get('regidium.user.handler')->post(
-                    $post
-                );
-            } else {
-                $statusCode = Codes::HTTP_OK;
-                $password = $request->request->get('password', null);
-                if ($user->getPassword() != null && $password == null) {
-                    $password = $user->getPassword();
-                }
-                $put = [
-                    'email' => $request->request->get('email', null),
-                    'fullname' => $request->request->get('fullname', null),
-                    'password' => $password,
-                    'status' => $request->request->get('status', 2)
-                ];
-                $user = $this->get('regidium.user.handler')->put(
-                    $user,
-                    $put
-                );
+        $person = $this->get('regidium.person.handler')->one(['uid' => $uid]);
+
+        if (!$person) {
+            $statusCode = Codes::HTTP_CREATED;
+
+            $person = $this->get('regidium.user.handler')->post(
+                $this->prepareUserData($request, $request->request->get('password', null))
+            );
+        } else {
+            $statusCode = Codes::HTTP_OK;
+
+            $password = $request->request->get('password', null);
+            if ($person->getPassword() != null && $password == null) {
+                $password = $person->getPassword();
             }
 
-            if (!$user instanceof User) {
-                return  $this->view(['errors' => $user]);
-            }
-
-            $routeOptions = array(
-                'uid' => $user->getUid(),
-                '_format' => $request->get('_format')
+            $person = $this->get('regidium.user.handler')->put(
+                $person->getUser(),
+                $this->prepareUserData($request, $password)
             );
-
-            return $this->routeRedirectView('api_1_get_user', $routeOptions, $statusCode);
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
         }
-    }
 
-    /**
-     * Update existing user from the submitted data or create a new user at a specific location.
-     *
-     *
-     * @ApiDoc(
-     *   resource = false,
-     *   input = "Regidium\UserBundle\Form\Type\UserType",
-     *   statusCodes = {
-     *     204 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *  template = "RegidiumUserBundle:User:editUser.html.twig",
-     *  templateVar = "form"
-     * )
-     *
-     * @todo Remove
-     *
-     * @deprecated Will be removed
-     *
-     * @param Request $request the request object
-     * @param int     $uid      the user uid
-     *
-     * @return FormTypeInterface|View
-     *
-     * @throws NotFoundHttpException when user not exist
-     */
-    public function patchAction(Request $request, $uid)
-    {
-        try {
-            $user = $this->get('regidium.user.handler')->patch(
-                $this->getOr404(['uid' => $uid]),
-                $request->request->all()
-            );
-
-            $routeOptions = array(
-                'uid' => $user->getUid(),
-                '_format' => $request->get('_format')
-            );
-
-            return $this->routeRedirectView('api_1_get_user', $routeOptions, Codes::HTTP_NO_CONTENT);
-
-        } catch (InvalidFormException $exception) {
-
-            return $exception->getForm();
+        if (!$person instanceof Person) {
+            return $this->sendError($person);
         }
+
+        return  $this->send($person, $statusCode);
     }
 
     /**
      * Remove existing user.
      *
-     *
      * @ApiDoc(
      *   resource = false,
+     *   description = "Remove existing user.",
      *   statusCodes = {
-     *     200 = "Always returned",
+     *     200 = "Returned when successful",
      *   }
      * )
      *
-     * @param int   $uid  User uid
+     * @param string $uid User UID
      *
      * @return View
      *
@@ -313,29 +171,48 @@ class UserController extends AbstractController
         $result = $this->get('regidium.user.handler')->delete([ 'uid' => $uid ]);
 
         if ($result === 404) {
-            return $this->view(['errors' => ['User not found!']]);
+            return $this->returnError('User not found!');
         } elseif ($result === 500) {
-            return $this->view(['errors' => ['Server error!']]);
+            return $this->returnError('Server error!', Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $this->view(['success' => true]);
+        return $this->returnSuccess();
     }
 
     /**
-     * Fetch a user or throw an 404 Exception.
+     * Fetch a user or 404.
      *
-     * @param array $criteria
+     * @param array $criteria Criteria for search
      *
-     * @return User
-     *
-     * @throws NotFoundHttpException
+     * @return User|int
      */
     protected function getOr404(array $criteria)
     {
-        if (!($user = $this->get('regidium.user.handler')->one($criteria))) {
-            throw new NotFoundHttpException(sprintf('The resource was not found.'));
+        $user = $this->get('regidium.user.handler')->one($criteria);
+
+        if (!$user) {
+            return $this->returnError('The resource was not found.');
         }
 
         return $user;
+    }
+
+
+    protected function prepareUserData(Request $request, $password)
+    {
+        return [
+            'fullname' => $request->request->get('fullname', null),
+            'avatar' => $request->request->get('avatar', null),
+            'email' => $request->request->get('email', null),
+            'password' => $password,
+            'status' => $request->request->get('status', User::STATUS_DEFAULT),
+            'country' => $request->request->get('country', null),
+            'city' => $request->request->get('city', null),
+            'ip' => $request->request->get('ip', null),
+            'os' => $request->request->get('os', null),
+            'browser' => $request->request->get('browser', null),
+            'keyword' => $request->request->get('keyword', null),
+            'language' => $request->request->get('language', 'ru')
+        ];
     }
 }

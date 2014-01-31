@@ -3,23 +3,23 @@
 namespace Regidium\AgentBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
+use FOS\RestBundle\View\View;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Request\ParamFetcherInterface;
+
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 
-use Regidium\AgentBundle\Document\Agent;
-use Regidium\ChatBundle\Document\Chat;
-
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Regidium\CommonBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Chat;
 
 /**
  * Agent chat controller
  *
  * @todo Update response for HTML format
+ * @todo Security
  *
  * @package Regidium\AgentBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -33,12 +33,13 @@ class AgentChatController extends AbstractController
      *
      * @ApiDoc(
      *   resource = false,
+     *   description = "List all agent chats.",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @param Request $uid  Agent uid
+     * @param Request $uid Agent uid
      *
      * @return View
      */
@@ -47,10 +48,10 @@ class AgentChatController extends AbstractController
         $agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]);
 
         if (!$agent instanceof Agent) {
-            return $this->view(['errors' => ['Agent not found!']]);
+            return $this->send(['errors' => ['Agent not found!']]);
         }
 
-        return $this->view($agent->getChats());
+        return $this->send($agent->getChats());
     }
 
     /**
@@ -58,16 +59,14 @@ class AgentChatController extends AbstractController
      *
      * @ApiDoc(
      *   resource = false,
+     *   description = "Update existing chat.",
      *   statusCodes = {
-     *     204 = "Returned when successful",
-     *     400 = "Returned when has errors"
+     *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @todo Update
-     *
-     * @param int  $uid   Agent uid
-     * @param int  $chat  Chat uid
+     * @param int $uid  Agent UID
+     * @param int $chat Chat UID
      *
      * @return View
      */
@@ -75,20 +74,20 @@ class AgentChatController extends AbstractController
     {
         $agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]);
         if (!$agent instanceof Agent) {
-            return $this->view(['errors' => ['Agent not found!']]);
+            return $this->sendError('Agent not found!');
         }
 
         $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat]);
         if (!$chat instanceof Chat) {
-            return $this->view(['errors' => ['Chat not found!']]);
+            return $this->sendError('Chat not found!');
         }
 
         $chat->setAgent($agent);
         $return = $this->get('regidium.chat.handler')->edit($chat);
         if (!$return instanceof Chat) {
-            return $this->view(['errors' => ['Server error!']]);
+            return $this->sendError('Server error!', Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $this->view($return);
+        return $this->sendArray($return);
     }
 }

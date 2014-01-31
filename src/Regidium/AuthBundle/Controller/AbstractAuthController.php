@@ -6,9 +6,8 @@ use FOS\RestBundle\Controller\Annotations;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 
-use Regidium\AuthBundle\Document\Auth;
-use Regidium\UserBundle\Document\User;
-use Regidium\AgentBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Auth;
+use Regidium\CommonBundle\Document\Person;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -18,24 +17,39 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  * @package Regidium\AuthBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
- *
  */
 abstract class AbstractAuthController extends AbstractController
 {
 
+    /**
+     * Registration person
+     *
+     * @param array $data Data about person
+     * @param bool $remember Remember user session
+     *
+     * @return Person|int
+     */
     protected function registration($data, $remember = false) {
-        $object = $this->get('regidium.user.handler')->post($data);
+        $person = $this->get('regidium.person.handler')->post($data);
 
-        if ($object instanceof User || $object instanceof Agent) {
-            return $this->login($object, $remember);
+        if ($person instanceof Person) {
+            return $this->login($person, $remember);
         }
 
-        return $this->view(['errors' => ['Error create user']]);
+        return $this->sendError(500);
     }
 
-    protected function login($object, $remember = false) {
+    /**
+     * Login person
+     *
+     * @param Person $person Person to login
+     * @param bool $remember Remember user session
+     *
+     * @return Person
+     */
+    protected function login($person, $remember = false) {
         $session_max_age = $this->container->getParameter('session')['max_age'];
-        $auths = $object->getAuths();
+        $auths = $person->getAuths();
         $auth = null;
         if ($auths) {
             $auth = $auths->filter(function($a) use ($session_max_age) {
@@ -55,7 +69,7 @@ abstract class AbstractAuthController extends AbstractController
         // Если нет активной сессии, тогда создаем её
         if (!$auth instanceof Auth) {
             $this->get('regidium.auth.handler')->post(
-                $object,
+                $person,
                 ['remember' => $remember]
             );
         } else {
@@ -67,7 +81,7 @@ abstract class AbstractAuthController extends AbstractController
             }
         }
 
-        return $object;
+        return $person;
     }
 
 }

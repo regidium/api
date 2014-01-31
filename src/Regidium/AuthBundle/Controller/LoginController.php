@@ -2,17 +2,12 @@
 
 namespace Regidium\AuthBundle\Controller;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 
-use Regidium\AuthBundle\Form\Login\LoginForm;
-use Regidium\UserBundle\Document\User;
-use Regidium\AgentBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Person;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -28,48 +23,20 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 class LoginController extends AbstractAuthController
 {
     /**
-     * Presents the form to login exist user or agent.
+     * Login exist person from submitted data.
      *
      * @ApiDoc(
      *   resource = true,
+     *   description = "Login exist person from submitted data.",
+     *   input = "Regidium\AuthBundle\Form\Login\LoginForm",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @Annotations\View(
-     *  templateVar = "form"
-     * )
+     * @param Request $request Request object
      *
-     * @return FormTypeInterface
-     */
-    public function getAction()
-    {
-        return $this->createForm(new LoginForm());
-    }
-
-    /**
-     * Login exist user or agent from the submitted data.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Login exist user or agent from the submitted data.",
-     *   input = "Regidium\AuthBundle\Form\Login\LoginForm",
-     *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *   template = "RegidiumAuthBundle:Login:index.html.twig",
-     *   statusCode = Codes::HTTP_BAD_REQUEST,
-     *   templateVar = "form"
-     * )
-     *
-     * @param Request $request the request object
-     *
-     * @return FormTypeInterface|View
+     * @return View
      */
     public function postAction(Request $request)
     {
@@ -78,77 +45,49 @@ class LoginController extends AbstractAuthController
         $remember = $request->request->get('remember', false);
 
         if (!$email || !$password) {
-            return  $this->view(['errors' => ['Login or password is null']]);
+            return  $this->sendError('Login or password is null');
         }
 
-        $object = $this->get('regidium.user.handler')->one([
+        $person = $this->get('regidium.person.handler')->one([
             'email' => $email,
             'password' => $password,
         ]);
 
-        if (!$object) {
-            $object = $this->get('regidium.agent.handler')->one([
-                'email' => $email,
-                'password' => $password,
-            ]);
+        if (!$person instanceof Person) {
+            return $this->sendError('User not found');
         }
 
-        if (!$object instanceof User && !$object instanceof Agent) {
-            return $this->view(['errors' => $object]);
-        }
-
-        $object = $this->login($object, $remember);
-        if ($object instanceof User) {
-            $returnOptions = ['user' => $object];
-        } elseif ($object instanceof Agent) {
-            $returnOptions = ['agent' => $object];
+        $person = $this->login($person, $remember);
+        if ($person instanceof Person) {
+            return $this->send($person);
         } else {
-            $returnOptions = ['errors' => ['Login service error!']];
+            return $this->sendError('Login service error!');
         }
-
-        return $this->view($returnOptions, Codes::HTTP_CREATED);
     }
 
     /**
-     * Check info about user or agent.
+     * Check info about person.
      *
      * @ApiDoc(
      *   resource = true,
+     *   description = "Check info about user or agent.",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
-     * @Annotations\View(
-     *   templateVar = "form"
-     * )
+     * @param string $uid Person UID
      *
-     * @param $uid
-     *
-     * @throws NotFoundHttpException
      * @return View
      */
     public function getCheckAction($uid)
     {
-        $object = $this->get('regidium.user.handler')->one([ 'uid' => $uid  ]);
-        if (!$object) {
-            $object = $this->get('regidium.agent.handler')->one([ 'uid' => $uid  ]);
-        }
+        $person = $this->get('regidium.person.handler')->one([ 'uid' => $uid  ]);
 
-        if($object instanceof User) {
-            $view = new View([ 'user' => [
-                "uid" => $object->getUid(),
-                "fullname" => $object->getFullname()
-            ]], Codes::HTTP_OK);
-            return $this->handleView($view);
-        } elseif ($object instanceof Agent) {
-            $view = new View([ 'agent' => [
-                "uid" => $object->getUid(),
-                "fullname" => $object->getFullname()
-            ]], Codes::HTTP_OK);
-            return $this->handleView($view);
+        if($person instanceof Person) {
+            return $this->send($person);
         } else {
-            throw new NotFoundHttpException(sprintf('The resource was not found.'));
+            $this->sendError('The resource was not found.');
         }
     }
 }

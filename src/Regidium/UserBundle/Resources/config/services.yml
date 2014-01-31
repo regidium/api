@@ -3,17 +3,9 @@ imports:
 
 parameters:
     regidium.user.handler.class: Regidium\UserBundle\Handler\UserHandler
-    regidium.user.document.class: Regidium\UserBundle\Document\User
-    regidium.user.repository.class: Regidium\UserBundle\Repository\UserRepository
+    regidium.user.document.class: Regidium\CommonBundle\Document\User
 
 services:
     regidium.user.handler:
         class: %regidium.user.handler.class%
-        arguments: [ "@form.factory", "@doctrine_mongodb", %regidium.user.document.class% ]
-
-    regidium.user.repository:
-        class: %regidium.user.handler.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.user.document.class% ]
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.user.document.class% ]

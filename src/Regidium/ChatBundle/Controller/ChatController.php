@@ -12,8 +12,8 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 
-use Regidium\UserBundle\Document\User;
-use Regidium\ChatBundle\Document\Chat;
+use Regidium\CommonBundle\Document\User;
+use Regidium\CommonBundle\Document\Chat;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 

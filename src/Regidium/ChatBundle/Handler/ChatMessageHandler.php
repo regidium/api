@@ -3,12 +3,12 @@
 namespace Regidium\ChatBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
-use Regidium\ChatBundle\Document\Chat;
-use Regidium\ChatBundle\Document\ChatMessage;
-use Regidium\UserBundle\Document\User;
-use Regidium\UserBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Chat;
+use Regidium\CommonBundle\Document\ChatMessage;
+use Regidium\CommonBundle\Document\User;
+use Regidium\CommonBundle\Document\Agent;
 
-class ChatMessageHandler extends AbstractHandler implements ChatMessageHandlerInterface
+class ChatMessageHandler extends AbstractHandler
 {
     /**
      * Create a new chat message.

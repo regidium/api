@@ -6,11 +6,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
-use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 
-/**
- * @todo В проверке уникальности email исключать текущий email
-*/
+use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
+use Regidium\CommonBundle\Document\Agent;
+
 class AgentForm extends AbstractType
 {
     protected $email_exclusion;
@@ -25,38 +24,20 @@ class AgentForm extends AbstractType
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
-     *
-     * @todo type, status перевести в array;
-     * @todo integer перевести в boolean
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fullname', 'text', [
+            ->add('job_title', 'text', [
                     'required' => false
                 ])
-            ->add('avatar', 'text', [
-                    'required' => false
-                ])
-            ->add('email', 'email', [
-                    'required' => false,
-                    'constraints' => array(
-//                        new Constraints\Email(array('message' => 'Wrong Email')),
-//                        new Constraints\NotBlank(array('message' => 'Blank Email')),
-                        new UniqueDocument(array('repository' => 'regidium.agent.repository', 'property' => 'email', 'exclusion' => $this->email_exclusion))
-                    )
-                ])
-            ->add('password', 'password', [
-                'required' => false
+            ->add('status', 'choice', [
+                'required' => false,
+                'choices' => Agent::getStatuses()
             ])
-            ->add('type', 'integer', [
-                'required' => false
-            ])
-            ->add('status', 'integer', [
-                'required' => false
-            ])
-            ->add('accept_chats', 'checkbox', [
-                'required' => false
+            ->add('accept_chats', 'choice', [
+                'required' => false,
+                'choices'   => [true, false]
             ])
         ;
     }
@@ -67,7 +48,7 @@ class AgentForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\AgentBundle\Document\Agent'
+            'data_class' => 'Regidium\CommonBundle\Document\Agent'
         ));
     }
 
@@ -76,6 +57,6 @@ class AgentForm extends AbstractType
      */
     public function getName()
     {
-        return 'agent';
+        return '';
     }
 }

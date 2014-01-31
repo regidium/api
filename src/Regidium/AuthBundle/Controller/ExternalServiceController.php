@@ -8,13 +8,15 @@ use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 
-use Regidium\UserBundle\Document\User;
-use Regidium\AgentBundle\Document\Agent;
+use Regidium\CommonBundle\Document\User;
+use Regidium\CommonBundle\Document\Agent;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * External Service controller
+ *
+ * @todo Security
  *
  * @package Regidium\AuthBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -31,15 +33,13 @@ class ExternalServiceController extends AbstractAuthController
      *   resource = true,
      *   description = "Login exist user or agent from external service.",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     200 = "Always Returned"
      *   }
      * )
      *
+     * @param Request $request Request object
      *
-     * @param Request $request the request object
-     *
-     * @param         $provider
+     * @param $provider
      *
      * @return View
      */
@@ -47,44 +47,25 @@ class ExternalServiceController extends AbstractAuthController
     {
 
         if (!in_array($provider, ['facebook', 'vkontakte', 'google', 'twitter'])) {
-            return  $this->view(['errors' => ["The provider {$provider} was not found."]]);
+            return  $this->sendError("The provider {$provider} was not found.");
         };
 
         $uid = $request->request->get('uid', null);
         $data = $request->request->get('data', []);
         $security = $request->request->get('security', null);
 
-        /** @todo Проверка $data */
-        $object = $this->get('regidium.user.handler')->oneByExternalService($provider, $data['id']);
-        if (!$object) {
-            $object = $this->get('regidium.agent.handler')->oneByExternalService($provider, $data['id']);
-        }
+        $person = $this->get('regidium.person.handler')->oneByExternalService($provider, $data['id']);
 
-        if ($object instanceof User || $object instanceof Agent) {
-            if (isset($data['uid']) && $data['uid'] != $object->getUid()) {
-                return $this->view(['errors' => ['External account already used']]);
+        if ($person instanceof Person) {
+            if (isset($data['uid']) && $data['uid'] != $person->getUid()) {
+                return $this->sendError('External account already used');
             } else {
-                if ($object instanceof User) {
-                    $returnOptions = [
-                        'user' => $this->login($object)
-                    ];
-                } elseif ($object instanceof Agent) {
-                    $returnOptions = [
-                        'agent' => $this->login($object)
-                    ];
-                }
+                return $this->send($this->login($person));
             }
-            return $this->view($returnOptions, Codes::HTTP_CREATED);
         } elseif($uid) {
-            $object = $this->get('regidium.user.handler')->one(['uid' => $uid]);
-            if (!$object) {
-                $object = $this->get('regidium.agent.handler')->one(['uid' => $uid]);
-            }
+            $person = $this->get('regidium.person.handler')->one(['uid' => $uid]);
         } elseif (isset($data['email'])) {
-            $object = $this->get('regidium.user.handler')->one(['email' => $data['email']]);
-            if (!$object) {
-                $object = $this->get('regidium.user.handler')->one(['email' => $data['email']]);
-            }
+            $person = $this->get('regidium.person.handler')->one(['email' => $data['email']]);
         }
 
         $external_service[$provider] = [
@@ -93,45 +74,29 @@ class ExternalServiceController extends AbstractAuthController
             'security' => $security
         ];
 
-        if ($object) {
-            $object->setExternalService($external_service);
-            if ($object instanceof User) {
-                $this->get('regidium.user.handler')->edit($object);
-                $returnOptions = [
-                    'user' => $object
-                ];
-            } else {
-                $this->get('regidium.agent.handler')->edit($object);
-                $returnOptions = [
-                    'agent' => $object
-                ];
-            }
+        if ($person) {
+            $person->setExternalService($external_service);
+            $person = $this->get('regidium.person.handler')->edit($person);
+            return $this->send($person);
         } else {
-            $object = array();
-            if (isset($data['fullname'])) $object['fullname'] = $data['fullname'];
-            if (isset($data['email'])) $object['email'] = $data['email'];
-
-            $object = $this->registration($object);
-            if ($object instanceof User || $object instanceof Agent) {
-                $object->setExternalService($external_service);
+            $person = array();
+            if (isset($data['fullname'])) {
+                $person['fullname'] = $data['fullname'];
             }
 
-            if ($object instanceof User) {
-                $this->get('regidium.user.handler')->edit($object);
-                $returnOptions = [
-                    'user' => $object
-                ];
-            } elseif ($object instanceof Agent) {
-                $this->get('regidium.agent.handler')->edit($object);
-                $returnOptions = [
-                    'agent' => $object
-                ];
+            if (isset($data['email'])) {
+                $person['email'] = $data['email'];
+            }
+
+            $person = $this->registration($person);
+            if ($person instanceof Person) {
+                $person->setExternalService($external_service);
+                $person = $this->get('regidium.person.handler')->edit($person);
+                return $this->send($person, Codes::HTTP_CREATED);
             } else {
-                $returnOptions = [ 'errors' => [ 'Error connect external service!' ] ];
+                return $this->sendError('Error connect external service!');
             }
         }
-
-        return $this->view($returnOptions, Codes::HTTP_CREATED);
     }
 
     /**

@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
-use Regidium\UserBundle\Document\User;
+use Regidium\CommonBundle\Document\User;
 
 /**
  * @todo В проверке уникальности email исключать текущий email
@@ -54,7 +54,7 @@ class UserForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\UserBundle\Document\User'
+            'data_class' => 'Regidium\CommonBundle\Document\User'
         ));
     }
 

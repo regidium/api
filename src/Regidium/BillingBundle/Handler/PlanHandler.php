@@ -5,7 +5,7 @@ namespace Regidium\BillingBundle\Handler;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\BillingBundle\Document\Plan;
 
-class PlanHandler extends AbstractHandler implements PlanHandlerInterface
+class PlanHandler extends AbstractHandler
 {
     /**
      * Get one billing plan by criteria.
