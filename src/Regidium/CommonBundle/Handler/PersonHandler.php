@@ -78,7 +78,7 @@ class PersonHandler extends AbstractHandler
     /**
      * Remove exist person
      *
-     * @todo Удалять Agent, User, Visitor
+     * @todo Удалять Agent, User
      *
      * @param string $criteria
      *

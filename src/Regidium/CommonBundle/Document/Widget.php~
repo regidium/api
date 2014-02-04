@@ -11,12 +11,12 @@ use Regidium\CommonBundle\Document\PaymentMethod;
 
 /**
  * @MongoDB\Document(
- *      repositoryClass="Regidium\CommonBundle\Repository\ClientRepository",
- *      collection="clients",
+ *      repositoryClass="Regidium\CommonBundle\Repository\WidgetRepository",
+ *      collection="widgets",
  *      requireIndexes=false
  *  )
  */
-class Client
+class Widget
 {
     /**
      * @MongoDB\Id
@@ -41,6 +41,11 @@ class Client
     private $personal_account;
 
     /**
+     * @MongoDB\String
+     */
+    protected $css;
+
+    /**
      * @MongoDB\Float
      */
     private $balance;
@@ -56,11 +61,6 @@ class Client
     private $status;
 
     /**
-     * @MongoDB\String
-     */
-    private $email;
-
-    /**
      * @MongoDB\Int
      */
     private $available_chats;
@@ -72,25 +72,24 @@ class Client
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"all"}, inversedBy="clients")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"all"}, inversedBy="widgets")
      */
     private $plan;
 
     /**
-     * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="client")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Agent", mappedBy="widget")
      */
-    private $widget;
+    private $agents;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="client")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\User", mappedBy="widget")
      */
-    protected $chats;
+    private $users;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Agent", mappedBy="client")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="widget")
      */
-    protected $agents;
+    private $chats;
 
     /* =============== Constants =============== */
 
@@ -118,11 +117,11 @@ class Client
         $this->setAvailableChats(0);
         $this->setStatus(self::STATUS_DEFAULT);
 
-        $this->chats = new ArrayCollection();
         $this->agents = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->chats = new ArrayCollection();
 
-        $this->setModelType('client');
+        $this->setModelType('widget');
     }
 
     public function __toString()
@@ -221,6 +220,28 @@ class Client
     }
 
     /**
+     * Set css
+     *
+     * @param string $css
+     * @return self
+     */
+    public function setCss($css)
+    {
+        $this->css = $css;
+        return $this;
+    }
+
+    /**
+     * Get css
+     *
+     * @return string $css
+     */
+    public function getCss()
+    {
+        return $this->css;
+    }
+
+    /**
      * Set balance
      *
      * @param float $balance
@@ -284,28 +305,6 @@ class Client
     public function getStatus()
     {
         return $this->status;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     * @return self
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string $email
-     */
-    public function getEmail()
-    {
-        return $this->email;
     }
 
     /**
@@ -375,25 +374,63 @@ class Client
     }
 
     /**
-     * Set widget
+     * Add agent
      *
-     * @param int $widget
-     * @return self
+     * @param Regidium\CommonBundle\Document\Agent $agent
      */
-    public function setWidget($widget)
+    public function addAgent(\Regidium\CommonBundle\Document\Agent $agent)
     {
-        $this->widget = $widget;
-        return $this;
+        $this->agents[] = $agent;
     }
 
     /**
-     * Get widget
+     * Remove agent
      *
-     * @return int $widget
+     * @param Regidium\CommonBundle\Document\Agent $agent
      */
-    public function getWidget()
+    public function removeAgent(\Regidium\CommonBundle\Document\Agent $agent)
     {
-        return $this->widget;
+        $this->agents->removeElement($agent);
+    }
+
+    /**
+     * Get agents
+     *
+     * @return Doctrine\Common\Collections\Collection $agents
+     */
+    public function getAgents()
+    {
+        return $this->agents;
+    }
+
+    /**
+     * Add user
+     *
+     * @param Regidium\CommonBundle\Document\User $user
+     */
+    public function addUser(\Regidium\CommonBundle\Document\User $user)
+    {
+        $this->users[] = $user;
+    }
+
+    /**
+     * Remove user
+     *
+     * @param Regidium\CommonBundle\Document\User $user
+     */
+    public function removeUser(\Regidium\CommonBundle\Document\User $user)
+    {
+        $this->users->removeElement($user);
+    }
+
+    /**
+     * Get users
+     *
+     * @return Doctrine\Common\Collections\Collection $users
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 
     /**
@@ -424,35 +461,5 @@ class Client
     public function getChats()
     {
         return $this->chats;
-    }
-
-    /**
-     * Add agent
-     *
-     * @param Regidium\CommonBundle\Document\Agent $agent
-     */
-    public function addAgent(\Regidium\CommonBundle\Document\Agent $agent)
-    {
-        $this->agents[] = $agent;
-    }
-
-    /**
-     * Remove agent
-     *
-     * @param Regidium\CommonBundle\Document\Agent $agent
-     */
-    public function removeAgent(\Regidium\CommonBundle\Document\Agent $agent)
-    {
-        $this->agents->removeElement($agent);
-    }
-
-    /**
-     * Get agents
-     *
-     * @return Doctrine\Common\Collections\Collection $agents
-     */
-    public function getAgents()
-    {
-        return $this->agents;
     }
 }

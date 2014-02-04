@@ -4,19 +4,15 @@ namespace Regidium\CommonBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Regidium\CommonBundle\Document\Auth;
-use Regidium\CommonBundle\Document\Chat;
 
 /**
  * @MongoDB\Document(
- *      repositoryClass="Regidium\CommonBundle\Repository\PlanRepository",
- *      collection="plans",
+ *      repositoryClass="Regidium\CommonBundle\Repository\FileRepository",
+ *      collection="files",
  *      requireIndexes=false
  *  )
  */
-class Plan
+class File
 {
     /**
      * @MongoDB\Id
@@ -40,33 +36,37 @@ class Plan
     private $name;
 
     /**
-     * @MongoDB\Float
+     * @MongoDB\File
      */
-    private $cost;
+    private $file;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\String
      */
-    private $count_chats;
+    private $uploadDate;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\String
      */
-    private $count_agents;
+    private $length;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Widget", mappedBy="plan")
+     * @MongoDB\String
      */
-    protected $widgets;
+    private $chunkSize;
 
-    /* =============== Constants =============== */
+    /**
+     * @MongoDB\String
+     */
+    private $md5;
+
+    /* =============== General =============== */
 
     public function __construct()
     {
         $this->setUid(uniqid());
-        $this->widgets = new ArrayCollection();
 
-        $this->setModelType('plan');
+        $this->setModelType('file');
     }
 
     /* =============== Get/Set=============== */
@@ -160,98 +160,112 @@ class Plan
     }
 
     /**
-     * Set cost
+     * Set file
      *
-     * @param float $cost
+     * @param file $file
      * @return self
      */
-    public function setCost($cost)
+    public function setFile($file)
     {
-        $this->cost = $cost;
+        $this->file = $file;
         return $this;
     }
 
     /**
-     * Get cost
+     * Get file
      *
-     * @return float $cost
+     * @return file $file
      */
-    public function getCost()
+    public function getFile()
     {
-        return $this->cost;
+        return $this->file;
     }
 
     /**
-     * Set countChats
+     * Set uploadDate
      *
-     * @param int $countChats
+     * @param string $uploadDate
      * @return self
      */
-    public function setCountChats($countChats)
+    public function setUploadDate($uploadDate)
     {
-        $this->count_chats = $countChats;
+        $this->uploadDate = $uploadDate;
         return $this;
     }
 
     /**
-     * Get countChats
+     * Get uploadDate
      *
-     * @return int $countChats
+     * @return string $uploadDate
      */
-    public function getCountChats()
+    public function getUploadDate()
     {
-        return $this->count_chats;
+        return $this->uploadDate;
     }
 
     /**
-     * Set countAgents
+     * Set length
      *
-     * @param int $countAgents
+     * @param string $length
      * @return self
      */
-    public function setCountAgents($countAgents)
+    public function setLength($length)
     {
-        $this->count_agents = $countAgents;
+        $this->length = $length;
         return $this;
     }
 
     /**
-     * Get countAgents
+     * Get length
      *
-     * @return int $countAgents
+     * @return string $length
      */
-    public function getCountAgents()
+    public function getLength()
     {
-        return $this->count_agents;
+        return $this->length;
     }
 
     /**
-     * Add widget
+     * Set chunkSize
      *
-     * @param Regidium\CommonBundle\Document\Widget $widget
+     * @param string $chunkSize
+     * @return self
      */
-    public function addWidget(\Regidium\CommonBundle\Document\Widget $widget)
+    public function setChunkSize($chunkSize)
     {
-        $this->widgets[] = $widget;
+        $this->chunkSize = $chunkSize;
+        return $this;
     }
 
     /**
-     * Remove widget
+     * Get chunkSize
      *
-     * @param Regidium\CommonBundle\Document\Widget $widget
+     * @return string $chunkSize
      */
-    public function removeWidget(\Regidium\CommonBundle\Document\Widget $widget)
+    public function getChunkSize()
     {
-        $this->widgets->removeElement($widget);
+        return $this->chunkSize;
     }
 
     /**
-     * Get widgets
+     * Set md5
      *
-     * @return Doctrine\Common\Collections\Collection $widgets
+     * @param string $md5
+     * @return self
      */
-    public function getWidgets()
+    public function setMd5($md5)
     {
-        return $this->widgets;
+        $this->md5 = $md5;
+        return $this;
+    }
+
+    /**
+     * Get md5
+     *
+     * @return string $md5
+     */
+    public function getMd5()
+    {
+        return $this->md5;
     }
 }

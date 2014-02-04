@@ -18,6 +18,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
     {
         $dummyUser = new User();
         $dummyUser->setStatus(User::STATUS_DEFAULT);
+        $dummyUser->setWidget($this->getReference('widget_regidium_my'));
         $manager->persist($dummyUser);
 
         $dummyPerson = new Person();
@@ -33,8 +34,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
 
         $manager->flush();
 
-        $this->addReference('dummyUser', $dummyUser);
-        $this->addReference('dummyUserPerson', $dummyPerson);
+        $this->addReference('dummy_user', $dummyUser);
+        $this->addReference('dummy_user_person', $dummyPerson);
     }
 
     /**
@@ -42,6 +43,6 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function getOrder()
     {
-        return 2;
+        return 5;
     }
 }

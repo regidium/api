@@ -7,15 +7,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @MongoDB\Document(
- *      repositoryClass="Regidium\CommonBundle\Repository\UserRepository",
- *      collection="users",
- *      requireIndexes=false
- *  )
- *
  * @todo Увеличивать кол-во чатов при добавлении чата
  */
-class User
+/**
+ * @MongoDB\Document(
+ *      repositoryClass="Regidium\CommonBundle\Repository\AgentRepository",
+ *      collection="agents",
+ *      requireIndexes=false
+ *  )
+ */
+class Agent
 {
     /**
      * @MongoDB\Id
@@ -34,27 +35,57 @@ class User
     private $model_type;
 
     /**
+     * @MongoDB\String
+     */
+    private $job_title;
+
+    /**
+     * @Assert\NotBlank
      * @MongoDB\Int
      */
     private $status;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", mappedBy="user")
+     * @Assert\NotBlank
+     * @MongoDB\Int
      */
-    private $person;
+    private $type;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $accept_chats;
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="users")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="agents")
      */
     private $widget;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="user")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", mappedBy="agent")
+     */
+    private $person;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="operator")
      */
     private $chats;
 
     /* =============== Constants =============== */
+
+    const TYPE_OWNER         = 1;
+    const TYPE_ADMINISTRATOR = 2;
+    const TYPE_OPERATOR      = 3;
+
+    static public function getTypes()
+    {
+        return array(
+            self::TYPE_OWNER,
+            self::TYPE_ADMINISTRATOR,
+            self::TYPE_OPERATOR
+        );
+    }
 
     const STATUS_DEFAULT = 1;
     const STATUS_BLOCKED = 2;
@@ -63,10 +94,10 @@ class User
     static public function getStatuses()
     {
         return array(
-                self::STATUS_DEFAULT,
-                self::STATUS_BLOCKED,
-                self::STATUS_DELETED
-            );
+            self::STATUS_DEFAULT,
+            self::STATUS_BLOCKED,
+            self::STATUS_DELETED
+        );
     }
 
     /* =============== General =============== */
@@ -74,11 +105,13 @@ class User
     public function __construct()
     {
         $this->setUid(uniqid());
+        $this->setType(self::TYPE_ADMINISTRATOR);
         $this->setStatus(self::STATUS_DEFAULT);
+        $this->setAcceptChats(true);
 
         $this->chats = new ArrayCollection();
 
-        $this->setModelType('user');
+        $this->setModelType('agent');
     }
 
     public function __toString()
@@ -155,6 +188,28 @@ class User
     }
 
     /**
+     * Set jobTitle
+     *
+     * @param string $jobTitle
+     * @return self
+     */
+    public function setJobTitle($jobTitle)
+    {
+        $this->job_title = $jobTitle;
+        return $this;
+    }
+
+    /**
+     * Get jobTitle
+     *
+     * @return string $jobTitle
+     */
+    public function getJobTitle()
+    {
+        return $this->job_title;
+    }
+
+    /**
      * Set status
      *
      * @param int $status
@@ -177,25 +232,47 @@ class User
     }
 
     /**
-     * Set person
+     * Set type
      *
-     * @param Regidium\CommonBundle\Document\Person $person
+     * @param int $type
      * @return self
      */
-    public function setPerson(\Regidium\CommonBundle\Document\Person $person)
+    public function setType($type)
     {
-        $this->person = $person;
+        $this->type = $type;
         return $this;
     }
 
     /**
-     * Get person
+     * Get type
      *
-     * @return \Regidium\CommonBundle\Document\Person $person
+     * @return int $type
      */
-    public function getPerson()
+    public function getType()
     {
-        return $this->person;
+        return $this->type;
+    }
+
+    /**
+     * Set acceptChats
+     *
+     * @param boolean $acceptChats
+     * @return self
+     */
+    public function setAcceptChats($acceptChats)
+    {
+        $this->accept_chats = $acceptChats;
+        return $this;
+    }
+
+    /**
+     * Get acceptChats
+     *
+     * @return boolean $acceptChats
+     */
+    public function getAcceptChats()
+    {
+        return $this->accept_chats;
     }
 
     /**
@@ -213,11 +290,33 @@ class User
     /**
      * Get widget
      *
-     * @return \Regidium\CommonBundle\Document\Widget $widget
+     * @return Regidium\CommonBundle\Document\Widget $widget
      */
     public function getWidget()
     {
         return $this->widget;
+    }
+
+    /**
+     * Set person
+     *
+     * @param Regidium\CommonBundle\Document\Person $person
+     * @return self
+     */
+    public function setPerson(\Regidium\CommonBundle\Document\Person $person)
+    {
+        $this->person = $person;
+        return $this;
+    }
+
+    /**
+     * Get person
+     *
+     * @return Regidium\CommonBundle\Document\Person $person
+     */
+    public function getPerson()
+    {
+        return $this->person;
     }
 
     /**

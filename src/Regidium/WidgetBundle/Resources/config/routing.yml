@@ -1,0 +1,30 @@
+widgets:
+    type: rest
+    prefix: /v1
+    resource: Regidium\WidgetBundle\Controller\WidgetController
+    name_prefix:  api_1_
+
+widget_pay:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetPayController
+
+widget_plan:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetPlanController
+
+widget_agent:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetAgentController
+
+widget_user:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetUserController
+
+widget_chat:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetChatController

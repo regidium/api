@@ -252,7 +252,7 @@ class Chat
     /**
      * Set operator
      *
-     * @param \Regidium\CommonBundle\Document\Agent $operator
+     * @param Regidium\CommonBundle\Document\Agent $operator
      * @return self
      */
     public function setOperator(\Regidium\CommonBundle\Document\Agent $operator)
@@ -264,7 +264,7 @@ class Chat
     /**
      * Get operator
      *
-     * @return \Regidium\CommonBundle\Document\Agent $operator
+     * @return Regidium\CommonBundle\Document\Agent $operator
      */
     public function getOperator()
     {

@@ -1,0 +1,8 @@
+parameters:
+    regidium.widget.form.type.class: Regidium\WidgetBundle\Form\WidgetForm
+
+services:
+    regidium.widget.form.type:
+        class: %regidium.widget.form.type.class%
+        tags:
+            - { name: form.type, alias: "widget" }

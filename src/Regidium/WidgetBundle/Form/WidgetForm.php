@@ -1,14 +1,15 @@
 <?php
 
-namespace Regidium\ClientBundle\Form;
+namespace Regidium\WidgetBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
-use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 
-class ClientForm extends AbstractType
+use Regidium\CommonBundle\Document\Widget;
+
+class WidgetForm extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -17,8 +18,9 @@ class ClientForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('status', 'integer', [
-                'required' => false
+            ->add('status', 'choice', [
+                'required' => false,
+                'choices' => Widget::getStatuses()
             ])
         ;
     }
@@ -29,7 +31,7 @@ class ClientForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Regidium\CommonBundle\Document\Client'
+            'data_class' => 'Regidium\CommonBundle\Document\Widget'
         ));
     }
 
@@ -38,6 +40,6 @@ class ClientForm extends AbstractType
      */
     public function getName()
     {
-        return 'client';
+        return '';
     }
 }

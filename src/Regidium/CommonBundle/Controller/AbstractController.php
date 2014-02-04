@@ -34,7 +34,7 @@ abstract class AbstractController extends FOSRestController
     /**
      * Return error
      *
-     * @param array|string $errors     Text error
+     * @param array|string $error      Text error
      * @param int          $statusCode Status code
      * @param array        $headers    Response headers
      *
@@ -78,9 +78,11 @@ abstract class AbstractController extends FOSRestController
     protected function sendArray($data = true, $statusCode = null, array $headers = array())
     {
         if (!is_array($data)) {
-            $data[] = $data;
+            $return[] = $data;
+        } else {
+            $return = $data;
         }
 
-        return $this->send($data, $statusCode, $headers);
+        return $this->send($return, $statusCode, $headers);
     }
 }

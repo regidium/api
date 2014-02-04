@@ -31,19 +31,8 @@ class UserForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fullname', 'text', [
-                    'required' => false
-                ])
-            ->add('email', 'email', [
-                    'required' => false,
-                    'constraints' => array(
-//                        new Constraints\Email(array('message' => 'Wrong Email')),
-//                        new Constraints\NotBlank(array('message' => 'Blank Email')),
-                        new UniqueDocument(array('repository' => 'regidium.user.repository', 'property' => 'email', 'exclusion' => $this->email_exclusion))
-                    )
-                ])
-            ->add('password', 'password', [
-                'required' => false
+            ->add('status', 'choice', [
+                'choices' => User::getStatuses()
             ])
         ;
     }

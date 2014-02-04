@@ -11,6 +11,9 @@ use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
+
+use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Agent;
 
 /**
@@ -27,11 +30,11 @@ use Regidium\CommonBundle\Document\Agent;
 class AgentController extends AbstractController
 {
     /**
-     * List all agents.
+     * Получаение списка агентов.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "List all agents.",
+     *   description = "Получаение списка агентов.",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
@@ -50,11 +53,11 @@ class AgentController extends AbstractController
     }
 
     /**
-     * Get single agent.
+     * Получение детальной информации об агенте.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Get single agent",
+     *   description = "Получение детальной информации об агенте",
      *   output = "Regidium\CommonBundle\Document\Agent",
      *   statusCodes = {
      *     200 = "Returned when successful"
@@ -70,11 +73,11 @@ class AgentController extends AbstractController
     {
         $agent = $this->getOr404(['uid' => $uid]);
 
-        return $agent;
+        return $this->send($agent);
     }
 
     /**
-     * Create agent from submitted data.
+     * Создание нового агента.
      *
      * @ApiDoc(
      *   resource = true,
@@ -91,7 +94,13 @@ class AgentController extends AbstractController
      */
     public function postAction(Request $request)
     {
-        $person = $this->get('regidium.agent.handler')->post($this->prepareAgentData($request, $request->request->get('password', null)));
+        // Создаем виджет для нового пользователя
+        $widget = $this->get('regidium.widget.handler')->post($request->request->all());
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Server Error!');
+        }
+
+        $person = $this->get('regidium.agent.handler')->post($widget, $this->prepareAgentData($request, $request->request->get('password', null)));
 
         if (!$person instanceof Person) {
             return $this->sendError($person);
@@ -125,7 +134,14 @@ class AgentController extends AbstractController
         if (!$person) {
             $statusCode = Codes::HTTP_CREATED;
 
+            // Создаем виджет для нового пользователя
+            $widget = $this->get('regidium.widget.handler')->post($request->request->all());
+            if (!$widget instanceof Widget) {
+                return $this->sendError('Server Error!');
+            }
+
             $person = $this->get('regidium.agent.handler')->post(
+                $widget,
                 $this->prepareAgentData($request, $request->request->get('password', null))
             );
         } else {
@@ -200,17 +216,12 @@ class AgentController extends AbstractController
     {
         return [
             'fullname' => $request->request->get('fullname', null),
+            'job_title' => $request->request->get('job_title', null),
             'avatar' => $request->request->get('avatar', null),
             'email' => $request->request->get('email', null),
             'password' => $password,
+            'type' => $request->request->get('type', Agent::TYPE_ADMINISTRATOR),
             'status' => $request->request->get('status', Agent::STATUS_DEFAULT),
-            'country' => $request->request->get('country', null),
-            'city' => $request->request->get('city', null),
-            'ip' => $request->request->get('ip', null),
-            'os' => $request->request->get('os', null),
-            'browser' => $request->request->get('browser', null),
-            'keyword' => $request->request->get('keyword', null),
-            'language' => $request->request->get('language', 'ru'),
             'accept_chats' => $request->request->get('accept_chats', true)
         ];
     }

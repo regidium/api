@@ -48,6 +48,6 @@ class LoadPaymentMethodData extends AbstractFixture implements OrderedFixtureInt
      */
     public function getOrder()
     {
-        return 5;
+        return 2;
     }
 }

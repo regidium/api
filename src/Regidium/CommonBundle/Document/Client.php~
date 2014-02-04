@@ -1,0 +1,168 @@
+<?php
+
+namespace Regidium\CommonBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Regidium\CommonBundle\Document\Plan;
+use Regidium\CommonBundle\Document\PaymentMethod;
+
+/**
+ * @MongoDB\Document(
+ *      repositoryClass="Regidium\CommonBundle\Repository\ClientRepository",
+ *      collection="clients",
+ *      requireIndexes=false
+ *  )
+ */
+class Client
+{
+    /**
+     * @MongoDB\Id
+     */
+    private $id;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $uid;
+
+    /**
+     * @MongoDB\String
+     */
+    private $model_type;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $personal_account;
+
+    /**
+     * @MongoDB\Float
+     */
+    private $balance;
+
+    /**
+     * @MongoDB\String
+     */
+    private $url;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $status;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $available_chats;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $available_agents;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="client")
+     */
+    private $widget;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"all"}, inversedBy="clients")
+     */
+    private $owner;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"all"}, inversedBy="clients")
+     */
+    private $plan;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="client")
+     */
+    protected $chats;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Visitors", mappedBy="clients")
+     */
+    protected $visitors;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\User", mappedBy="clients")
+     */
+    protected $users;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Agent", mappedBy="clients")
+     */
+    protected $agents;
+
+    /* =============== Constants =============== */
+
+    const STATUS_DEFAULT = 1;
+    const STATUS_BLOCKED = 2;
+    const STATUS_DELETED = 3;
+
+    static public function getStatuses()
+    {
+        return array(
+                self::STATUS_DEFAULT,
+                self::STATUS_BLOCKED,
+                self::STATUS_DELETED
+            );
+    }
+
+    /* =============== General =============== */
+
+    public function __construct()
+    {
+        $this->setUid(uniqid());
+        $this->setPersonalAccount(uniqid());
+        $this->setBalance(0);
+        $this->setAvailableAgents(0);
+        $this->setAvailableChats(0);
+        $this->setStatus(self::STATUS_DEFAULT);
+
+        $this->chats = new ArrayCollection();
+        $this->visitors = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->agents = new ArrayCollection();
+
+        $this->setModelType('client');
+    }
+
+    public function __toString()
+    {
+        return $this->personal_account;
+    }
+
+    /* =============== Get/Set=============== */
+
+    /**
+     * Set id
+     *
+     * @param string $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}

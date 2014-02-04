@@ -1,8 +1,0 @@
-parameters:
-    regidium.client.form.type.class: Regidium\ClientBundle\Form\ClientForm
-
-services:
-    regidium.client.form.type:
-        class: %regidium.client.form.type.class%
-        tags:
-            - { name: form.type, alias: "client" }

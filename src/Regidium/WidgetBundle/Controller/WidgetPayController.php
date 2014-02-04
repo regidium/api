@@ -1,33 +1,33 @@
 <?php
 
-namespace Regidium\ClientBundle\Controller;
+namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use FOS\RestBundle\Controller\Annotations;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-use Regidium\CommonBundle\Document\Client;
+use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Payment;
 use Regidium\CommonBundle\Document\PaymentMethod;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
- * Client payment controller
+ * Widget payment controller
  *
  * @todo Update response for HTML format
  *
- * @package Regidium\ClientBundle\Controller
+ * @package Regidium\WidgetBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
  * @Annotations\RouteResource("Pay")
  */
-class ClientPayController extends AbstractController
+class WidgetPayController extends AbstractController
 {
     /**
      * @todo Not realized
-     * List all client payments.
+     * List all widget payments.
      *
      * @ApiDoc(
      *   resource = false,
@@ -36,7 +36,7 @@ class ClientPayController extends AbstractController
      *   }
      * )
      *
-     * @param Request $uid Client uid
+     * @param Request $uid Widget UID
      *
      * @return View
      */
@@ -46,7 +46,7 @@ class ClientPayController extends AbstractController
     }
 
     /**
-     * Create client payment.
+     * Create widget payment.
      *
      * @ApiDoc(
      *   resource = false,
@@ -58,17 +58,17 @@ class ClientPayController extends AbstractController
      *
      * @todo Update
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param string                                    $uid Client uid
-     * @param string                                    $payment_method
+     * @param Request $request
+     * @param string  $uid Widget UID
+     * @param string  $payment_method
      *
      * @return View
      */
     public function postAction(Request $request, $uid, $payment_method)
     {
-        $client = $this->get('regidium.client.handler')->one(['uid' => $uid]);
-        if (!$client instanceof Client) {
-            return $this->view(['errors' => ['Client not found!']]);
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
         }
 
         $payment_method = $this->get('regidium.billing.payment_method.handler')->one(['uid' => $payment_method]);
@@ -82,7 +82,7 @@ class ClientPayController extends AbstractController
         }
 
         $payment = $this->get('regidium.billing.payment.handler')->post(
-            $client,
+            $widget,
             $payment_method,
             $amount
         );
@@ -92,8 +92,8 @@ class ClientPayController extends AbstractController
         }
 
         /** @todo Запись дейсвий */
-        $client->setBalance($client->getBalance() + $amount);
-        $this->get('regidium.client.handler')->edit($client);
+        $widget->setBalance($widget->getBalance() + $amount);
+        $this->get('regidium.widget.handler')->edit($widget);
 
         return $this->view($payment);
     }

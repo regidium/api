@@ -21,13 +21,13 @@ class Agent
     /**
      * @MongoDB\Id
      */
-    protected $id;
+    private $id;
 
     /**
      * @MongoDB\String
      * @MongoDB\UniqueIndex(safe="true")
      */
-    protected $uid;
+    private $uid;
 
     /**
      * @MongoDB\String
@@ -43,30 +43,49 @@ class Agent
      * @Assert\NotBlank
      * @MongoDB\Int
      */
-    protected $status;
+    private $status;
+
+    /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $type;
 
     /**
      * @MongoDB\Boolean
      */
-    protected $accept_chats;
+    private $accept_chats;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="agents")
+     */
+    private $widget;
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", mappedBy="agent")
      */
-    protected $person;
+    private $person;
 
     /**
-     * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Client", cascade={"all"}, inversedBy="agents")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="operator")
      */
-    protected $client;
-
-    /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="agent")
-     */
-    protected $chats;
+    private $chats;
 
     /* =============== Constants =============== */
+
+    const TYPE_OWNER         = 1;
+    const TYPE_ADMINISTRATOR = 2;
+    const TYPE_OPERATOR      = 3;
+
+    static public function getTypes()
+    {
+        return array(
+            self::TYPE_OWNER,
+            self::TYPE_ADMINISTRATOR,
+            self::TYPE_OPERATOR
+        );
+    }
 
     const STATUS_DEFAULT = 1;
     const STATUS_BLOCKED = 2;
@@ -86,6 +105,7 @@ class Agent
     public function __construct()
     {
         $this->setUid(uniqid());
+        $this->setType(self::TYPE_ADMINISTRATOR);
         $this->setStatus(self::STATUS_DEFAULT);
         $this->setAcceptChats(true);
 
@@ -168,6 +188,28 @@ class Agent
     }
 
     /**
+     * Set jobTitle
+     *
+     * @param string $jobTitle
+     * @return self
+     */
+    public function setJobTitle($jobTitle)
+    {
+        $this->job_title = $jobTitle;
+        return $this;
+    }
+
+    /**
+     * Get jobTitle
+     *
+     * @return string $jobTitle
+     */
+    public function getJobTitle()
+    {
+        return $this->job_title;
+    }
+
+    /**
      * Set status
      *
      * @param int $status
@@ -187,6 +229,28 @@ class Agent
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set type
+     *
+     * @param int $type
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return int $type
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
@@ -212,6 +276,28 @@ class Agent
     }
 
     /**
+     * Set widget
+     *
+     * @param Regidium\CommonBundle\Document\Widget $widget
+     * @return self
+     */
+    public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
+    {
+        $this->widget = $widget;
+        return $this;
+    }
+
+    /**
+     * Get widget
+     *
+     * @return Regidium\CommonBundle\Document\Widget $widget
+     */
+    public function getWidget()
+    {
+        return $this->widget;
+    }
+
+    /**
      * Set person
      *
      * @param Regidium\CommonBundle\Document\Person $person
@@ -226,33 +312,11 @@ class Agent
     /**
      * Get person
      *
-     * @return Regidium\CommonBundle\Document\Person $person
+     * @return \Regidium\CommonBundle\Document\Person $person
      */
     public function getPerson()
     {
         return $this->person;
-    }
-
-    /**
-     * Set client
-     *
-     * @param Regidium\CommonBundle\Document\Client $client
-     * @return self
-     */
-    public function setClient(\Regidium\CommonBundle\Document\Client $client)
-    {
-        $this->client = $client;
-        return $this;
-    }
-
-    /**
-     * Get client
-     *
-     * @return Regidium\CommonBundle\Document\Client $client
-     */
-    public function getClient()
-    {
-        return $this->client;
     }
 
     /**
@@ -283,27 +347,5 @@ class Agent
     public function getChats()
     {
         return $this->chats;
-    }
-
-    /**
-     * Set jobTitle
-     *
-     * @param string $jobTitle
-     * @return self
-     */
-    public function setJobTitle($jobTitle)
-    {
-        $this->job_title = $jobTitle;
-        return $this;
-    }
-
-    /**
-     * Get jobTitle
-     *
-     * @return string $jobTitle
-     */
-    public function getJobTitle()
-    {
-        return $this->job_title;
     }
 }

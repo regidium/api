@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 
-use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 use Regidium\CommonBundle\Document\Agent;
 
 class AgentForm extends AbstractType
@@ -29,8 +28,12 @@ class AgentForm extends AbstractType
     {
         $builder
             ->add('job_title', 'text', [
-                    'required' => false
-                ])
+                'required' => false
+            ])
+            ->add('type', 'choice', [
+                'required' => false,
+                'choices' => Agent::getTypes()
+            ])
             ->add('status', 'choice', [
                 'required' => false,
                 'choices' => Agent::getStatuses()

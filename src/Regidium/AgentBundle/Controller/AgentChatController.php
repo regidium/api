@@ -55,39 +55,41 @@ class AgentChatController extends AbstractController
     }
 
     /**
-     * Update existing chat.
+     * Добавлям агента к чату.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Update existing chat.",
+     *   description = "Добавлям агента к чату.",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
      * @param int $uid  Agent UID
-     * @param int $chat Chat UID
+     * @param int $chat_uid Chat UID
      *
      * @return View
      */
-    public function putAction($uid, $chat)
+    public function putAction($uid, $chat_uid)
     {
+        /** @var Agent $agent */
         $agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]);
         if (!$agent instanceof Agent) {
             return $this->sendError('Agent not found!');
         }
 
-        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat]);
+        /** @var Chat $chat */
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
         if (!$chat instanceof Chat) {
             return $this->sendError('Chat not found!');
         }
 
-        $chat->setAgent($agent);
+        $chat->setOperator($agent);
         $return = $this->get('regidium.chat.handler')->edit($chat);
         if (!$return instanceof Chat) {
             return $this->sendError('Server error!', Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $this->sendArray($return);
+        return $this->send($return);
     }
 }

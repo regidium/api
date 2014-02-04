@@ -1,0 +1,12 @@
+imports:
+    - { resource: forms.yml }
+
+parameters:
+    regidium.widget.handler.class: Regidium\WidgetBundle\Handler\WidgetHandler
+    regidium.widget.document.class: Regidium\CommonBundle\Document\Widget
+
+
+services:
+    regidium.widget.handler:
+        class: %regidium.widget.handler.class%
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.widget.document.class% ]

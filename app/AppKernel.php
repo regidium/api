@@ -30,7 +30,7 @@ class AppKernel extends Kernel
             new Regidium\UserBundle\RegidiumUserBundle(),
             new Regidium\AuthBundle\RegidiumAuthBundle(),
             new Regidium\ChatBundle\RegidiumChatBundle(),
-            new Regidium\ClientBundle\RegidiumClientBundle(),
+            new Regidium\WidgetBundle\RegidiumWidgetBundle(),
             new Regidium\BillingBundle\RegidiumBillingBundle()
         );
 

@@ -4,6 +4,10 @@ namespace Regidium\CommonBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Regidium\CommonBundle\Document\Plan;
+use Regidium\CommonBundle\Document\PaymentMethod;
 
 /**
  * @MongoDB\Document(
@@ -17,13 +21,13 @@ class Widget
     /**
      * @MongoDB\Id
      */
-    protected $id;
+    private $id;
 
     /**
      * @MongoDB\String
      * @MongoDB\UniqueIndex(safe="true")
      */
-    protected $uid;
+    private $uid;
 
     /**
      * @MongoDB\String
@@ -32,32 +36,97 @@ class Widget
 
     /**
      * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $personal_account;
+
+    /**
+     * @MongoDB\String
      */
     protected $css;
 
     /**
-     * @MongoDB\Hash
+     * @MongoDB\Float
      */
-    protected $option;
+    private $balance;
+
+    /**
+     * @MongoDB\String
+     */
+    private $url;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $status;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $available_chats;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $available_agents;
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Client", mappedBy="widget")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"all"}, inversedBy="widgets")
      */
-    protected $client;
+    private $plan;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Agent", mappedBy="widget")
+     */
+    private $agents;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\User", mappedBy="widget")
+     */
+    private $users;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="widget")
+     */
+    private $chats;
+
+    /* =============== Constants =============== */
+
+    const STATUS_DEFAULT = 1;
+    const STATUS_BLOCKED = 2;
+    const STATUS_DELETED = 3;
+
+    static public function getStatuses()
+    {
+        return array(
+                self::STATUS_DEFAULT,
+                self::STATUS_BLOCKED,
+                self::STATUS_DELETED
+            );
+    }
 
     /* =============== General =============== */
 
     public function __construct()
     {
         $this->setUid(uniqid());
+        $this->setPersonalAccount(uniqid());
+        $this->setBalance(0);
+        $this->setAvailableAgents(0);
+        $this->setAvailableChats(0);
+        $this->setStatus(self::STATUS_DEFAULT);
+
+        $this->agents = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->chats = new ArrayCollection();
 
         $this->setModelType('widget');
     }
 
     public function __toString()
     {
-        return $this->css;
+        return $this->personal_account;
     }
 
     /* =============== Get/Set=============== */
@@ -129,6 +198,28 @@ class Widget
     }
 
     /**
+     * Set personalAccount
+     *
+     * @param string $personalAccount
+     * @return self
+     */
+    public function setPersonalAccount($personalAccount)
+    {
+        $this->personal_account = $personalAccount;
+        return $this;
+    }
+
+    /**
+     * Get personalAccount
+     *
+     * @return string $personalAccount
+     */
+    public function getPersonalAccount()
+    {
+        return $this->personal_account;
+    }
+
+    /**
      * Set css
      *
      * @param string $css
@@ -151,46 +242,224 @@ class Widget
     }
 
     /**
-     * Set option
+     * Set balance
      *
-     * @param array $option
+     * @param float $balance
      * @return self
      */
-    public function setOption($option)
+    public function setBalance($balance)
     {
-        $this->option = $option;
+        $this->balance = $balance;
         return $this;
     }
 
     /**
-     * Get option
+     * Get balance
      *
-     * @return array $option
+     * @return float $balance
      */
-    public function getOption()
+    public function getBalance()
     {
-        return $this->option;
+        return $this->balance;
     }
 
     /**
-     * Set client
+     * Set url
      *
-     * @param Client $client
+     * @param string $url
      * @return self
      */
-    public function setClient(Client $client)
+    public function setUrl($url)
     {
-        $this->client = $client;
+        $this->url = $url;
         return $this;
     }
 
     /**
-     * Get client
+     * Get url
      *
-     * @return Client $client
+     * @return string $url
      */
-    public function getClient()
+    public function getUrl()
     {
-        return $this->client;
+        return $this->url;
+    }
+
+    /**
+     * Set status
+     *
+     * @param int $status
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return int $status
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set availableChats
+     *
+     * @param int $availableChats
+     * @return self
+     */
+    public function setAvailableChats($availableChats)
+    {
+        $this->available_chats = $availableChats;
+        return $this;
+    }
+
+    /**
+     * Get availableChats
+     *
+     * @return int $availableChats
+     */
+    public function getAvailableChats()
+    {
+        return $this->available_chats;
+    }
+
+    /**
+     * Set availableAgents
+     *
+     * @param int $availableAgents
+     * @return self
+     */
+    public function setAvailableAgents($availableAgents)
+    {
+        $this->available_agents = $availableAgents;
+        return $this;
+    }
+
+    /**
+     * Get availableAgents
+     *
+     * @return int $availableAgents
+     */
+    public function getAvailableAgents()
+    {
+        return $this->available_agents;
+    }
+
+    /**
+     * Set plan
+     *
+     * @param Regidium\CommonBundle\Document\Plan $plan
+     * @return self
+     */
+    public function setPlan(\Regidium\CommonBundle\Document\Plan $plan)
+    {
+        $this->plan = $plan;
+        return $this;
+    }
+
+    /**
+     * Get plan
+     *
+     * @return Regidium\CommonBundle\Document\Plan $plan
+     */
+    public function getPlan()
+    {
+        return $this->plan;
+    }
+
+    /**
+     * Add agent
+     *
+     * @param Regidium\CommonBundle\Document\Agent $agent
+     */
+    public function addAgent(\Regidium\CommonBundle\Document\Agent $agent)
+    {
+        $this->agents[] = $agent;
+    }
+
+    /**
+     * Remove agent
+     *
+     * @param Regidium\CommonBundle\Document\Agent $agent
+     */
+    public function removeAgent(\Regidium\CommonBundle\Document\Agent $agent)
+    {
+        $this->agents->removeElement($agent);
+    }
+
+    /**
+     * Get agents
+     *
+     * @return Doctrine\Common\Collections\Collection $agents
+     */
+    public function getAgents()
+    {
+        return $this->agents;
+    }
+
+    /**
+     * Add user
+     *
+     * @param Regidium\CommonBundle\Document\User $user
+     */
+    public function addUser(\Regidium\CommonBundle\Document\User $user)
+    {
+        $this->users[] = $user;
+    }
+
+    /**
+     * Remove user
+     *
+     * @param Regidium\CommonBundle\Document\User $user
+     */
+    public function removeUser(\Regidium\CommonBundle\Document\User $user)
+    {
+        $this->users->removeElement($user);
+    }
+
+    /**
+     * Get users
+     *
+     * @return Doctrine\Common\Collections\Collection $users
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
+
+    /**
+     * Add chat
+     *
+     * @param Regidium\CommonBundle\Document\Chat $chat
+     */
+    public function addChat(\Regidium\CommonBundle\Document\Chat $chat)
+    {
+        $this->chats[] = $chat;
+    }
+
+    /**
+     * Remove chat
+     *
+     * @param Regidium\CommonBundle\Document\Chat $chat
+     */
+    public function removeChat(\Regidium\CommonBundle\Document\Chat $chat)
+    {
+        $this->chats->removeElement($chat);
+    }
+
+    /**
+     * Get chats
+     *
+     * @return Doctrine\Common\Collections\Collection $chats
+     */
+    public function getChats()
+    {
+        return $this->chats;
     }
 }

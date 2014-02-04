@@ -5,24 +5,24 @@ namespace Regidium\ChatBundle\Handler;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\ChatMessage;
-use Regidium\CommonBundle\Document\User;
-use Regidium\CommonBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Person;
 
 class ChatMessageHandler extends AbstractHandler
 {
     /**
      * Create a new chat message.
      *
-     * @param Chat $chat
-     * @param User|Agent $sender
-     * @param User|Agent|null $receiver
-     * @param array $text
+     * @param Chat   $chat
+     * @param Person $sender
+     * @param Person $receiver
+     * @param string  $text
      *
      * @return ChatMessage
      */
-    public function post(Chat $chat, $sender, $receiver = null, $text)
+    public function post(Chat $chat, Person $sender, $receiver = null, $text)
     {
-        $chat_message = $this->createChatMessage();
+        /** @var ChatMessage $chat_message */
+        $chat_message = $this->createEntity();
 
         $chat_message->setChat($chat);
         $chat_message->setText($text);
@@ -34,10 +34,5 @@ class ChatMessageHandler extends AbstractHandler
         $this->dm->persist($chat_message);
         $this->dm->flush($chat_message);
         return $chat_message;
-    }
-
-    private function createChatMessage()
-    {
-        return new $this->entityClass();
     }
 }

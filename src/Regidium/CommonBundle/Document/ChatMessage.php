@@ -56,13 +56,13 @@ class ChatMessage
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\User", cascade={"all"}, inversedBy="output_messages")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"all"}, inversedBy="output_messages")
      */
     private $sender;
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\User", cascade={"all"}, inversedBy="input_messages")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"all"}, inversedBy="input_messages")
      */
     private $receiver;
 
@@ -272,10 +272,10 @@ class ChatMessage
     /**
      * Set sender
      *
-     * @param Regidium\CommonBundle\Document\User $sender
+     * @param \Regidium\CommonBundle\Document\Person $sender
      * @return self
      */
-    public function setSender(\Regidium\CommonBundle\Document\User $sender)
+    public function setSender(\Regidium\CommonBundle\Document\Person $sender)
     {
         $this->sender = $sender;
         return $this;
@@ -284,7 +284,7 @@ class ChatMessage
     /**
      * Get sender
      *
-     * @return Regidium\CommonBundle\Document\User $sender
+     * @return \Regidium\CommonBundle\Document\Person $sender
      */
     public function getSender()
     {
@@ -294,10 +294,10 @@ class ChatMessage
     /**
      * Set receiver
      *
-     * @param Regidium\CommonBundle\Document\User $receiver
+     * @param \Regidium\CommonBundle\Document\Person $receiver
      * @return self
      */
-    public function setReceiver(\Regidium\CommonBundle\Document\User $receiver)
+    public function setReceiver(\Regidium\CommonBundle\Document\Person $receiver)
     {
         $this->receiver = $receiver;
         return $this;
@@ -306,7 +306,7 @@ class ChatMessage
     /**
      * Get receiver
      *
-     * @return Regidium\CommonBundle\Document\User $receiver
+     * @return Regidium\CommonBundle\Document\Person $receiver
      */
     public function getReceiver()
     {

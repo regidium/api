@@ -5,7 +5,7 @@ namespace Regidium\ChatBundle\Handler;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\User;
-use Regidium\CommonBundle\Document\Client;
+use Regidium\CommonBundle\Document\Widget;
 
 class ChatHandler extends AbstractHandler
 {
@@ -36,17 +36,18 @@ class ChatHandler extends AbstractHandler
     /**
      * Create a new chat.
      *
-     * @param Client $client
-     * @param User $user
-     * @param array $parameters
+     * @param Widget $widget
+     * @param User   $user
+     * @param array  $parameters
      *
      * @return Chat
      */
-    public function post(Client $client, User $user, array $parameters)
+    public function post(Widget $widget, User $user, array $parameters)
     {
-        $chat = $this->createChat();
+        /** @var Chat $chat */
+        $chat = $this->createEntity();
 
-        $chat->setClient($client);
+        $chat->setWidget($widget);
         $chat->setUser($user);
 
         $this->dm->persist($chat);
@@ -57,6 +58,8 @@ class ChatHandler extends AbstractHandler
     /**
      * Edit a chat.
      *
+     * @todo Проверить необходимость
+     *
      * @param Chat  $chat
      * @param array $parameters
      *
@@ -64,7 +67,8 @@ class ChatHandler extends AbstractHandler
      */
     public function put(Chat $chat, array $parameters)
     {
-        return $this->processForm($chat, $parameters, 'PUT');
+        return $chat;
+        //return $this->processForm($chat, $parameters, 'PUT');
     }
 
     /**
@@ -79,10 +83,5 @@ class ChatHandler extends AbstractHandler
     public function edit(Chat $chat) {
         $this->dm->flush($chat);
         return $chat;
-    }
-
-    private function createChat()
-    {
-        return new $this->entityClass();
     }
 }

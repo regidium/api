@@ -4,7 +4,7 @@ namespace Regidium\BillingBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 
-use Regidium\CommonBundle\Document\Client;
+use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Payment;
 use Regidium\CommonBundle\Document\PaymentMethod;
 
@@ -50,16 +50,16 @@ class PaymentHandler extends AbstractHandler
     /**
      * Create a new payment.
      *
-     * @param Client $client
+     * @param Widget        $widget
      * @param PaymentMethod $payment_method
-     * @param array $parameters
+     * @param float         $amount
      *
      * @return Payment
      */
-    public function post(Client $client, PaymentMethod $payment_method, $amount)
+    public function post(Widget $widget, PaymentMethod $payment_method, $amount)
     {
         $entity = $this->createEntity();
-        $entity->setClient($client);
+        $entity->setWidget($widget);
         $entity->setPaymentMethod($payment_method);
         $entity->setAmount($amount);
 

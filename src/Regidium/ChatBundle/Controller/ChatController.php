@@ -31,28 +31,22 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 class ChatController extends AbstractController
 {
     /**
-     * Get single chat.
+     * Получить информацию о чате.
      *
      * @todo Сделать доступным через пользователя
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Gets chat for a given uid",
-     *   output = "Regidium\ChatBundle\Document\Chat",
+     *   description = "Получить информацию о чате.",
+     *   output = "Regidium\CommonBundle\Document\Chat",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when the chat is not found"
+     *     200 = "Returned when successful"
      *   }
      * )
-     *
-     *
-     * @Annotations\View(templateVar="chat")
      *
      * @param int     $uid   chat uid
      *
      * @return array
-     *
-     * @throws NotFoundHttpException when chat not exist
      */
     public function getAction($uid)
     {
@@ -80,40 +74,40 @@ class ChatController extends AbstractController
      */
     public function postAction(Request $request)
     {
-        $client = null;
+        $widget = null;
         if (!isset($_SERVER['HTTP_ORIGIN'])) {
-            return $this->view(['errors' => ['Client not found!']]);
+            return $this->sendError('Widget not found!');
         }
 
-        $client = $this->get('regidium.client.handler')->one(['url' => $_SERVER['HTTP_ORIGIN']]);
-        if (!$client) {
-            return $this->view(['errors' => ['Client not found!']]);
+        $widget = $this->get('regidium.widget.handler')->one(['url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/")]);
+        if (!$widget) {
+            return $this->sendError('Widget not found!');
         }
 
-        if ($client->getAvailableChats() < 1) {
-            return $this->view(['errors' => ['Client is not available to create new chat!']]);
+        if ($widget->getAvailableChats() < 1) {
+            return $this->sendError('Widget is not available to create new chat!');
         }
 
         $user = $this->get('regidium.user.handler')->one(['uid' => $request->request->get('user', null)]);
 
         if (!$user instanceof User) {
-            return $this->view(['errors' => 'User not found! ']);
+            return $this->sendError('User not found!');
         }
 
         $result = $this->get('regidium.chat.handler')->post(
-            $client,
+            $widget,
             $user,
             $request->request->all()
         );
 
         if (!$result instanceof Chat) {
-            return $this->view(['errors' => $result]);
+            return $this->sendError($result);
         }
 
-        $client->setAvailableChats($client->getAvailableChats() - 1);
-        $this->get('regidium.client.handler')->edit($client);
+        $widget->setAvailableChats($widget->getAvailableChats() - 1);
+        $this->get('regidium.widget.handler')->edit($widget);
 
-        return $this->view($result);
+        return $this->send($result);
     }
 
     /**
@@ -121,14 +115,12 @@ class ChatController extends AbstractController
      *
      * @param array $criteria
      *
-     * @return Chat
-     *
-     * @throws NotFoundHttpException
+     * @return string|Chat
      */
     protected function getOr404(array $criteria)
     {
         if (!($chat = $this->get('regidium.chat.handler')->one($criteria))) {
-            throw new NotFoundHttpException(sprintf('The resource was not found.'));
+            return $this->sendError('The resource was not found.');
         }
 
         return $chat;

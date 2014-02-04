@@ -12,12 +12,14 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 
+use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\User;
 
 /**
  * User controller
  *
  * @todo Update response for HTML format
+ * @todo Security
  *
  * @package Regidium\UserBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -46,7 +48,7 @@ class UserController extends AbstractController
     {
         $users = $this->get('regidium.user.handler')->all();
 
-        return $this->returnArray(array_values($users));
+        return $this->sendArray(array_values($users));
     }
 
     /**
@@ -73,7 +75,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Create new user from the submitted data.
+     * Создаем пользователя
      *
      * @ApiDoc(
      *   resource = false,
@@ -209,6 +211,7 @@ class UserController extends AbstractController
             'country' => $request->request->get('country', null),
             'city' => $request->request->get('city', null),
             'ip' => $request->request->get('ip', null),
+            'device' => $request->request->get('device', null),
             'os' => $request->request->get('os', null),
             'browser' => $request->request->get('browser', null),
             'keyword' => $request->request->get('keyword', null),

@@ -1,31 +1,31 @@
 <?php
 
-namespace Regidium\ClientBundle\Controller;
+namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use FOS\RestBundle\Controller\Annotations;
 
-use Regidium\CommonBundle\Controller\AbstractController;
-use Regidium\CommonBundle\Document\Client;
-use Regidium\CommonBundle\Document\Plan;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Regidium\CommonBundle\Controller\AbstractController;
+use Regidium\CommonBundle\Document\Widget;
+use Regidium\CommonBundle\Document\Plan;
+
 /**
- * Client plan controller
+ * Widget plan controller
  *
  * @todo Update response for HTML format
  *
- * @package Regidium\ClientBundle\Controller
+ * @package Regidium\WidgetBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
  * @Annotations\RouteResource("Plan")
  */
-class ClientPlanController extends AbstractController
+class WidgetPlanController extends AbstractController
 {
     /**
-     * Select client plan.
+     * Select widget plan.
      *
      * @ApiDoc(
      *   resource = false,
@@ -36,16 +36,16 @@ class ClientPlanController extends AbstractController
      * )
      *
      * @param Request $request
-     * @param string  $uid  Client uid
-     * @param string  $plan Plan uid
+     * @param string  $uid     Widget UID
+     * @param string  $plan    Plan UID
      *
      * @return View
      */
     public function putAction(Request $request, $uid, $plan)
     {
-        $client = $this->get('regidium.client.handler')->one(['uid' => $uid]);
-        if (!$client instanceof Client) {
-            return $this->view(['errors' => ['Client not found!']]);
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
         }
 
         $plan = $this->get('regidium.billing.plan.handler')->one(['uid' => $plan]);
@@ -53,16 +53,16 @@ class ClientPlanController extends AbstractController
             return $this->view(['errors' => ['Plan not found!']]);
         }
 
-        if ($client->getBalance() < $plan->getCost()) {
+        if ($widget->getBalance() < $plan->getCost()) {
             return $this->view(['errors' => ['Not enough money!']]);
         }
 
-        $client->setPlan($plan);
-        $client->setBalance($client->getBalance() - $plan->getCost());
-        $client->setAvailableAgents($plan->getCountAgents());
-        $client->setAvailableChats($plan->getCountChats());
-        $this->get('regidium.client.handler')->edit($client);
+        $widget->setPlan($plan);
+        $widget->setBalance($widget->getBalance() - $plan->getCost());
+        $widget->setAvailableAgents($plan->getCountAgents());
+        $widget->setAvailableChats($plan->getCountChats());
+        $this->get('regidium.widget.handler')->edit($widget);
 
-        return $this->view($client);
+        return $this->view($widget);
     }
 }

@@ -1,88 +1,84 @@
 <?php
 
-namespace Regidium\ClientBundle\Controller;
+namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Request\ParamFetcherInterface;
-
-use Regidium\CommonBundle\Controller\AbstractController;
-
-use Regidium\CommonBundle\Document\Client;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Regidium\CommonBundle\Controller\AbstractController;
+use Regidium\CommonBundle\Document\Widget;
+
 /**
- * Client controller
+ * Widget controller
  *
  * @todo Update response for HTML format
  *
- * @package Regidium\ClientBundle\Controller
+ * @package Regidium\WidgetBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
- * @Annotations\RouteResource("Client")
+ * @Annotations\RouteResource("Widget")
  */
-class ClientController extends AbstractController
+class WidgetController extends AbstractController
 {
     /**
-     * List all clients.
+     * List all widgets.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "List all clients",
+     *   description = "List all widgets",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
+     *widget
+     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing widgets.")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many widgets to return.")
      *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing clients.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many clients to return.")
-     *
-     * @return array
+     * @return View
      */
     public function cgetAction()
     {
-        $return = $this->get('regidium.client.handler')->all();
+        $return = $this->get('regidium.widget.handler')->all();
 
         return $this->view($return);
     }
 
     /**
-     * Get single client.
+     * Get single widget3.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Gets a clients for a given uid",
-     *   output = "Regidium\CommonBundle\Document\Client",
+     *   description = "Gets a widgets for a given uid",
+     *   output = "Regidium\CommonBundle\Document\Widget",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     404 = "Returned when the client is not found"
+     *     404 = "Returned when the widget is not found"
      *   }
      * )
      *
-     * @param string $uid Client UID
+     * @param string $uid Widget UID
      *
      * @return array
      *
      */
     public function getAction($uid)
     {
-        $client = $this->getOr404(['uid' => $uid]);
+        $widget = $this->getOr404(['uid' => $uid]);
 
-        return $client;
+        return $this->send($widget);
     }
 
     /**
-     * Create a client from the submitted data.
+     * Create a widget from the submitted data.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Creates a new client from the submitted data.",
-     *   input = "Regidium\ClientBundle\Form\ClientForm",
+     *   description = "Creates a new widget from the submitted data.",
+     *   input = "Regidium\WidgetBundle\Form\WidgetForm",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
@@ -94,11 +90,11 @@ class ClientController extends AbstractController
      */
     public function postAction(Request $request)
     {
-        $result = $this->get('regidium.client.handler')->post(
+        $result = $this->get('regidium.widget.handler')->post(
             $request->request->all()
         );
 
-        if (!$result instanceof Client) {
+        if (!$result instanceof Widget) {
             return $this->view(['errors' => $result]);
         }
 
@@ -107,46 +103,46 @@ class ClientController extends AbstractController
             '_format' => $request->get('_format')
         );
 
-        return $this->routeRedirectView('api_1_get_client', $routeOptions, Codes::HTTP_CREATED);
+        return $this->routeRedirectView('api_1_get_widget', $routeOptions, Codes::HTTP_CREATED);
 
     }
 
     /**
-     * Update existing client from the submitted data or create a new client at a specific location.
+     * Update existing widget from the submitted data or create a new widget at a specific location.
      *
      * @ApiDoc(
      *   resource = false,
-     *   input = "Regidium\ClientBundle\Form\ClientForm",
+     *   input = "Regidium\WidgetBundle\Form\WidgetForm",
      *   statusCodes = {
-     *     201 = "Returned when the client is created",
+     *     201 = "Returned when the widget is created",
      *     204 = "Returned when successful",
      *     400 = "Returned when the form has errors"
      *   }
      * )
      *
      * @param Request $request Request object
-     * @param string  $uid     Client UID
+     * @param string  $uid     Widget UID
      *
      * @return View
      */
     public function putAction(Request $request, $uid)
     {
-        if (!($client = $this->get('regidium.client.handler')->one(['uid' => $uid]))) {
+        if (!($widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]))) {
             $statusCode = Codes::HTTP_CREATED;
             $post = [
                 'email' => $request->request->get('email', null),
                 'fullname' => $request->request->get('fullname', null),
                 'password' => $request->request->get('password', null),
-                'status' => $request->request->get('status', Client::STATUS_DEFAULT)
+                'status' => $request->request->get('status', Widget::STATUS_DEFAULT)
             ];
-            $client = $this->get('regidium.client.handler')->post(
+            $widget = $this->get('regidium.widget.handler')->post(
                 $post
             );
         } else {
             $statusCode = Codes::HTTP_OK;
             $password = $request->request->get('password', null);
-            if ($client->getPassword() != null && $password == null) {
-                $password = $client->getPassword();
+            if ($widget->getPassword() != null && $password == null) {
+                $password = $widget->getPassword();
             }
             $put = [
                 'email' => $request->request->get('email', null),
@@ -154,26 +150,26 @@ class ClientController extends AbstractController
                 'password' => $password,
                 'status' => $request->request->get('status', 2)
             ];
-            $client = $this->get('regidium.client.handler')->put(
-                $client,
+            $widget = $this->get('regidium.widget.handler')->put(
+                $widget,
                 $put
             );
         }
 
-        if (!$client instanceof Client) {
-            return  $this->view(['errors' => $client]);
+        if (!$widget instanceof Widget) {
+            return  $this->view(['errors' => $widget]);
         }
 
         $routeOptions = array(
-            'uid' => $client->getUid(),
+            'uid' => $widget->getUid(),
             '_format' => $request->get('_format')
         );
 
-        return $this->routeRedirectView('api_1_get_client', $routeOptions, $statusCode);
+        return $this->routeRedirectView('api_1_get_widget', $routeOptions, $statusCode);
     }
 
     /**
-     * Remove existing client.
+     * Remove existing widget.
      *
      *
      * @ApiDoc(
@@ -183,17 +179,17 @@ class ClientController extends AbstractController
      *   }
      * )
      *
-     * @param int   $uid  client uid
+     * @param string $uid Widget UID
      *
      * @return View
      *
      */
     public function deleteAction($uid)
     {
-        $result = $this->get('regidium.client.handler')->delete([ 'uid' => $uid ]);
+        $result = $this->get('regidium.widget.handler')->delete([ 'uid' => $uid ]);
 
         if ($result === 404) {
-            return $this->view(['errors' => ['Client not found!']]);
+            return $this->view(['errors' => ['Widget not found!']]);
         } elseif ($result === 500) {
             return $this->view(['errors' => ['Server error!']]);
         }
@@ -202,20 +198,19 @@ class ClientController extends AbstractController
     }
 
     /**
-     * Fetch a client or throw an 404 Exception.
+     * Fetch a widget or throw an 404 Exception.
      *
      * @param array $criteria
      *
-     * @return Client
+     * @return Widget
      *
-     * @throws NotFoundHttpException
      */
     protected function getOr404(array $criteria)
     {
-        if (!($client = $this->get('regidium.client.handler')->one($criteria))) {
-            throw new NotFoundHttpException(sprintf('The resource was not found.'));
+        if (!($widget = $this->get('regidium.widget.handler')->one($criteria))) {
+            return $this->sendError('The resource was not found.');
         }
 
-        return $client;
+        return $widget;
     }
 }

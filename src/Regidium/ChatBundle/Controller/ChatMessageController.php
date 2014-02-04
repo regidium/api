@@ -3,16 +3,12 @@
 namespace Regidium\ChatBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
-use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Request\ParamFetcherInterface;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 
-use Regidium\CommonBundle\Document\User;
+use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\ChatMessage;
 
@@ -53,43 +49,33 @@ class ChatMessageController extends AbstractController
     public function postMessageAction(Request $request)
     {
         $sender = null;
-        $sender_uid = $request->request->get('sender', null);
-        if ($sender_uid) {
-            $sender = $this->get('regidium.user.handler')->one(['uid' => $sender_uid]);
-            if (!$sender) {
-                $sender = $this->get('regidium.agent.handler')->one(['uid' => $sender_uid]);
-            }
-        }
-
-        if (!$sender instanceof User && $sender instanceof Agent) {
-            return $this->view(['errors' => 'Sender not found!']);
+        $sender = $this->get('regidium.person.handler')->one(['uid' => $request->request->get('sender', null)]);
+        if (!$sender instanceof Person) {
+            return $this->sendError('Sender not found!');
         }
 
         $receiver = null;
         $receiver_uid = $request->request->get('receiver', null);
         if ($receiver_uid) {
-            $receiver = $this->get('regidium.user.handler')->one(['uid' => $receiver_uid]);
-            if (!$receiver) {
-                $receiver = $this->get('regidium.agent.handler')->one(['uid' => $receiver_uid]);
-            }
+            $receiver = $this->get('regidium.person.handler')->one(['uid' => $receiver_uid]);
         }
         /*
          * Получаетель не обязателен
          *
-        if (!$receiver instanceof User && $receiver instanceof Agent) {
-            return $this->view(['errors' => 'Receiver not found!']);
+        if (!$receiver instanceof Person) {
+            return $this->sendError('Receiver not found!');
         }
         */
 
         $chat_uid = $request->request->get('chat', null);
         $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
         if (!$chat instanceof Chat) {
-            return $this->view(['errors' => 'Chat not found!']);
+            return $this->sendError('Chat not found!');
         }
 
         $text = $request->request->get('text', null);
         if (!$text) {
-            return $this->view(['errors' => 'Message is empty!']);
+            return $this->sendError('Message is empty!');
         }
 
         $result = $this->get('regidium.chat.message.handler')->post(
@@ -100,9 +86,9 @@ class ChatMessageController extends AbstractController
         );
 
         if (!$result instanceof ChatMessage) {
-            return $this->view(['errors' => $result]);
+            return $this->sendError($result);
         }
 
-        return $this->view($result);
+        return $this->send($result);
     }
 }

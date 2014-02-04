@@ -3,17 +3,13 @@
 namespace Regidium\UserBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormTypeInterface;
 
 use FOS\RestBundle\Controller\Annotations;
-use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Request\ParamFetcherInterface;
-
-use Regidium\CommonBundle\Controller\AbstractController;
-
-use Regidium\UserBundle\Document\User;
+use FOS\RestBundle\View\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use Regidium\CommonBundle\Controller\AbstractController;
 
 /**
  * User chat controller
@@ -39,16 +35,73 @@ class UserChatController extends AbstractController
      *
      * @param Request  $uid  User uid
      *
-     * @return array
+     * @return View
      */
     public function cgetAction($uid)
     {
         $user = $this->get('regidium.user.handler')->one(['uid' => $uid]);
 
         if (!$user instanceof User) {
-            return $this->view(['errors' => ['User not found!']]);
+            return $this->sendError('User not found!');
         }
 
-        return $this->view($user->getChats());
+        return $this->sendArray(array_values($user->getChats()));
+    }
+
+
+    /**
+     * Create a new chat from submitted data.
+     *
+     * @ApiDoc(
+     *   resource = false,
+     *   description = "Creates a chat user from submitted data.",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     *
+     * @param Request $request request object
+     * @param string $uid User UID
+     *
+     * @return View
+     */
+    public function postAction(Request $request, $uid)
+    {
+        $widget = null;
+        if (!isset($_SERVER['HTTP_ORIGIN'])) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $widget = $this->get('regidium.widget.handler')->one(['url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/")]);
+        if (!$widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        if ($widget->getAvailableChats() < 1) {
+            return $this->sendError('Widget is not available to create new chat!');
+        }
+
+        $user = $this->get('regidium.user.handler')->one(['uid' => $uid]);
+
+        if (!$user instanceof User) {
+            return $this->sendError('User not found!');
+        }
+
+        $result = $this->get('regidium.chat.handler')->post(
+            $widget,
+            $user,
+            $request->request->all()
+        );
+
+        if (!$result instanceof Chat) {
+            return $this->sendError($result);
+        }
+
+        $widget->setAvailableChats($widget->getAvailableChats() - 1);
+        $this->get('regidium.widget.handler')->edit($widget);
+
+        return $this->send($result);
     }
 }

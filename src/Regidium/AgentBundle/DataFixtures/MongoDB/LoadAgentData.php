@@ -17,9 +17,11 @@ class LoadAgentData extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $dummyAgent = new Agent();
-        $dummyAgent->setJobTitle('Dummy Agent');
+        $dummyAgent->setJobTitle('Support Operator');
         $dummyAgent->setStatus(Agent::STATUS_DEFAULT);
         $dummyAgent->setAcceptChats(true);
+        $dummyAgent->setType(Agent::TYPE_OWNER);
+        $dummyAgent->setWidget($this->getReference('widget_regidium_my'));
         $manager->persist($dummyAgent);
 
         $dummyPerson = new Person();
@@ -35,8 +37,8 @@ class LoadAgentData extends AbstractFixture implements OrderedFixtureInterface
 
         $manager->flush();
 
-        $this->addReference('dummyAgent', $dummyAgent);
-        $this->addReference('dummyAgentPerson', $dummyPerson);
+        $this->addReference('dummy_agent', $dummyAgent);
+        $this->addReference('dummy_agent_person', $dummyPerson);
     }
 
     /**
@@ -44,6 +46,6 @@ class LoadAgentData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function getOrder()
     {
-        return 1;
+        return 4;
     }
 }

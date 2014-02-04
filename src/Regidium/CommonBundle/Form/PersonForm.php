@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
+
 use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
 
 use Regidium\CommonBundle\Document\Person;
@@ -54,6 +55,9 @@ class PersonForm extends AbstractType
                     'required' => false
                 ])
             ->add('ip', 'text', [
+                    'required' => false
+                ])
+            ->add('device', 'text', [
                     'required' => false
                 ])
             ->add('os', 'text', [

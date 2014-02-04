@@ -3,6 +3,7 @@
 namespace Regidium\CommonBundle\Handler;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\Form;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
@@ -42,12 +43,18 @@ abstract class AbstractHandler
         return new $this->entityClass();
     }
 
-    protected function getFormErrors($form)
+    /**
+     * @param Form $form
+     *
+     * @return array
+    */
+    protected function getFormErrors(Form $form)
     {
         $return = [];
         $errors = $form->getErrors();
+
         foreach ($errors as $error) {
-            $return[] = $error->getCause();
+            $return[] = $error->getMessage();
         }
 
         return $return;

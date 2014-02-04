@@ -4,13 +4,16 @@ namespace Regidium\AgentBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\AgentBundle\Form\AgentForm;
+use Regidium\CommonBundle\Form\PersonForm;
+
+use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Agent;
 
 class AgentHandler extends AbstractHandler
 {
     /**
-     * Get one agent by criteria.
+     * Получение одного агента по условию.
      *
      * @param array $criteria
      *
@@ -22,7 +25,7 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     * Get agents by criteria.
+     * * Получение агентов по условию.
      *
      * @param array $criteria
      *
@@ -34,9 +37,9 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     * Get list of agents.
+     * * Получение списка всех агентов.
      *
-     * @param int $limit  the limit of the result
+     * @param int $limit  limit of the result
      * @param int $offset starting from the offset
      *
      * @return array
@@ -47,17 +50,19 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     * Create new agent.
+     * Создание агента.
      *
-     * @param array $parameters
+     * @param Widget $widget     Виджет к которому будет прикреплен агент
+     * @param array  $parameters Параметры для сохранения
      *
-     * @return Agent
+     * @return string|array|Person
      */
-    public function post(array $parameters)
+    public function post(Widget $widget, array $parameters)
     {
         $agent = $this->createEntity();
+        $person = new Person();
 
-        return $this->processForm($agent, $parameters, 'POST');
+        return $this->processForm($agent, $person, $widget, $parameters, 'POST');
     }
 
     /**
@@ -66,11 +71,14 @@ class AgentHandler extends AbstractHandler
      * @param Agent $agent
      * @param array $parameters
      *
-     * @return Agent
+     * @return string|array|Person
      */
     public function put(Agent $agent, array $parameters)
     {
-        return $this->processForm($agent, $parameters, 'PUT');
+        $person = $agent->getPerson();
+        $widget = $agent->getWidget();
+
+        return $this->processForm($agent, $person, $widget, $parameters, 'PUT');
     }
 
     /**
@@ -108,7 +116,6 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     *
      * Find agent by external service id
      *
      * @param string $provider External service provider
@@ -127,49 +134,51 @@ class AgentHandler extends AbstractHandler
     /**
      * Processes the form.
      *
-     * @param Agent   $agent
+     * @param Agent  $agent
+     * @param Person $person
+     * @param Widget $widget
      * @param array  $parameters
      * @param string $method
      *
-     * @return Agent|\Symfony\Component\Form\FormError[]
+     * @return string|array|Person
      *
      */
-    private function processForm(Agent $agent, array $parameters, $method = 'PUT')
+    private function processForm(Agent $agent, Person $person, Widget $widget, array $parameters, $method = 'PUT')
     {
-        $agentParameters = [
+        $agent_data = [
             'job_title' => isset($parameters['job_title']) ? $parameters['job_title'] : '',
-            'accept_chats' => isset($parameters['accept_chats']) ? $parameters['accept_chats'] : true,
-            'status' => isset($parameters['status']) ? $parameters['status'] : Agent::STATUS_DEFAULT
+            'type' => isset($parameters['type']) ? $parameters['type'] : Agent::TYPE_ADMINISTRATOR,
+            'status' => isset($parameters['status']) ? $parameters['status'] : Agent::STATUS_DEFAULT,
+            'accept_chats' => isset($parameters['accept_chats']) ? $parameters['accept_chats'] : true
         ];
 
         $formAgent = $this->formFactory->create(new AgentForm(), $agent, array('method' => $method));
-        $formAgent->submit($agentParameters, 'PATCH' !== $method);
+        $formAgent->submit($agent_data, 'PATCH' !== $method);
         if ($formAgent->isValid()) {
+            /** @var Agent $agent */
             $agent = $formAgent->getData();
-            $personParameters = [
+            if (!$agent instanceof Agent) {
+                return 'Server error';
+            }
+
+            $agent->setWidget($widget);
+
+            $person_data = [
                 'fullname' => isset($parameters['fullname']) ? $parameters['fullname'] : '',
                 'avatar' => isset($parameters['avatar']) ? $parameters['avatar'] : '',
                 'email' => isset($parameters['email']) ? $parameters['email'] : '',
-                'password' => isset($parameters['password']) ? $parameters['password'] : '',
-                'status' => isset($parameters['status']) ? $parameters['status'] : '',
-                'country' => isset($parameters['country']) ? $parameters['country'] : '',
-                'city' => isset($parameters['city']) ? $parameters['city'] : '',
-                'ip' => isset($parameters['ip']) ? $parameters['ip'] : '',
-                'os' => isset($parameters['os']) ? $parameters['os'] : '',
-                'browser' => isset($parameters['browser']) ? $parameters['browser'] : '',
-                'keyword' => isset($parameters['keyword']) ? $parameters['keyword'] : '',
-                'language' => isset($parameters['language']) ? $parameters['language'] : ''
+                'password' => isset($parameters['password']) ? $parameters['password'] : ''
             ];
 
-            $formPerson = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $agent->getEmail() ]), $agent, array('method' => $method));
-            $formPerson->submit($personParameters, 'PATCH' !== $method);
+            $formPerson = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, array('method' => $method));
+            $formPerson->submit($person_data, 'PATCH' !== $method);
             if ($formPerson->isValid()) {
                 /** @var Person $person */
                 $person = $formPerson->getData();
                 $person->setAgent($agent);
 
-                $this->dm->persist($person);
                 $this->dm->persist($agent);
+                $this->dm->persist($person);
 
                 $this->dm->flush();
 
