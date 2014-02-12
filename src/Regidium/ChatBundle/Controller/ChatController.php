@@ -54,63 +54,6 @@ class ChatController extends AbstractController
     }
 
     /**
-     * Create a new chat from the submitted data.
-     *
-     * @todo Сделать доступным через пользователя
-     *
-     * @ApiDoc(
-     *   resource = false,
-     *   description = "Creates a chat user from the submitted data.",
-     *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     *
-     * @param Request $request the request object
-     *
-     * @return View
-     */
-    public function postAction(Request $request)
-    {
-        $widget = null;
-        if (!isset($_SERVER['HTTP_ORIGIN'])) {
-            return $this->sendError('Widget not found!');
-        }
-
-        $widget = $this->get('regidium.widget.handler')->one(['url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/")]);
-        if (!$widget) {
-            return $this->sendError('Widget not found!');
-        }
-
-        if ($widget->getAvailableChats() < 1) {
-            return $this->sendError('Widget is not available to create new chat!');
-        }
-
-        $user = $this->get('regidium.user.handler')->one(['uid' => $request->request->get('user', null)]);
-
-        if (!$user instanceof User) {
-            return $this->sendError('User not found!');
-        }
-
-        $result = $this->get('regidium.chat.handler')->post(
-            $widget,
-            $user,
-            $request->request->all()
-        );
-
-        if (!$result instanceof Chat) {
-            return $this->sendError($result);
-        }
-
-        $widget->setAvailableChats($widget->getAvailableChats() - 1);
-        $this->get('regidium.widget.handler')->edit($widget);
-
-        return $this->send($result);
-    }
-
-    /**
      * Fetch a chat or throw an 404 Exception.
      *
      * @param array $criteria

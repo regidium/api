@@ -49,11 +49,13 @@ class WidgetChatController extends AbstractController
     public function postMessageAction(Request $request, $uid, $chat_uid)
     {
         /* @todo дополнительная проверка URL запроса
+        
         if (!isset($_SERVER['HTTP_ORIGIN'])) {
-        return $this->sendError('Widget not found!');
+            return $this->sendError('Widget not found!');
         }
-        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid, 'url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/")]);
-         */
+
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid, 'url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/", 'uid' => $uid)]);
+        */
 
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
