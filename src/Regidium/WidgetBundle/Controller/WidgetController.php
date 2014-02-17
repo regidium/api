@@ -25,34 +25,11 @@ use Regidium\CommonBundle\Document\Widget;
 class WidgetController extends AbstractController
 {
     /**
-     * List all widgets.
+     * Получение информации о виджете
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "List all widgets",
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *widget
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing widgets.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many widgets to return.")
-     *
-     * @return View
-     */
-    public function cgetAction()
-    {
-        $return = $this->get('regidium.widget.handler')->all();
-
-        return $this->view($return);
-    }
-
-    /**
-     * Get single widget3.
-     *
-     * @ApiDoc(
-     *   resource = false,
-     *   description = "Gets a widgets for a given uid",
+     *   description = "Получение информации о виджете",
      *   output = "Regidium\CommonBundle\Document\Widget",
      *   statusCodes = {
      *     200 = "Returned when successful",
@@ -69,7 +46,28 @@ class WidgetController extends AbstractController
     {
         $widget = $this->getOr404(['uid' => $uid]);
 
-        return $this->send($widget);
+        if (!$widget instanceof Widget) {
+            return $widget;
+        }
+
+        $return = [
+            'uid' => $widget->getUid(),
+            'model_type' => $widget->getModelType(),
+            'available_agents' => $widget->getAvailableAgents(),
+            'available_chats' => $widget->getAvailableChats(),
+            'balance' => $widget->getBalance(),
+            'personal_account' => $widget->getPersonalAccount(),
+            'url' => $widget->getUrl(),
+            'settings' => $widget->getSettings(),
+            'plan' => [
+                'name' => $widget->getPlan()->getName(),
+                'cost' => $widget->getPlan()->getCost(),
+                'count_agents' => $widget->getPlan()->getCountAgents(),
+                'count_chats' => $widget->getPlan()->getCountChats()
+            ]
+        ];
+
+        return $this->send($return);
     }
 
     /**

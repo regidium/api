@@ -58,6 +58,7 @@ class PaymentHandler extends AbstractHandler
      */
     public function post(Widget $widget, PaymentMethod $payment_method, $amount)
     {
+        /** @var Payment $entity */
         $entity = $this->createEntity();
         $entity->setWidget($widget);
         $entity->setPaymentMethod($payment_method);

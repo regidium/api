@@ -21,6 +21,7 @@ class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
         $plan->setCost(0);
         $plan->setCountChats(10);
         $plan->setCountAgents(2);
+        $plan->setType(1);
 
         $manager->persist($plan);
         $manager->flush($plan);
@@ -33,6 +34,7 @@ class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
         $plan->setCost(10);
         $plan->setCountChats(100);
         $plan->setCountAgents(20);
+        $plan->setType(2);
 
         $manager->persist($plan);
         $manager->flush($plan);
@@ -45,6 +47,7 @@ class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
         $plan->setCost(100);
         $plan->setCountChats(0);
         $plan->setCountAgents(0);
+        $plan->setType(3);
 
         $manager->persist($plan);
         $manager->flush($plan);

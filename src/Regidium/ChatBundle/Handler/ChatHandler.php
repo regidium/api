@@ -38,20 +38,23 @@ class ChatHandler extends AbstractHandler
      *
      * @param Widget $widget
      * @param User   $user
-     * @param array  $parameters
      *
      * @return Chat
      */
-    public function post(Widget $widget, User $user, array $parameters)
+    public function post(Widget $widget, User $user)
     {
         /** @var Chat $chat */
         $chat = $this->createEntity();
 
         $chat->setWidget($widget);
         $chat->setUser($user);
-
         $this->dm->persist($chat);
-        $this->dm->flush($chat);
+
+        $widget->setAvailableChats($widget->getAvailableChats() - 1);
+        $this->dm->persist($widget);
+
+        $this->dm->flush();
+
         return $chat;
     }
 

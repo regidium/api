@@ -54,10 +54,33 @@ class WidgetAgentController extends AbstractController
 
         /** @todo вернуть ошибку */
         if (!$widget instanceof Widget) {
-            return $this->sendArray([]);
+            return $this->sendError('Widget not found!');
         }
 
-        return $this->sendArray($widget->getAgents()->getValues());
+        /** @var Agent[] $agents */
+        $agents = $widget->getAgents()->getValues();
+
+        $return = [];
+
+        foreach($agents as $agent) {
+            $person = $agent->getPerson();
+            $return[] = [
+                'uid' => $person->getUid(),
+                'fullname' => $person->getFullname(),
+                'email' => $person->getEmail(),
+                'avatar' => $person->getAvatar(),
+                'agent' => [
+                    'uid' => $agent->getUid(),
+                    'status' => $agent->getStatus(),
+                    'job_title' => $agent->getJobTitle(),
+                    'type' => $agent->getType(),
+                    'accept_chats' => $agent->getAcceptChats(),
+                    'model_type' => $agent->getModelType()
+                ]
+            ];
+        }
+
+        return $this->sendArray($return);
     }
 
 

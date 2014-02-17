@@ -89,19 +89,16 @@ class UserChatController extends AbstractController
             return $this->sendError('User not found!');
         }
 
-        $result = $this->get('regidium.chat.handler')->post(
+        $chat = $this->get('regidium.chat.handler')->post(
             $widget,
             $user,
             $request->request->all()
         );
 
-        if (!$result instanceof Chat) {
-            return $this->sendError($result);
+        if (!$chat instanceof Chat) {
+            return $this->sendError($chat);
         }
 
-        $widget->setAvailableChats($widget->getAvailableChats() - 1);
-        $this->get('regidium.widget.handler')->edit($widget);
-
-        return $this->send($result);
+        return $this->send($chat);
     }
 }

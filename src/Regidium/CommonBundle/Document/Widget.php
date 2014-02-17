@@ -91,6 +91,11 @@ class Widget
      */
     private $chats;
 
+    /**
+     * @MongoDB\Hash
+     */
+    private $settings;
+
     /* =============== Constants =============== */
 
     const STATUS_DEFAULT = 1;
@@ -120,6 +125,9 @@ class Widget
         $this->agents = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->chats = new ArrayCollection();
+        $this->settings = [
+            'header_color' => '#ec1d23'
+        ];
 
         $this->setModelType('widget');
     }
@@ -366,7 +374,7 @@ class Widget
     /**
      * Get plan
      *
-     * @return Regidium\CommonBundle\Document\Plan $plan
+     * @return \Regidium\CommonBundle\Document\Plan $plan
      */
     public function getPlan()
     {
@@ -396,7 +404,7 @@ class Widget
     /**
      * Get agents
      *
-     * @return Doctrine\Common\Collections\Collection $agents
+     * @return \Doctrine\Common\Collections\Collection $agents
      */
     public function getAgents()
     {
@@ -461,5 +469,27 @@ class Widget
     public function getChats()
     {
         return $this->chats;
+    }
+
+    /**
+     * Set settings
+     *
+     * @param array $settings
+     * @return self
+     */
+    public function setSettings($settings)
+    {
+        $this->settings = $settings;
+        return $this;
+    }
+
+    /**
+     * Get settings
+     *
+     * @return array $settings
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 }

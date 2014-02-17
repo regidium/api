@@ -77,6 +77,8 @@ class UserController extends AbstractController
     /**
      * Создаем пользователя
      *
+     * @deprecated
+     *
      * @ApiDoc(
      *   resource = false,
      *   description = "Create new user from the submitted data.",
@@ -104,6 +106,8 @@ class UserController extends AbstractController
 
     /**
      * Update existing user from submitted data or create new user at a specific location.
+     *
+     * @deprecated
      *
      * @ApiDoc(
      *   resource = false,

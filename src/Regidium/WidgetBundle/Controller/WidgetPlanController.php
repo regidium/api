@@ -37,7 +37,7 @@ class WidgetPlanController extends AbstractController
      *
      * @param Request $request
      * @param string  $uid     Widget UID
-     * @param string  $plan    Plan UID
+     * @param int     $plan    Plan UID
      *
      * @return View
      */
@@ -48,7 +48,7 @@ class WidgetPlanController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        $plan = $this->get('regidium.billing.plan.handler')->one(['uid' => $plan]);
+        $plan = $this->get('regidium.billing.plan.handler')->one(['type' => (int)$plan]);
         if (!$plan instanceof Plan) {
             return $this->view(['errors' => ['Plan not found!']]);
         }

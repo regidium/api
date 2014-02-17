@@ -18,6 +18,7 @@ class LoadPaymentMethodData extends AbstractFixture implements OrderedFixtureInt
         // Electronic money
         $payment_method = new PaymentMethod();
         $payment_method->setName('Electronic money');
+        $payment_method->setType(1);
 
         $manager->persist($payment_method);
         $manager->flush($payment_method);
@@ -27,6 +28,7 @@ class LoadPaymentMethodData extends AbstractFixture implements OrderedFixtureInt
         // Plastic card
         $payment_method = new PaymentMethod();
         $payment_method->setName('Plastic card');
+        $payment_method->setType(2);
 
         $manager->persist($payment_method);
         $manager->flush($payment_method);
@@ -36,6 +38,7 @@ class LoadPaymentMethodData extends AbstractFixture implements OrderedFixtureInt
         // Plastic card
         $payment_method = new PaymentMethod();
         $payment_method->setName('Cashless payments');
+        $payment_method->setType(3);
 
         $manager->persist($payment_method);
         $manager->flush($payment_method);

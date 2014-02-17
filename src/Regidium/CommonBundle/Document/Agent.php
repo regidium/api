@@ -290,7 +290,7 @@ class Agent
     /**
      * Get widget
      *
-     * @return Regidium\CommonBundle\Document\Widget $widget
+     * @return \Regidium\CommonBundle\Document\Widget $widget
      */
     public function getWidget()
     {

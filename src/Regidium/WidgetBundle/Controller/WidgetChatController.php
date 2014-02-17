@@ -29,6 +29,64 @@ use Regidium\CommonBundle\Document\ChatMessage;
 class WidgetChatController extends AbstractController
 {
     /**
+     * Создаем новый чат для виджета
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Создаем новый чат для виджета.",
+     *   statusCodes = {
+     *     200 = "Returned when successful"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     *
+     * @return View
+     *
+     */
+    public function postAction(Request $request, $uid)
+    {
+        /* @todo дополнительная проверка URL запроса
+        
+        if (!isset($_SERVER['HTTP_ORIGIN'])) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid, 'url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/", 'uid' => $uid)]);
+        */
+
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        if ($widget->getAvailableChats() < 1) {
+            return $this->sendError('Widget is not available to create new chat!');
+        }
+
+        $person = $this->get('regidium.person.handler')->one(['uid' => $request->get('person_uid', null)]);
+        if (!$person instanceof Person) {
+            return $this->sendError('User not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->post(
+            $widget,
+            $person->getUser()
+        );
+
+        if (!$chat instanceof Chat) {
+            return $this->sendError($chat);
+        }
+
+        $return = [
+            'uid' => $chat->getUid()
+        ];
+
+        return  $this->send($return);
+    }
+
+    /**
      * Создаем новое сообщение для чата.
      *
      * @ApiDoc(
@@ -67,12 +125,15 @@ class WidgetChatController extends AbstractController
             return $this->sendError('Chat not found!');
         }
 
-        $sender = $this->get('regidium.person.handler')->one(['uid' => $request->request->get('sender', null)]);
+        $sender = $this->get('regidium.person.handler')->one(['uid' => $request->request->get('person', null)]);
         if (!$sender instanceof Person) {
             return $this->sendError('Sender not found!');
         }
 
-        $receiver = $this->get('regidium.person.handler')->one(['uid' => $request->request->get('sender', null)]);
+        $receiver = null;
+        if ($chat->getOperator()) {
+            $receiver = $chat->getOperator()->getPerson();
+        }
 /*        if (!$receiver instanceof Person) {
             return $this->sendError('Receiver not found!');
         }*/
@@ -88,6 +149,10 @@ class WidgetChatController extends AbstractController
             return $this->sendError($chat_message);
         }
 
-        return  $this->send($chat_message);
+        $return = [
+            'uid' => $chat_message->getUid()
+        ];
+
+        return $this->send($return);
     }
 }

@@ -35,6 +35,11 @@ class PaymentMethod
      */
     private $name;
 
+    /**
+     * @MongoDB\Int
+     */
+    private $type;
+
     /* ============= COMMON ============= */
 
     public function __construct()
@@ -132,5 +137,27 @@ class PaymentMethod
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set type
+     *
+     * @param int $type
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return int $type
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

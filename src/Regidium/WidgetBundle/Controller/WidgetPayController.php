@@ -60,7 +60,7 @@ class WidgetPayController extends AbstractController
      *
      * @param Request $request
      * @param string  $uid Widget UID
-     * @param string  $payment_method
+     * @param int  $payment_method
      *
      * @return View
      */
@@ -71,7 +71,7 @@ class WidgetPayController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        $payment_method = $this->get('regidium.billing.payment_method.handler')->one(['uid' => $payment_method]);
+        $payment_method = $this->get('regidium.billing.payment_method.handler')->one(['type' => (int)$payment_method]);
         if (!$payment_method instanceof PaymentMethod) {
             return $this->view(['errors' => ['Payment method not found!']]);
         }

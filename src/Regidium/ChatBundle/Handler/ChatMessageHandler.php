@@ -12,10 +12,10 @@ class ChatMessageHandler extends AbstractHandler
     /**
      * Create a new chat message.
      *
-     * @param Chat   $chat
-     * @param Person $sender
-     * @param Person $receiver
-     * @param string  $text
+     * @param Chat         $chat
+     * @param Person       $sender
+     * @param Person|null  $receiver
+     * @param string       $text
      *
      * @return ChatMessage
      */

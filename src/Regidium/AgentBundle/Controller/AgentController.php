@@ -215,14 +215,14 @@ class AgentController extends AbstractController
     protected function prepareAgentData(Request $request, $password)
     {
         return [
-            'fullname' => $request->request->get('fullname', null),
-            'job_title' => $request->request->get('job_title', null),
-            'avatar' => $request->request->get('avatar', null),
-            'email' => $request->request->get('email', null),
+            'fullname' => $request->get('fullname', null),
+            'job_title' => $request->get('job_title', null),
+            'avatar' => $request->get('avatar', null),
+            'email' => $request->get('email', null),
             'password' => $password,
-            'type' => $request->request->get('type', Agent::TYPE_ADMINISTRATOR),
-            'status' => $request->request->get('status', Agent::STATUS_DEFAULT),
-            'accept_chats' => $request->request->get('accept_chats', true)
+            'type' => $request->get('type', Agent::TYPE_ADMINISTRATOR),
+            'status' => $request->get('status', Agent::STATUS_DEFAULT),
+            'accept_chats' => $request->get('accept_chats', true)
         ];
     }
 }

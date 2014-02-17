@@ -83,20 +83,40 @@ class WidgetUserController extends AbstractController
         // Получаем виджет
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
 
-        // Возвращаем ошибку если не виджет не найден
+        // Возвращаем ошибку если виджет не найден
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
         }
 
-        // Создаем пользователя
-        $person = $this->get('regidium.user.handler')->post($widget, $this->prepareUserData($request, $request->request->get('password', null)));
+        if ($widget->getAvailableChats() < 1) {
+            return $this->sendError('Widget is not available to create new chat!');
+        }
 
-        // Возвращаем ошибку если не пользователь не создан
+        // Создаем пользователя
+        $person = $this->get('regidium.user.handler')->post($widget, $this->prepareUserData($request, $request->get('password', null)));
+
+        // Возвращаем ошибку если пользователь не создан
         if (!$person instanceof Person) {
             return $this->sendError($person);
         }
 
-        return $this->send($person, Codes::HTTP_CREATED);
+        $return = [
+            'uid' => $person->getUid(),
+            'model_type' => $person->getModelType(),
+            'fullname' => $person->getFullname(),
+            'avatar' => $person->getAvatar(),
+            'email' => $person->getEmail(),
+            'status' => $person->getStatus(),
+            'country' => $person->getCountry(),
+            'city' => $person->getCity(),
+            'ip' => $person->getIp(),
+            'os' => $person->getOs(),
+            'device' => $person->getDevice(),
+            'browser' => $person->getBrowser(),
+            'user_uid' => $person->getUser()->getUid()
+        ];
+
+        return $this->send($return, Codes::HTTP_CREATED);
     }
 
     /**
@@ -156,7 +176,23 @@ class WidgetUserController extends AbstractController
             return $this->sendError($person);
         }
 
-        return  $this->send($person, $statusCode);
+        $return = [
+            'uid' => $person->getUid(),
+            'model_type' => $person->getModelType(),
+            'fullname' => $person->getFullname(),
+            'avatar' => $person->getAvatar(),
+            'email' => $person->getEmail(),
+            'status' => $person->getStatus(),
+            'country' => $person->getCountry(),
+            'city' => $person->getCity(),
+            'ip' => $person->getIp(),
+            'os' => $person->getOs(),
+            'device' => $person->getDevice(),
+            'browser' => $person->getBrowser(),
+            'user_uid' => $person->getUser()->getUid()
+        ];
+
+        return  $this->send($return, $statusCode);
     }
 
     /**
@@ -213,19 +249,19 @@ class WidgetUserController extends AbstractController
     {
         /** @todo Получать IP для proxy */
         return [
-            'fullname' => $request->request->get('fullname', null),
-            'avatar' => $request->request->get('avatar', null),
-            'email' => $request->request->get('email', null),
+            'fullname' => $request->get('fullname', null),
+            'avatar' => $request->get('avatar', null),
+            'email' => $request->get('email', null),
             'password' => $password,
-            'status' => $request->request->get('status', User::STATUS_DEFAULT),
-            'country' => $request->request->get('country', null),
-            'city' => $request->request->get('city', null),
+            'status' => $request->get('status', User::STATUS_DEFAULT),
+            'country' => $request->get('country', null),
+            'city' => $request->get('city', null),
             'ip' => $request->getClientIp(),
-            'device' => $request->request->get('device', null),
-            'os' => $request->request->get('os', null),
-            'browser' => $request->request->get('browser', null),
-            'keyword' => $request->request->get('keyword', null),
-            'language' => $request->request->get('language', 'ru')
+            'device' => $request->get('device', null),
+            'os' => $request->get('os', null),
+            'browser' => $request->get('browser', null),
+            'keyword' => $request->get('keyword', null),
+            'language' => $request->get('language', 'ru')
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace Regidium\WidgetBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\WidgetBundle\Form\WidgetForm;
+use Regidium\WidgetBundle\Form\WidgetSettingsForm;
+
 use Regidium\CommonBundle\Document\Widget;
 
 class WidgetHandler extends AbstractHandler
@@ -73,6 +75,19 @@ class WidgetHandler extends AbstractHandler
     }
 
     /**
+     * Edit a widget settings.
+     *
+     * @param Widget $widget
+     * @param array  $parameters
+     *
+     * @return Widget
+     */
+    public function putSettings(Widget $widget, array $parameters)
+    {
+        return $this->processSettingsForm($widget, $parameters);
+    }
+
+    /**
      * Partially update a widget.
      *
      * @param Widget $widget
@@ -138,6 +153,34 @@ class WidgetHandler extends AbstractHandler
         $form->submit($data, 'PATCH' !== $method);
         if ($form->isValid()) {
             $widget = $form->getData();
+
+            $this->dm->persist($widget);
+            $this->dm->flush($widget);
+
+            return $widget;
+        }
+
+        return $this->getFormErrors($form);
+    }
+
+
+    /**
+     * Обработка формы настроек
+     *
+     * @param Widget $widget     Виджет для обработки
+     * @param array  $parameters Параметры для обработки
+     *
+     * @return array|Widget
+     *
+     */
+    private function processSettingsForm(Widget $widget, array $parameters)
+    {
+        $form = $this->formFactory->create(new WidgetSettingsForm());
+        $form->submit($parameters);
+        if ($form->isValid()) {
+            $settings = $form->getData();
+
+            $widget->setSettings($settings);
 
             $this->dm->persist($widget);
             $this->dm->flush($widget);

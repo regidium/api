@@ -13,6 +13,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Regidium\CommonBundle\Controller\AbstractController;
 
 use Regidium\CommonBundle\Document\Agent;
+use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Chat;
 
 /**
@@ -72,9 +73,9 @@ class AgentChatController extends AbstractController
      */
     public function putAction($uid, $chat_uid)
     {
-        /** @var Agent $agent */
-        $agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]);
-        if (!$agent instanceof Agent) {
+        /** @var Person $person */
+        $person = $this->get('regidium.person.handler')->one(['uid' => $uid]);
+        if (!$person instanceof Person) {
             return $this->sendError('Agent not found!');
         }
 
@@ -84,11 +85,16 @@ class AgentChatController extends AbstractController
             return $this->sendError('Chat not found!');
         }
 
-        $chat->setOperator($agent);
-        $return = $this->get('regidium.chat.handler')->edit($chat);
-        if (!$return instanceof Chat) {
+        $chat->setOperator($person->getAgent());
+        $chat = $this->get('regidium.chat.handler')->edit($chat);
+        if (!$chat instanceof Chat) {
             return $this->sendError('Server error!', Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
+
+        $return = [
+            'chat_uid' => $chat->getUid(),
+            'messages' => $chat->getMessages()
+        ];
 
         return $this->send($return);
     }

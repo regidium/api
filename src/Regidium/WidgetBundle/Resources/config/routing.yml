@@ -28,3 +28,8 @@ widget_chat:
     type:     rest
     parent:   widgets
     resource: Regidium\WidgetBundle\Controller\WidgetChatController
+
+widget_settings:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetSettingsController

@@ -58,8 +58,25 @@ class LoginController extends AbstractAuthController
         }
 
         $person = $this->login($person, $remember);
+
+        $return = [
+            'uid' => $person->getUid(),
+            'fullname' => $person->getFullname(),
+            'avatar' => $person->getAvatar(),
+            'email' => $person->getEmail(),
+            'model_type' => $person->getModelType(),
+            'agent' => [
+                'uid' => $person->getAgent()->getUid(),
+                'model_type' => $person->getAgent()->getModelType(),
+                'job_title' => $person->getAgent()->getJobTitle(),
+                'widget' => [
+                    'uid' => $person->getAgent()->getWidget()->getUid()
+                ]
+            ]
+        ];
+
         if ($person instanceof Person) {
-            return $this->send($person);
+            return $this->send($return);
         } else {
             return $this->sendError('Login service error!');
         }
@@ -82,10 +99,27 @@ class LoginController extends AbstractAuthController
      */
     public function getCheckAction($uid)
     {
+        /** @var Person $person */
         $person = $this->get('regidium.person.handler')->one([ 'uid' => $uid  ]);
 
+        $return = [
+            'uid' => $person->getUid(),
+            'fullname' => $person->getFullname(),
+            'avatar' => $person->getAvatar(),
+            'email' => $person->getEmail(),
+            'model_type' => $person->getModelType(),
+            'agent' => [
+                'uid' => $person->getAgent()->getUid(),
+                'model_type' => $person->getAgent()->getModelType(),
+                'job_title' => $person->getAgent()->getJobTitle(),
+                'widget' => [
+                    'uid' => $person->getAgent()->getWidget()->getUid()
+                ]
+            ]
+        ];
+
         if($person instanceof Person) {
-            return $this->send($person);
+            return $this->send($return);
         } else {
             $this->sendError('The resource was not found.');
         }

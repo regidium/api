@@ -55,9 +55,14 @@ class Plan
     private $count_agents;
 
     /**
+     * @MongoDB\Int
+     */
+    private $type;
+
+    /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Widget", mappedBy="plan")
      */
-    protected $widgets;
+    private $widgets;
 
     /* =============== Constants =============== */
 
@@ -253,5 +258,27 @@ class Plan
     public function getWidgets()
     {
         return $this->widgets;
+    }
+
+    /**
+     * Set type
+     *
+     * @param int $type
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return int $type
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }
