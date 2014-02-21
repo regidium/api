@@ -19,8 +19,7 @@ class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
         $plan = new Plan();
         $plan->setName('Base');
         $plan->setCost(0);
-        $plan->setCountChats(10);
-        $plan->setCountAgents(2);
+        $plan->setCountAgents(1);
         $plan->setType(1);
 
         $manager->persist($plan);
@@ -30,29 +29,27 @@ class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
 
         // Expanded
         $plan = new Plan();
-        $plan->setName('Expanded');
-        $plan->setCost(10);
-        $plan->setCountChats(100);
-        $plan->setCountAgents(20);
+        $plan->setName('Company');
+        $plan->setCost(500);
+        $plan->setCountAgents(1);
         $plan->setType(2);
 
         $manager->persist($plan);
         $manager->flush($plan);
 
-        $this->addReference('plan_expanded', $plan);
+        $this->addReference('plan_company', $plan);
 
         // Unlimited
         $plan = new Plan();
-        $plan->setName('Unlimited');
-        $plan->setCost(100);
-        $plan->setCountChats(0);
-        $plan->setCountAgents(0);
+        $plan->setName('Corporation');
+        $plan->setCost(550);
+        $plan->setCountAgents(1);
         $plan->setType(3);
 
         $manager->persist($plan);
         $manager->flush($plan);
 
-        $this->addReference('plan_unlimited', $plan);
+        $this->addReference('plan_orporation', $plan);
     }
 
     /**

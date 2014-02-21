@@ -88,10 +88,6 @@ class WidgetUserController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        if ($widget->getAvailableChats() < 1) {
-            return $this->sendError('Widget is not available to create new chat!');
-        }
-
         // Создаем пользователя
         $person = $this->get('regidium.user.handler')->post($widget, $this->prepareUserData($request, $request->get('password', null)));
 

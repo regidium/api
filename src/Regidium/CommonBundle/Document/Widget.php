@@ -63,11 +63,6 @@ class Widget
     /**
      * @MongoDB\Int
      */
-    private $available_chats;
-
-    /**
-     * @MongoDB\Int
-     */
     private $available_agents;
 
     /**
@@ -119,7 +114,6 @@ class Widget
         $this->setPersonalAccount(uniqid());
         $this->setBalance(0);
         $this->setAvailableAgents(0);
-        $this->setAvailableChats(0);
         $this->setStatus(self::STATUS_DEFAULT);
 
         $this->agents = new ArrayCollection();
@@ -313,28 +307,6 @@ class Widget
     public function getStatus()
     {
         return $this->status;
-    }
-
-    /**
-     * Set availableChats
-     *
-     * @param int $availableChats
-     * @return self
-     */
-    public function setAvailableChats($availableChats)
-    {
-        $this->available_chats = $availableChats;
-        return $this;
-    }
-
-    /**
-     * Get availableChats
-     *
-     * @return int $availableChats
-     */
-    public function getAvailableChats()
-    {
-        return $this->available_chats;
     }
 
     /**

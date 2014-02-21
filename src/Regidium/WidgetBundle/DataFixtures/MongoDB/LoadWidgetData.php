@@ -18,10 +18,9 @@ class LoadWidgetData extends AbstractFixture implements OrderedFixtureInterface
         $widget = new Widget();
         $widget->setUrl('http://my.regidium.com');
         $widget->setBalance(0);
-        $widget->setAvailableChats(0);
         $widget->setAvailableAgents(0);
         $widget->setStatus(Widget::STATUS_DEFAULT);
-        $widget->setPlan($this->getReference('plan_expanded'));
+        $widget->setPlan($this->getReference('plan_base'));
 
         $manager->persist($widget);
         $manager->flush();

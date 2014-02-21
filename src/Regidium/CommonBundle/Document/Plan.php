@@ -47,11 +47,6 @@ class Plan
     /**
      * @MongoDB\Int
      */
-    private $count_chats;
-
-    /**
-     * @MongoDB\Int
-     */
     private $count_agents;
 
     /**
@@ -184,28 +179,6 @@ class Plan
     public function getCost()
     {
         return $this->cost;
-    }
-
-    /**
-     * Set countChats
-     *
-     * @param int $countChats
-     * @return self
-     */
-    public function setCountChats($countChats)
-    {
-        $this->count_chats = $countChats;
-        return $this;
-    }
-
-    /**
-     * Get countChats
-     *
-     * @return int $countChats
-     */
-    public function getCountChats()
-    {
-        return $this->count_chats;
     }
 
     /**

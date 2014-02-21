@@ -48,11 +48,8 @@ class ChatHandler extends AbstractHandler
 
         $chat->setWidget($widget);
         $chat->setUser($user);
+
         $this->dm->persist($chat);
-
-        $widget->setAvailableChats($widget->getAvailableChats() - 1);
-        $this->dm->persist($widget);
-
         $this->dm->flush();
 
         return $chat;

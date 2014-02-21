@@ -54,7 +54,6 @@ class WidgetController extends AbstractController
             'uid' => $widget->getUid(),
             'model_type' => $widget->getModelType(),
             'available_agents' => $widget->getAvailableAgents(),
-            'available_chats' => $widget->getAvailableChats(),
             'balance' => $widget->getBalance(),
             'personal_account' => $widget->getPersonalAccount(),
             'url' => $widget->getUrl(),
@@ -62,8 +61,7 @@ class WidgetController extends AbstractController
             'plan' => [
                 'name' => $widget->getPlan()->getName(),
                 'cost' => $widget->getPlan()->getCost(),
-                'count_agents' => $widget->getPlan()->getCountAgents(),
-                'count_chats' => $widget->getPlan()->getCountChats()
+                'count_agents' => $widget->getPlan()->getCountAgents()
             ]
         ];
 

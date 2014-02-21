@@ -60,7 +60,6 @@ class WidgetPlanController extends AbstractController
         $widget->setPlan($plan);
         $widget->setBalance($widget->getBalance() - $plan->getCost());
         $widget->setAvailableAgents($plan->getCountAgents());
-        $widget->setAvailableChats($plan->getCountChats());
         $this->get('regidium.widget.handler')->edit($widget);
 
         return $this->view($widget);
