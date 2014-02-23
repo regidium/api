@@ -132,14 +132,14 @@ class WidgetAgentController extends AbstractController
      *   }
      * )
      *
-     * @param Request $request   Request object
-     * @param string  $uid       Widget UID
-     * @param string  $agent_uid Agent UID
+     * @param Request $request    Request object
+     * @param string  $uid        Widget UID
+     * @param string  $person_uid Person UID
      *
      * @return View
      *
      */
-    public function putAction(Request $request, $uid, $agent_uid = null)
+    public function putAction(Request $request, $uid, $person_uid = null)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
 
@@ -147,28 +147,28 @@ class WidgetAgentController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        $agent = null;
-        if ($agent_uid) {
-            $agent = $this->get('regidium.agent.handler')->one(['uid' => $agent_uid]);
+        $person = null;
+        if ($person_uid) {
+            $person = $this->get('regidium.person.handler')->one(['uid' => $person_uid]);
         }
 
-        if (!$agent) {
-            $statusCode = Codes::HTTP_OK;
+        if (!$person) {
+            $status_code = Codes::HTTP_OK;
 
             $person = $this->get('regidium.agent.handler')->post(
                 $widget,
                 $this->prepareAgentData($request, $request->request->get('password', null))
             );
         } else {
-            $statusCode = Codes::HTTP_OK;
+            $status_code = Codes::HTTP_OK;
 
             $password = $request->request->get('password', null);
-            if ($agent->getPerson()->getPassword() != null && $password == null) {
-                $password = $agent->getPerson()->getPassword();
+            if ($person->getPassword() != null && $password == null) {
+                $password = $person->getPassword();
             }
 
             $person = $this->get('regidium.agent.handler')->put(
-                $agent,
+                $person,
                 $this->prepareAgentData($request, $password)
             );
         }
@@ -177,7 +177,24 @@ class WidgetAgentController extends AbstractController
             return $this->sendError($person);
         }
 
-        return  $this->send($person, $statusCode);
+        $return = [
+            'uid' => $person->getUid(),
+            'fullname' => $person->getFullname(),
+            'avatar' => $person->getAvatar(),
+            'email' => $person->getEmail(),
+            'country' => $person->getCountry(),
+            'city' => $person->getCity(),
+            'status' => $person->getStatus(),
+            'agent' => [
+                'uid' => $person->getAgent()->getUid(),
+                'job_title' => $person->getAgent()->getJobTitle(),
+                'status' => $person->getAgent()->getStatus(),
+                'type' => $person->getAgent()->getType(),
+                'accept_chats' => $person->getAgent()->getAcceptChats()
+            ]
+        ];
+
+        return $this->send($return, $status_code);
     }
 
     protected function prepareAgentData(Request $request, $password)

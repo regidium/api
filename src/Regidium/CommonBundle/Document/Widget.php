@@ -436,7 +436,7 @@ class Widget
     /**
      * Get chats
      *
-     * @return Doctrine\Common\Collections\Collection $chats
+     * @return \Doctrine\Common\Collections\Collection $chats
      */
     public function getChats()
     {

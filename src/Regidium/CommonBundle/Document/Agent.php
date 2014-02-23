@@ -52,6 +52,7 @@ class Agent
     private $type;
 
     /**
+     * @Assert\NotBlank
      * @MongoDB\Boolean
      */
     private $accept_chats;
@@ -80,11 +81,11 @@ class Agent
 
     static public function getTypes()
     {
-        return array(
+        return [
             self::TYPE_OWNER,
             self::TYPE_ADMINISTRATOR,
             self::TYPE_OPERATOR
-        );
+        ];
     }
 
     const STATUS_DEFAULT = 1;
@@ -93,11 +94,11 @@ class Agent
 
     static public function getStatuses()
     {
-        return array(
+        return [
             self::STATUS_DEFAULT,
             self::STATUS_BLOCKED,
             self::STATUS_DELETED
-        );
+        ];
     }
 
     /* =============== General =============== */

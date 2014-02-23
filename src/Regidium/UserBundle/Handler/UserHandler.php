@@ -173,21 +173,21 @@ class UserHandler extends AbstractHandler
      */
     private function processForm(User $user, Person $person, Widget $widget, array $parameters, $method = 'PUT')
     {
-        $userParameters = [
+        $user_parameters = [
             'status' => isset($parameters['status']) ? $parameters['status'] : User::STATUS_DEFAULT
         ];
 
-        $formUser = $this->formFactory->create(new UserForm(), $user, array('method' => $method));
-        $formUser->submit($userParameters, 'PATCH' !== $method);
-        if ($formUser->isValid()) {
-            $user = $formUser->getData();
+        $form_user = $this->formFactory->create(new UserForm(), $user, array('method' => $method));
+        $form_user->submit($user_parameters, 'PATCH' !== $method);
+        if ($form_user->isValid()) {
+            $user = $form_user->getData();
             if (!$user instanceof User) {
                 return 'Server error';
             }
 
             $user->setWidget($widget);
 
-            $personParameters = [
+            $person_parameters = [
                 'fullname' => isset($parameters['fullname']) ? $parameters['fullname'] : '',
                 'avatar' => isset($parameters['avatar']) ? $parameters['avatar'] : '',
                 'email' => isset($parameters['email']) ? $parameters['email'] : '',
@@ -203,11 +203,11 @@ class UserHandler extends AbstractHandler
                 'language' => isset($parameters['language']) ? $parameters['language'] : ''
             ];
 
-            $formPerson = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, array('method' => $method));
-            $formPerson->submit($personParameters, 'PATCH' !== $method);
-            if ($formPerson->isValid()) {
+            $form_person = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, array('method' => $method));
+            $form_person->submit($person_parameters, 'PATCH' !== $method);
+            if ($form_person->isValid()) {
                 /** @var Person $person */
-                $person = $formPerson->getData();
+                $person = $form_person->getData();
                 $person->setUser($user);
 
                 $this->dm->persist($person);
@@ -218,9 +218,9 @@ class UserHandler extends AbstractHandler
                 return $person;
             }
 
-            return $this->getFormErrors($formPerson);
+            return $this->getFormErrors($form_person);
         }
 
-        return $this->getFormErrors($formUser);
+        return $this->getFormErrors($form_user);
     }
 }

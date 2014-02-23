@@ -68,14 +68,14 @@ class AgentHandler extends AbstractHandler
     /**
      * Edit agent.
      *
-     * @param Agent $agent
-     * @param array $parameters
+     * @param Person $person
+     * @param array  $parameters
      *
      * @return string|array|Person
      */
-    public function put(Agent $agent, array $parameters)
+    public function put(Person $person, array $parameters)
     {
-        $person = $agent->getPerson();
+        $agent = $person->getAgent();
         $widget = $agent->getWidget();
 
         return $this->processForm($agent, $person, $widget, $parameters, 'PUT');
@@ -128,7 +128,7 @@ class AgentHandler extends AbstractHandler
             ->field("external_service.{$provider}.data.id")->equals($id)
             ->getQuery()
             ->getSingleResult()
-            ;
+        ;
     }
 
     /**
@@ -147,16 +147,16 @@ class AgentHandler extends AbstractHandler
     {
         $agent_data = [
             'job_title' => isset($parameters['job_title']) ? $parameters['job_title'] : '',
-            'type' => isset($parameters['type']) ? $parameters['type'] : Agent::TYPE_ADMINISTRATOR,
-            'status' => isset($parameters['status']) ? $parameters['status'] : Agent::STATUS_DEFAULT,
-            'accept_chats' => isset($parameters['accept_chats']) ? $parameters['accept_chats'] : true
+            'type' => isset($parameters['type']) ? intval($parameters['type']) : Agent::TYPE_ADMINISTRATOR,
+            'status' => isset($parameters['status']) ? intval($parameters['status']) : Agent::STATUS_DEFAULT,
+            'accept_chats' => isset($parameters['accept_chats']) ? boolval($parameters['accept_chats']) : true
         ];
 
-        $formAgent = $this->formFactory->create(new AgentForm(), $agent, array('method' => $method));
-        $formAgent->submit($agent_data, 'PATCH' !== $method);
-        if ($formAgent->isValid()) {
+        $form_agent = $this->formFactory->create(new AgentForm(), $agent, ['method' => $method]);
+        $form_agent->submit($agent_data, 'PATCH' !== $method);
+        if ($form_agent->isValid()) {
             /** @var Agent $agent */
-            $agent = $formAgent->getData();
+            $agent = $form_agent->getData();
             if (!$agent instanceof Agent) {
                 return 'Server error';
             }
@@ -170,11 +170,11 @@ class AgentHandler extends AbstractHandler
                 'password' => isset($parameters['password']) ? $parameters['password'] : ''
             ];
 
-            $formPerson = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, array('method' => $method));
-            $formPerson->submit($person_data, 'PATCH' !== $method);
-            if ($formPerson->isValid()) {
+            $form_person = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, ['method' => $method]);
+            $form_person->submit($person_data, 'PATCH' !== $method);
+            if ($form_person->isValid()) {
                 /** @var Person $person */
-                $person = $formPerson->getData();
+                $person = $form_person->getData();
                 $person->setAgent($agent);
 
                 $this->dm->persist($agent);
@@ -185,9 +185,9 @@ class AgentHandler extends AbstractHandler
                 return $person;
             }
 
-            return $this->getFormErrors($formPerson);
+            return $this->getFormErrors($form_person);
         }
-
-        return $this->getFormErrors($formAgent);
+        var_dump($form_agent->isValid());die();
+        return $this->getFormErrors($form_agent);
     }
 }

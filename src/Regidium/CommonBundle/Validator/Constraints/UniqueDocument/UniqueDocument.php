@@ -4,16 +4,19 @@ namespace Regidium\CommonBundle\Validator\Constraints\UniqueDocument;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
 class UniqueDocument extends Constraint
 {
+    /**
+     * @var string
+    */
     public $message = 'The value %value% not unique %property%.';
 
     public $repository;
     public $property;
 
+    /**
+     * @var mixed
+     */
     public $exclusion;
 
     public function validatedBy()
@@ -23,7 +26,7 @@ class UniqueDocument extends Constraint
 
     public function getRequiredOptions()
     {
-        return array('repository', 'property');
+        return ['repository', 'property'];
     }
 
 }

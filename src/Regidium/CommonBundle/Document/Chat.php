@@ -242,7 +242,7 @@ class Chat
     /**
      * Get user
      *
-     * @return Regidium\CommonBundle\Document\User $user
+     * @return \Regidium\CommonBundle\Document\User $user
      */
     public function getUser()
     {
@@ -360,7 +360,7 @@ class Chat
     /**
      * Get messages
      *
-     * @return Doctrine\Common\Collections\Collection $messages
+     * @return \Doctrine\Common\Collections\Collection $messages
      */
     public function getMessages()
     {

@@ -12,8 +12,6 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  *
  * @package Regidium\CommonBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
- *
- *
  */
 abstract class AbstractController extends FOSRestController
 {
@@ -21,26 +19,26 @@ abstract class AbstractController extends FOSRestController
      * Return array
      *
      * @param mixed   $data
-     * @param integer $statusCode
+     * @param integer $status_code
      * @param array   $headers
      *
      * @return View
      */
-    protected function send($data = null, $statusCode = null, array $headers = array())
+    protected function send($data = null, $status_code = null, array $headers = [])
     {
-        return $this->view($data, $statusCode, $headers);
+        return $this->view($data, $status_code, $headers);
     }
 
     /**
      * Return error
      *
-     * @param array|string $error      Text error
-     * @param int          $statusCode Status code
-     * @param array        $headers    Response headers
+     * @param array|string $error       Text error
+     * @param int          $status_code Status code
+     * @param array        $headers     Response headers
      *
      * @return View
     */
-    protected function sendError($error, $statusCode = null, array $headers = array())
+    protected function sendError($error, $status_code = null, array $headers = [])
     {
         $errors = array();
         if (!is_array($error)) {
@@ -49,33 +47,33 @@ abstract class AbstractController extends FOSRestController
             $errors = $error;
         }
 
-        return $this->send(['errors' => $errors], $statusCode, $headers);
+        return $this->send(['errors' => $errors], $status_code, $headers);
     }
 
     /**
      * Return success
      *
-     * @param mixed $data       Return data
-     * @param int   $statusCode Status code
-     * @param array $headers    Response headers
+     * @param mixed $data        Return data
+     * @param int   $status_code Status code
+     * @param array $headers     Response headers
      *
      * @return View
      */
-    protected function sendSuccess($data = true, $statusCode = null, array $headers = array())
+    protected function sendSuccess($data = true, $status_code = null, array $headers = [])
     {
-        return $this->send(['success' => $data], $statusCode, $headers);
+        return $this->send(['success' => $data], $status_code, $headers);
     }
 
     /**
      * Return array
      *
-     * @param mixed $data       Return data
-     * @param int   $statusCode Status code
-     * @param array $headers    Response headers
+     * @param mixed $data        Return data
+     * @param int   $status_code Status code
+     * @param array $headers     Response headers
      *
      * @return View
      */
-    protected function sendArray($data = true, $statusCode = null, array $headers = array())
+    protected function sendArray($data = true, $status_code = null, array $headers = [])
     {
         if (!is_array($data)) {
             $return[] = $data;
@@ -83,6 +81,6 @@ abstract class AbstractController extends FOSRestController
             $return = $data;
         }
 
-        return $this->send($return, $statusCode, $headers);
+        return $this->send($return, $status_code, $headers);
     }
 }

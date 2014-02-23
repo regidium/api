@@ -11,15 +11,6 @@ use Regidium\CommonBundle\Document\Agent;
 
 class AgentForm extends AbstractType
 {
-    protected $email_exclusion;
-
-    public function __construct($options = array())
-    {
-        if (array_key_exists('email_exclusion', $options)) {
-            $this->email_exclusion = $options['email_exclusion'];
-        }
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -30,7 +21,16 @@ class AgentForm extends AbstractType
             ->add('job_title', 'text', [
                 'required' => false
             ])
-            ->add('type', 'choice', [
+            ->add('type', 'integer', [
+                'required' => false
+            ])
+            ->add('status', 'integer', [
+                'required' => false
+            ])
+            ->add('accept_chats', 'radio', [
+                'required' => false
+            ])
+/*            ->add('type', 'choice', [
                 'required' => false,
                 'choices' => Agent::getTypes()
             ])
@@ -41,7 +41,7 @@ class AgentForm extends AbstractType
             ->add('accept_chats', 'choice', [
                 'required' => false,
                 'choices'   => [true, false]
-            ])
+            ])*/
         ;
     }
 
@@ -50,9 +50,9 @@ class AgentForm extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'Regidium\CommonBundle\Document\Agent'
-        ));
+        ]);
     }
 
     /**

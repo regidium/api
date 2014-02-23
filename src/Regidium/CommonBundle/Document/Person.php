@@ -165,6 +165,25 @@ class Person
         return $this->fullname;
     }
 
+    public function toArray()
+    {
+        return [
+           'uid' => $this->uid,
+           'fullname' => $this->fullname,
+           'avatar' => $this->avatar,
+           'email' => $this->email,
+           'country' => $this->country,
+           'city' => $this->city,
+           'ip' => $this->ip,
+           'os' => $this->os,
+           'device' => $this->device,
+           'browser' => $this->browser,
+           'keyword' => $this->keyword,
+           'language' => $this->language,
+           'status' => $this->status
+        ];
+    }
+
     /* =============== Get/Set=============== */
 
     /**

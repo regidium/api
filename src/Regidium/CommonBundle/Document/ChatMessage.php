@@ -34,12 +34,6 @@ class ChatMessage
     private $model_type;
 
     /**
-     * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Chat", cascade={"all"}, inversedBy="messages")
-     */
-    private $chat;
-
-    /**
      * @MongoDB\Timestamp
      */
     private $created;
@@ -78,6 +72,12 @@ class ChatMessage
      */
     private $receiver_status;
 
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Chat", cascade={"all"}, inversedBy="messages")
+     */
+    private $chat;
+
     /* =============== Constants =============== */
 
     const STATUS_NOT_READED = 1;
@@ -111,6 +111,25 @@ class ChatMessage
     public function __toString()
     {
         return $this->text;
+    }
+
+    public function toArray()
+    {
+        $return = [
+            'uid' => $this->uid,
+            'created' => $this->created,
+            'updated' => $this->updated,
+            'text' => $this->text,
+            'sender' => $this->sender,
+            'sender_status' => $this->sender_status,
+            'receiver_status' => $this->receiver_status
+        ];
+
+        if ($this->receiver) {
+            $return['receiver'] = $this->receiver->toArray();
+        }
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */

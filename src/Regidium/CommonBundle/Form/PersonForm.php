@@ -13,9 +13,17 @@ use Regidium\CommonBundle\Document\Person;
 
 class PersonForm extends AbstractType
 {
+    /**
+     * @var string
+    */
     protected $email_exclusion;
 
-    public function __construct($options = array())
+    /**
+     * Construct
+     *
+     * @param array $options
+    */
+    public function __construct($options = [])
     {
         if (array_key_exists('email_exclusion', $options)) {
             $this->email_exclusion = $options['email_exclusion'];

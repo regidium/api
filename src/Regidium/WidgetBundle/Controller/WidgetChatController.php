@@ -29,6 +29,68 @@ use Regidium\CommonBundle\Document\ChatMessage;
 class WidgetChatController extends AbstractController
 {
     /**
+     * Получаем список архивных чатов
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Получаем список архивных чатов.",
+     *   statusCodes = {
+     *     200 = "Returned when successful"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     *
+     * @return View
+     *
+     */
+    public function getArchiveAction(Request $request, $uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $return = [];
+        /** @var Chat[] $chats */
+        $chats = $widget->getChats();
+        /*foreach($chats as $chat) {
+            $_chat = [
+                'uid' => $chat->getUid(),
+                'started' => $chat->getStarted(),
+                'ended' => $chat->getEnded(),
+                'user_status' => $chat->getUserStatus(),
+                'operator_status' => $chat->getOperatorStatus(),
+                'user' => [
+                    'uid' => $chat->getUser()->getUid(),
+                    'person' => $chat->getUser()->getPerson()->toArray()
+                ]
+            ];
+
+            if ($chat->getOperator()) {
+                $_chat['agent'] = [
+                    'uid' => $chat->getOperator()->getUid(),
+                    'job_title' => $chat->getOperator()->getJobTitle(),
+                    'status' => $chat->getOperator()->getStatus(),
+                    'type' => $chat->getOperator()->getType(),
+                    'accept_chats' => $chat->getOperator()->getAcceptChats()
+                ];
+            }
+
+            $_chat['messages'] = [];
+            $messages = $chat->getMessages();
+            foreach ($messages as $message) {
+                $_chat['messages'][] = $message->toArray();
+            }
+
+            $return[] = $_chat;
+        }*/
+
+        return  $this->send($chats);
+    }
+
+    /**
      * Создаем новый чат для виджета
      *
      * @ApiDoc(

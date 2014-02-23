@@ -153,7 +153,7 @@ class AgentController extends AbstractController
             }
 
             $person = $this->get('regidium.agent.handler')->put(
-                $person->getAgent(),
+                $person,
                 $this->prepareAgentData($request, $password)
             );
         }
