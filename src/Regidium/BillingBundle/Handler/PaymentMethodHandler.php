@@ -41,6 +41,6 @@ class PaymentMethodHandler extends AbstractHandler
      */
     public function all($limit = 5, $offset = 0)
     {
-        return $this->repository->findBy(array(), null, $limit, $offset);
+        return $this->repository->findBy([], null, $limit, $offset);
     }
 }

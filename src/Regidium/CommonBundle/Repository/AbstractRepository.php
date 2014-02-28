@@ -13,7 +13,7 @@ class AbstractRepository extends DocumentRepository
      *
      * @return int The count
      */
-    public function count(array $criteria = array())
+    public function count(array $criteria = [])
     {
         return count($this->findBy($criteria));
     }

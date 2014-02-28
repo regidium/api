@@ -3,15 +3,12 @@
 namespace Regidium\AgentBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Util\Codes;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-
 use Regidium\CommonBundle\Document\Agent;
 use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Chat;
@@ -30,17 +27,17 @@ use Regidium\CommonBundle\Document\Chat;
 class AgentChatController extends AbstractController
 {
     /**
-     * List all agent chats.
+     * Получаем список чатов агента.
      *
      * @ApiDoc(
      *   resource = false,
      *   description = "List all agent chats.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $uid Agent uid
+     * @param Request $uid Agent UID
      *
      * @return View
      */
@@ -49,10 +46,28 @@ class AgentChatController extends AbstractController
         $agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]);
 
         if (!$agent instanceof Agent) {
-            return $this->send(['errors' => ['Agent not found!']]);
+            return $this->sendError('Agent not found!');
         }
 
-        return $this->send($agent->getChats());
+        /** @var Chat[] $chats */
+        $chats = $agent->getChats();
+
+        $return = [];
+        foreach($chats as $chat) {
+            $return = [
+                'uid' => $chat->getUid(),
+                'started' => intval($chat->getStarted()),
+                'ended' => intval($chat->getEnded()),
+                'user' => [
+                    'uid' => $chat->getUser()->getUid(),
+                    'person' => [
+                        'uid' => $chat->getUser()->getPerson()->getUid(),
+                    ]
+                ]
+            ];
+        }
+
+        return $this->sendArray($return);
     }
 
     /**
@@ -62,11 +77,11 @@ class AgentChatController extends AbstractController
      *   resource = false,
      *   description = "Добавлям агента к чату.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param int $uid  Agent UID
+     * @param int $uid      Agent UID
      * @param int $chat_uid Chat UID
      *
      * @return View

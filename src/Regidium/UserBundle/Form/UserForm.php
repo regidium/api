@@ -17,7 +17,7 @@ class UserForm extends AbstractType
 
     protected $email_exclusion = null;
 
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if (array_key_exists('email_exclusion', $options)) {
             $this->email_exclusion = $options['email_exclusion'];
@@ -42,9 +42,9 @@ class UserForm extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'Regidium\CommonBundle\Document\User'
-        ));
+        ]);
     }
 
     /**

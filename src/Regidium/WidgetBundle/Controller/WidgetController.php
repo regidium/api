@@ -94,10 +94,10 @@ class WidgetController extends AbstractController
             return $this->view(['errors' => $result]);
         }
 
-        $routeOptions = array(
+        $routeOptions = [
             'uid' => $result->getUid(),
             '_format' => $request->get('_format')
-        );
+        ];
 
         return $this->routeRedirectView('api_1_get_widget', $routeOptions, Codes::HTTP_CREATED);
 
@@ -156,10 +156,10 @@ class WidgetController extends AbstractController
             return  $this->view(['errors' => $widget]);
         }
 
-        $routeOptions = array(
+        $routeOptions = [
             'uid' => $widget->getUid(),
             '_format' => $request->get('_format')
-        );
+        ];
 
         return $this->routeRedirectView('api_1_get_widget', $routeOptions, $statusCode);
     }

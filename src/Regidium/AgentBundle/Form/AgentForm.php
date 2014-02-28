@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 
+use Regidium\CommonBundle\Validator\Constraints\ExistDocument\ExistDocument;
 use Regidium\CommonBundle\Document\Agent;
 
 class AgentForm extends AbstractType
@@ -19,7 +20,8 @@ class AgentForm extends AbstractType
     {
         $builder
             ->add('job_title', 'text', [
-                'required' => false
+                'required' => false,
+                'description' => 'Agent Job title'
             ])
             ->add('type', 'integer', [
                 'required' => false
@@ -30,7 +32,7 @@ class AgentForm extends AbstractType
             ->add('accept_chats', 'radio', [
                 'required' => false
             ])
-/*            ->add('type', 'choice', [
+            ->add('type', 'choice', [
                 'required' => false,
                 'choices' => Agent::getTypes()
             ])
@@ -41,7 +43,14 @@ class AgentForm extends AbstractType
             ->add('accept_chats', 'choice', [
                 'required' => false,
                 'choices'   => [true, false]
-            ])*/
+            ])
+            ->add('widget_uid', 'hidden', [
+                'required' => true,
+                'mapped' => false,
+                'constraints' => [
+                    new ExistDocument(['repository' => 'regidium.widget.repository', 'property' => 'uid'])
+                ]
+            ])
         ;
     }
 

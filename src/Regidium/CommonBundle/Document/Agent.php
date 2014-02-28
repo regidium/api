@@ -18,6 +18,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Agent
 {
+    /* =============== Attributes =============== */
+
     /**
      * @MongoDB\Id
      */
@@ -28,11 +30,6 @@ class Agent
      * @MongoDB\UniqueIndex(safe="true")
      */
     private $uid;
-
-    /**
-     * @MongoDB\String
-     */
-    private $model_type;
 
     /**
      * @MongoDB\String
@@ -62,6 +59,8 @@ class Agent
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="agents")
      */
     private $widget;
+
+    /* =============== References =============== */
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", mappedBy="agent")
@@ -105,19 +104,31 @@ class Agent
 
     public function __construct()
     {
-        $this->setUid(uniqid());
-        $this->setType(self::TYPE_ADMINISTRATOR);
-        $this->setStatus(self::STATUS_DEFAULT);
-        $this->setAcceptChats(true);
-
+        $this->uid = uniqid();
+        $this->type = self::TYPE_ADMINISTRATOR;
+        $this->status = self::STATUS_DEFAULT;
+        $this->accept_chats = true;
         $this->chats = new ArrayCollection();
-
-        $this->setModelType('agent');
     }
 
     public function __toString()
     {
         return $this->uid;
+    }
+
+    public function toArray()
+    {
+        $return = [
+            'uid' => $this->uid,
+            'job_title' => $this->job_title,
+            'status' => $this->status,
+            'type' => $this->type,
+            'accept_chats' => $this->accept_chats,
+            'person' => $this->person->toArray(),
+            'widget' => $this->widget->toArray()
+        ];
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */
@@ -164,28 +175,6 @@ class Agent
     public function getUid()
     {
         return $this->uid;
-    }
-
-    /**
-     * Set modelType
-     *
-     * @param string $modelType
-     * @return self
-     */
-    public function setModelType($modelType)
-    {
-        $this->model_type = $modelType;
-        return $this;
-    }
-
-    /**
-     * Get modelType
-     *
-     * @return string $modelType
-     */
-    public function getModelType()
-    {
-        return $this->model_type;
     }
 
     /**
@@ -279,7 +268,7 @@ class Agent
     /**
      * Set widget
      *
-     * @param Regidium\CommonBundle\Document\Widget $widget
+     * @param \Regidium\CommonBundle\Document\Widget $widget
      * @return self
      */
     public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
@@ -291,7 +280,7 @@ class Agent
     /**
      * Get widget
      *
-     * @return \Regidium\CommonBundle\Document\Widget $widget
+     * @return Regidium\CommonBundle\Document\Widget $widget
      */
     public function getWidget()
     {
@@ -313,7 +302,7 @@ class Agent
     /**
      * Get person
      *
-     * @return \Regidium\CommonBundle\Document\Person $person
+     * @return Regidium\CommonBundle\Document\Person $person
      */
     public function getPerson()
     {

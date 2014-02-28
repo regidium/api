@@ -17,6 +17,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class User
 {
+    /* =============== Attributes =============== */
+
     /**
      * @MongoDB\Id
      */
@@ -37,6 +39,8 @@ class User
      * @MongoDB\Int
      */
     private $status;
+
+    /* =============== References =============== */
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", mappedBy="user")
@@ -62,11 +66,11 @@ class User
 
     static public function getStatuses()
     {
-        return array(
-                self::STATUS_DEFAULT,
-                self::STATUS_BLOCKED,
-                self::STATUS_DELETED
-            );
+        return [
+            self::STATUS_DEFAULT,
+            self::STATUS_BLOCKED,
+            self::STATUS_DELETED
+        ];
     }
 
     /* =============== General =============== */
@@ -84,6 +88,18 @@ class User
     public function __toString()
     {
         return $this->uid;
+    }
+
+    public function toArray()
+    {
+        $return = [
+            'uid' => $this->uid,
+            'status' => $this->status,
+            'person' => $this->person->toArray(),
+            'widget' => $this->widget->toArray()
+        ];
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */

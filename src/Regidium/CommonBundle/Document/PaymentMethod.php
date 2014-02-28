@@ -14,6 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class PaymentMethod
 {
+    /* =============== Attributes =============== */
+
     /**
      * @MongoDB\Id
      */

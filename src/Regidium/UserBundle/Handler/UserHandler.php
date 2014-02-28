@@ -45,7 +45,7 @@ class UserHandler extends AbstractHandler
      */
     public function all($limit = 5, $offset = 0)
     {
-        return $this->repository->findBy(array(), null, $limit, $offset);
+        return $this->repository->findBy([], null, $limit, $offset);
     }
 
     /**
@@ -57,7 +57,7 @@ class UserHandler extends AbstractHandler
      *
      * @return array
      */
-    public function allAgents($criteria = array(), $limit = 5, $offset = 0)
+    public function allAgents($criteria = [], $limit = 5, $offset = 0)
     {
         return $this->repository->findBy($criteria, null, $limit, $offset);
     }
@@ -71,7 +71,7 @@ class UserHandler extends AbstractHandler
      *
      * @return array
      */
-    public function allUsers($criteria = array(), $limit = 5, $offset = 0)
+    public function allUsers($criteria = [], $limit = 5, $offset = 0)
     {
         return $this->repository->findBy($criteria, null, $limit, $offset);
     }
@@ -171,13 +171,13 @@ class UserHandler extends AbstractHandler
      * @return string|array|Person
      *
      */
-    private function processForm(User $user, Person $person, Widget $widget, array $parameters, $method = 'PUT')
+    public function processForm(User $user, Person $person, Widget $widget, array $parameters, $method = 'PUT')
     {
         $user_parameters = [
             'status' => isset($parameters['status']) ? $parameters['status'] : User::STATUS_DEFAULT
         ];
 
-        $form_user = $this->formFactory->create(new UserForm(), $user, array('method' => $method));
+        $form_user = $this->formFactory->create(new UserForm(), $user, ['method' => $method]);
         $form_user->submit($user_parameters, 'PATCH' !== $method);
         if ($form_user->isValid()) {
             $user = $form_user->getData();
@@ -203,7 +203,7 @@ class UserHandler extends AbstractHandler
                 'language' => isset($parameters['language']) ? $parameters['language'] : ''
             ];
 
-            $form_person = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, array('method' => $method));
+            $form_person = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, ['method' => $method]);
             $form_person->submit($person_parameters, 'PATCH' !== $method);
             if ($form_person->isValid()) {
                 /** @var Person $person */

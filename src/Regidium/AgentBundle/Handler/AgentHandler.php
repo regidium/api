@@ -5,7 +5,6 @@ namespace Regidium\AgentBundle\Handler;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\AgentBundle\Form\AgentForm;
 use Regidium\CommonBundle\Form\PersonForm;
-
 use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Agent;
@@ -25,7 +24,7 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     * * Получение агентов по условию.
+     * Получение агентов по условию.
      *
      * @param array $criteria
      *
@@ -46,27 +45,25 @@ class AgentHandler extends AbstractHandler
      */
     public function all($limit = 5, $offset = 0)
     {
-        return $this->repository->findBy(array(), null, $limit, $offset);
+        return $this->repository->findBy([], null, $limit, $offset);
     }
 
     /**
-     * Создание агента.
+     * Создание новой сущности
      *
-     * @param Widget $widget     Виджет к которому будет прикреплен агент
-     * @param array  $parameters Параметры для сохранения
+     * @param array $data
      *
-     * @return string|array|Person
+     * @return object
      */
-    public function post(Widget $widget, array $parameters)
+    public function post(array $data)
     {
-        $agent = $this->createEntity();
-        $person = new Person();
+        $entity = $this->createEntity();
 
-        return $this->processForm($agent, $person, $widget, $parameters, 'POST');
+        return $this->processForm($entity, $data, 'POST');
     }
 
     /**
-     * Edit agent.
+     * Изменение агента.
      *
      * @param Person $person
      * @param array  $parameters
@@ -76,13 +73,12 @@ class AgentHandler extends AbstractHandler
     public function put(Person $person, array $parameters)
     {
         $agent = $person->getAgent();
-        $widget = $agent->getWidget();
 
-        return $this->processForm($agent, $person, $widget, $parameters, 'PUT');
+        return $this->processForm($agent, $parameters, 'PUT');
     }
 
     /**
-     * Remove exist Agent
+     * Удаление агента
      *
      * @param string $criteria
      *
@@ -96,7 +92,8 @@ class AgentHandler extends AbstractHandler
 
         try {
             $this->dm->remove($agent);
-            $this->dm->flush();
+            $this->dm->flush($agent);
+
             return 200;
         } catch (\Exception $e) {
             return 500;
@@ -105,6 +102,8 @@ class AgentHandler extends AbstractHandler
 
     /**
      * Save edit Agent
+     *
+     * @todo Remove
      *
      * @param Agent $agent
      *
@@ -116,10 +115,10 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     * Find agent by external service id
+     * Поиск агента по данным стороннего сервиса
      *
-     * @param string $provider External service provider
-     * @param int    $id       External service agent id
+     * @param string $provider Провайдер стороннего сервиса
+     * @param int    $id       Id агента на стороннем сервисе
      *
      * @return Agent|null
      */
@@ -132,62 +131,35 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     * Processes the form.
+     * Обработка формы.
      *
      * @param Agent  $agent
-     * @param Person $person
-     * @param Widget $widget
-     * @param array  $parameters
+     * @param array  $data
      * @param string $method
      *
      * @return string|array|Person
      *
      */
-    private function processForm(Agent $agent, Person $person, Widget $widget, array $parameters, $method = 'PUT')
+    public function processForm(Agent $agent, array $data, $method = 'PUT')
     {
-        $agent_data = [
-            'job_title' => isset($parameters['job_title']) ? $parameters['job_title'] : '',
-            'type' => isset($parameters['type']) ? intval($parameters['type']) : Agent::TYPE_ADMINISTRATOR,
-            'status' => isset($parameters['status']) ? intval($parameters['status']) : Agent::STATUS_DEFAULT,
-            'accept_chats' => isset($parameters['accept_chats']) ? boolval($parameters['accept_chats']) : true
-        ];
-
-        $form_agent = $this->formFactory->create(new AgentForm(), $agent, ['method' => $method]);
-        $form_agent->submit($agent_data, 'PATCH' !== $method);
-        if ($form_agent->isValid()) {
+        $form = $this->formFactory->create(new AgentForm(), $agent, ['method' => $method]);
+        $form->submit($data, 'PATCH' !== $method);
+        if ($form->isValid()) {
             /** @var Agent $agent */
-            $agent = $form_agent->getData();
+            $agent = $form->getData();
             if (!$agent instanceof Agent) {
                 return 'Server error';
             }
 
+            $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
             $agent->setWidget($widget);
 
-            $person_data = [
-                'fullname' => isset($parameters['fullname']) ? $parameters['fullname'] : '',
-                'avatar' => isset($parameters['avatar']) ? $parameters['avatar'] : '',
-                'email' => isset($parameters['email']) ? $parameters['email'] : '',
-                'password' => isset($parameters['password']) ? $parameters['password'] : ''
-            ];
+            $this->dm->persist($agent);
+            $this->dm->flush($agent);
 
-            $form_person = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, ['method' => $method]);
-            $form_person->submit($person_data, 'PATCH' !== $method);
-            if ($form_person->isValid()) {
-                /** @var Person $person */
-                $person = $form_person->getData();
-                $person->setAgent($agent);
-
-                $this->dm->persist($agent);
-                $this->dm->persist($person);
-
-                $this->dm->flush();
-
-                return $person;
-            }
-
-            return $this->getFormErrors($form_person);
+            return $agent;
         }
-        var_dump($form_agent->isValid());die();
-        return $this->getFormErrors($form_agent);
+
+        return $this->getFormErrors($form);
     }
 }

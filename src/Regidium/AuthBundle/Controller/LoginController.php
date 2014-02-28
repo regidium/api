@@ -3,13 +3,12 @@
 namespace Regidium\AuthBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\View\View;
-
-use Regidium\CommonBundle\Document\Person;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use Regidium\CommonBundle\Controller\AbstractController;
+use Regidium\CommonBundle\Document\Person;
 
 /**
  * Login controller
@@ -20,21 +19,21 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  * @Annotations\RouteResource("Login")
  *
  */
-class LoginController extends AbstractAuthController
+class LoginController extends AbstractController
 {
     /**
-     * Login exist person from submitted data.
+     * Авторизация персоны.
      *
      * @ApiDoc(
      *   resource = true,
      *   description = "Login exist person from submitted data.",
      *   input = "Regidium\AuthBundle\Form\Login\LoginForm",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $request Request object
+     * @param Request $request Request объект
      *
      * @return View
      */
@@ -42,10 +41,9 @@ class LoginController extends AbstractAuthController
     {
         $email = $request->request->get('email', null);
         $password = $request->request->get('password', null);
-        $remember = $request->request->get('remember', false);
 
         if (!$email || !$password) {
-            return  $this->sendError('Login or password is null');
+            return  $this->sendError('Login or password not valid');
         }
 
         $person = $this->get('regidium.person.handler')->one([
@@ -57,23 +55,7 @@ class LoginController extends AbstractAuthController
             return $this->sendError('User not found');
         }
 
-        $person = $this->login($person, $remember);
-
-        $return = [
-            'uid' => $person->getUid(),
-            'fullname' => $person->getFullname(),
-            'avatar' => $person->getAvatar(),
-            'email' => $person->getEmail(),
-            'model_type' => $person->getModelType(),
-            'agent' => [
-                'uid' => $person->getAgent()->getUid(),
-                'model_type' => $person->getAgent()->getModelType(),
-                'job_title' => $person->getAgent()->getJobTitle(),
-                'widget' => [
-                    'uid' => $person->getAgent()->getWidget()->getUid()
-                ]
-            ]
-        ];
+        $return = $person->toArray();
 
         if ($person instanceof Person) {
             return $this->send($return);
@@ -83,17 +65,17 @@ class LoginController extends AbstractAuthController
     }
 
     /**
-     * Check info about person.
+     * Получение информации о персоне.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Check info about user or agent.",
+     *   description = "Получение информации о персоне.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param string $uid Person UID
+     * @param string $uid UID персоны
      *
      * @return View
      */
@@ -102,26 +84,12 @@ class LoginController extends AbstractAuthController
         /** @var Person $person */
         $person = $this->get('regidium.person.handler')->one([ 'uid' => $uid  ]);
 
-        $return = [
-            'uid' => $person->getUid(),
-            'fullname' => $person->getFullname(),
-            'avatar' => $person->getAvatar(),
-            'email' => $person->getEmail(),
-            'model_type' => $person->getModelType(),
-            'agent' => [
-                'uid' => $person->getAgent()->getUid(),
-                'model_type' => $person->getAgent()->getModelType(),
-                'job_title' => $person->getAgent()->getJobTitle(),
-                'widget' => [
-                    'uid' => $person->getAgent()->getWidget()->getUid()
-                ]
-            ]
-        ];
-
         if($person instanceof Person) {
+            $return = $person->toArray();
+
             return $this->send($return);
         } else {
-            $this->sendError('The resource was not found.');
+            return $this->sendError('Person not found.');
         }
     }
 }

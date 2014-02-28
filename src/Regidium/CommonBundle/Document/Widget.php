@@ -18,6 +18,8 @@ use Regidium\CommonBundle\Document\PaymentMethod;
  */
 class Widget
 {
+    /* =============== Attributes =============== */
+
     /**
      * @MongoDB\Id
      */
@@ -66,10 +68,17 @@ class Widget
     private $available_agents;
 
     /**
+     * @MongoDB\Hash
+     */
+    private $settings;
+
+    /**
      * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"all"}, inversedBy="widgets")
      */
     private $plan;
+
+    /* =============== References =============== */
 
     /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Agent", mappedBy="widget")
@@ -86,11 +95,6 @@ class Widget
      */
     private $chats;
 
-    /**
-     * @MongoDB\Hash
-     */
-    private $settings;
-
     /* =============== Constants =============== */
 
     const STATUS_DEFAULT = 1;
@@ -99,11 +103,11 @@ class Widget
 
     static public function getStatuses()
     {
-        return array(
-                self::STATUS_DEFAULT,
-                self::STATUS_BLOCKED,
-                self::STATUS_DELETED
-            );
+        return [
+            self::STATUS_DEFAULT,
+            self::STATUS_BLOCKED,
+            self::STATUS_DELETED
+        ];
     }
 
     /* =============== General =============== */
@@ -129,6 +133,22 @@ class Widget
     public function __toString()
     {
         return $this->personal_account;
+    }
+
+    public function toArray()
+    {
+        $return = [
+            'uid' => $this->uid,
+            'personal_account' => $this->personal_account,
+            'css' => $this->css,
+            'balance' => $this->balance,
+            'url' => $this->url,
+            'available_agents' => $this->available_agents,
+            'settings' => $this->settings,
+            'plan' => $this->plan->toArray()
+        ];
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */

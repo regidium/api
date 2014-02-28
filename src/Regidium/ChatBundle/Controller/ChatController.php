@@ -2,25 +2,15 @@
 
 namespace Regidium\ChatBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormTypeInterface;
-
 use FOS\RestBundle\Controller\Annotations;
-use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Request\ParamFetcherInterface;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-
-use Regidium\CommonBundle\Document\User;
 use Regidium\CommonBundle\Document\Chat;
-
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
  * Chat controller
  *
- * @todo Update response for HTML format
  * @todo Вынести всю работу с моделями в handlers
  *
  * @package Regidium\ChatBundle\Controller
@@ -40,32 +30,21 @@ class ChatController extends AbstractController
      *   description = "Получить информацию о чате.",
      *   output = "Regidium\CommonBundle\Document\Chat",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param int     $uid   chat uid
+     * @param string $uid UID чата
      *
      * @return array
      */
     public function getAction($uid)
     {
-        return $this->getOr404(['uid' => $uid]);
-    }
-
-    /**
-     * Fetch a chat or throw an 404 Exception.
-     *
-     * @param array $criteria
-     *
-     * @return string|Chat
-     */
-    protected function getOr404(array $criteria)
-    {
-        if (!($chat = $this->get('regidium.chat.handler')->one($criteria))) {
-            return $this->sendError('The resource was not found.');
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
         }
 
-        return $chat;
+        return $this->getOr404($chat);
     }
 }

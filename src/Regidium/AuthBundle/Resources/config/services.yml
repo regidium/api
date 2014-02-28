@@ -1,8 +1,0 @@
-parameters:
-    regidium.auth.handler.class: Regidium\AuthBundle\Handler\AuthHandler
-    regidium.auth.document.class: Regidium\CommonBundle\Document\Auth
-
-services:
-    regidium.auth.handler:
-        class: %regidium.auth.handler.class%
-        arguments: [ @form.factory, @doctrine_mongodb, %regidium.auth.document.class% ]

@@ -8,7 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 
 use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
-
 use Regidium\CommonBundle\Document\Person;
 
 class PersonForm extends AbstractType
@@ -45,9 +44,11 @@ class PersonForm extends AbstractType
                 ])
             ->add('email', 'email', [
                     'required' => false,
-                    'constraints' => array(
-                        new UniqueDocument(array('repository' => 'regidium.person.repository', 'property' => 'email', 'exclusion' => $this->email_exclusion))
-                    )
+                    'constraints' => [
+                        new UniqueDocument([
+                            'repository' => 'regidium.person.repository', 'property' => 'email', 'exclusion' => $this->email_exclusion
+                        ])
+                    ]
                 ])
             ->add('password', 'password', [
                     'required' => false
@@ -88,9 +89,9 @@ class PersonForm extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'Regidium\CommonBundle\Document\Person'
-        ));
+        ]);
     }
 
     /**

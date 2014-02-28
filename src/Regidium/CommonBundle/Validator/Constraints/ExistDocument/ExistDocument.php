@@ -23,7 +23,7 @@ class ExistDocument extends Constraint
 
     public function getRequiredOptions()
     {
-        return array('repository', 'property');
+        return ['repository', 'property'];
     }
 
 }

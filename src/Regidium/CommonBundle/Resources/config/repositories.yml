@@ -1,27 +1,23 @@
 parameters:
     # Documents
     regidium.agent.document.class: Regidium\CommonBundle\Document\Agent
-    regidium.auth.document.class: Regidium\CommonBundle\Document\Auth
     regidium.billing.plan.document.class: Regidium\CommonBundle\Document\Plan
     regidium.billing.payment.document.class: Regidium\CommonBundle\Document\Payment
     regidium.billing.payment_method.document.class: Regidium\CommonBundle\Document\PaymentMethod
     regidium.chat.document.class: Regidium\CommonBundle\Document\Chat
     regidium.chat.message.document.class: Regidium\CommonBundle\Document\ChatMessage
     regidium.user.document.class: Regidium\CommonBundle\Document\User
-    regidium.file.document.class: Regidium\CommonBundle\Document\File
     regidium.person.document.class: Regidium\CommonBundle\Document\Person
     regidium.widget.document.class: Regidium\CommonBundle\Document\Widget
 
     # Repositories
     regidium.agent.repository.class: Regidium\CommonBundle\Repository\AgentRepository
-    regidium.auth.repository.class: Regidium\CommonBundle\Repository\AuthRepository
     regidium.billing.plan.repository.class: Regidium\CommonBundle\Repository\PlanRepository
     regidium.billing.payment.repository.class: Regidium\CommonBundle\Repository\PaymentRepository
     regidium.billing.payment_method.repository.class: Regidium\CommonBundle\Repository\PaymentMethodRepository
     regidium.chat.repository.class: Regidium\CommonBundle\Repository\ChatRepository
     regidium.chat.message.repository.class: Regidium\CommonBundle\Repository\ChatMessageRepository
     regidium.user.repository.class: Regidium\CommonBundle\Repository\UserRepository
-    regidium.file.repository.class: Regidium\CommonBundle\Repository\FileRepository
     regidium.person.repository.class: Regidium\CommonBundle\Repository\PersonRepository
     regidium.widget.repository.class: Regidium\CommonBundle\Repository\WidgetRepository
 
@@ -32,13 +28,6 @@ services:
         factory_method: getRepository
         public: true
         arguments: [ %regidium.agent.document.class% ]
-
-    regidium.auth.repository:
-        class: %regidium.auth.repository.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.auth.document.class% ]
 
     regidium.billing.plan.repository:
         class: %regidium.billing.plan.repository.class%
@@ -74,13 +63,6 @@ services:
         factory_method: getRepository
         public: true
         arguments: [ %regidium.chat.message.document.class% ]
-
-    regidium.file.repository:
-        class: %regidium.file.repository.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.file.document.class% ]
 
     regidium.user.repository:
         class: %regidium.user.repository.class%

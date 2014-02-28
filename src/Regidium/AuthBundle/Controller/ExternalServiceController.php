@@ -3,15 +3,12 @@
 namespace Regidium\AuthBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use FOS\RestBundle\Controller\Annotations;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
-
-use Regidium\CommonBundle\Document\User;
-use Regidium\CommonBundle\Document\Agent;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use Regidium\CommonBundle\Controller\AbstractController;
+use Regidium\CommonBundle\Document\Person;
 
 /**
  * External Service controller
@@ -24,22 +21,21 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  * @Annotations\RouteResource("Externalservice")
  *
  */
-class ExternalServiceController extends AbstractAuthController
+class ExternalServiceController extends AbstractController
 {
     /**
-     * Login exist user or agent from external service.
+     * Авторизация персоны через внешние сервисы.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Login exist user or agent from external service.",
+     *   description = "Авторизация персоны через внешние сервисы.",
      *   statusCodes = {
-     *     200 = "Always Returned"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $request Request object
-     *
-     * @param $provider
+     * @param Request $request  Request объект
+     * @param string  $provider Провайдер авторизации
      *
      * @return View
      */
@@ -47,7 +43,7 @@ class ExternalServiceController extends AbstractAuthController
     {
 
         if (!in_array($provider, ['facebook', 'vkontakte', 'google', 'twitter'])) {
-            return  $this->sendError("The provider {$provider} was not found.");
+            return  $this->sendError('The provider '.$provider.' was not found.');
         };
 
         $uid = $request->request->get('uid', null);
@@ -60,7 +56,7 @@ class ExternalServiceController extends AbstractAuthController
             if (isset($data['uid']) && $data['uid'] != $person->getUid()) {
                 return $this->sendError('External account already used');
             } else {
-                return $this->send($this->login($person));
+                return $this->send($person->toArray());
             }
         } elseif($uid) {
             $person = $this->get('regidium.person.handler')->one(['uid' => $uid]);
@@ -79,20 +75,22 @@ class ExternalServiceController extends AbstractAuthController
             $person = $this->get('regidium.person.handler')->edit($person);
             return $this->send($person);
         } else {
-            $person = array();
+            $person_data = [];
             if (isset($data['fullname'])) {
-                $person['fullname'] = $data['fullname'];
+                $person_data['fullname'] = $data['fullname'];
             }
 
             if (isset($data['email'])) {
-                $person['email'] = $data['email'];
+                $person_data['email'] = $data['email'];
             }
 
-            $person = $this->registration($person);
+            $person = $this->get('regidium.person.handler')->post($person_data);
+
             if ($person instanceof Person) {
                 $person->setExternalService($external_service);
                 $person = $this->get('regidium.person.handler')->edit($person);
-                return $this->send($person, Codes::HTTP_CREATED);
+
+                return $this->send($person->toArray());
             } else {
                 return $this->sendError('Error connect external service!');
             }
@@ -100,22 +98,22 @@ class ExternalServiceController extends AbstractAuthController
     }
 
     /**
-     * Disconnect external service.
+     * Отключение внешнего сервиса персоны.
      *
-     * @todo Create real disconnect
+     * @todo Не реализовано
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Disconnect external service.",
+     *   description = "Отключение внешнего сервиса персоны.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @return bool
+     * @return View
      */
     public function deleteAction()
     {
-        return true;
+        return $this->send(true);
     }
 }

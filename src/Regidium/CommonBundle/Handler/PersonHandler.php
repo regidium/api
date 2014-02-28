@@ -3,11 +3,8 @@
 namespace Regidium\CommonBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
-
 use Regidium\CommonBundle\Form\PersonForm;
 use Regidium\CommonBundle\Document\Person;
-use Regidium\CommonBundle\Document\Agent;
-use Regidium\CommonBundle\Document\User;
 
 class PersonHandler extends AbstractHandler
 {
@@ -49,30 +46,30 @@ class PersonHandler extends AbstractHandler
     }
 
     /**
-     * Create new person.
+     * Создание новой сущности
      *
-     * @param array $parameters
+     * @param array $data
      *
-     * @return Person
+     * @return object
      */
-    public function post(array $parameters)
+    public function post(array $data)
     {
-        $person = $this->createEntity();
+        $entity = $this->createEntity();
 
-        return $this->processForm($person, $parameters, 'POST');
+        return $this->processForm($entity, $data, 'POST');
     }
 
     /**
      * Edit a person.
      *
      * @param Person $person
-     * @param array  $parameters
+     * @param array  $data
      *
      * @return Person
      */
-    public function put(Person $person, array $parameters)
+    public function put(Person $person, array $data)
     {
-        return $this->processForm($person, $parameters, 'PUT');
+        return $this->processForm($person, $data, 'PUT');
     }
 
     /**
@@ -143,40 +140,30 @@ class PersonHandler extends AbstractHandler
         ;
     }
 
-
     /**
-     * Processes the form.
+     * Обработка формы.
      *
      * @param Person $person
-     * @param array  $parameters
+     * @param array  $data
      * @param string $method
      *
      * @return Person|array
      *
      */
-    private function processForm(Person $person, array $parameters, $method = 'PUT')
+    public function processForm(Person $person, array $data, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new PersonForm([ 'email_exclusion' => $person->getEmail() ]), $person, array('method' => $method));
-        $form->submit($parameters, 'PATCH' !== $method);
+        $form = $this->formFactory->create(new PersonForm(['email_exclusion' => $person->getEmail()]), $person, ['method' => $method]);
+        $form->submit($data, 'PATCH' !== $method);
         if ($form->isValid()) {
-            /** @var \Regidium\CommonBundle\Document\Person $person */
+            /** @var Person $person */
             $person = $form->getData();
 
-            $agent = new Agent();
-            $user = new User();
-            $person->setAgent($agent);
-            $person->setUser($user);
             $this->dm->persist($person);
             $this->dm->flush($person);
+
             return $person;
         }
 
-        $return = [];
-        $errors = $form->getErrors();
-        foreach ($errors as $error) {
-            $return[] = $error->getCause();
-        }
-
-        return $return;
+        return $this->getFormErrors($form);
     }
 }

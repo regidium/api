@@ -6,8 +6,6 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Regidium\CommonBundle\Document\User;
-
 /**
  * @MongoDB\Document(
  *      repositoryClass="Regidium\CommonBundle\Repository\ChatRepository",
@@ -18,6 +16,8 @@ use Regidium\CommonBundle\Document\User;
  */
 class Chat
 {
+    /* =============== Attributes =============== */
+
     /**
      * @MongoDB\Id
      */
@@ -30,19 +30,14 @@ class Chat
     private $uid;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Timestamp
      */
-    private $model_type;
+    private $started_at;
 
     /**
      * @MongoDB\Timestamp
      */
-    private $started;
-
-    /**
-     * @MongoDB\Timestamp
-     */
-    private $ended;
+    private $ended_at;
 
     /**
      * @MongoDB\Index
@@ -74,8 +69,10 @@ class Chat
      */
     protected $widget;
 
+    /* =============== Embedded =============== */
+
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", mappedBy="chat")
+     * @MongoDB\EmbedMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", strategy="set")
      */
     private $messages;
 
@@ -88,31 +85,48 @@ class Chat
 
     static public function getStatuses()
     {
-        return array(
-                self::STATUS_PENDING,
-                self::STATUS_DEFAULT,
-                self::STATUS_ARCHIVED,
-                self::STATUS_DELETED
-            );
+        return [
+            self::STATUS_PENDING,
+            self::STATUS_DEFAULT,
+            self::STATUS_ARCHIVED,
+            self::STATUS_DELETED
+        ];
     }
 
     /* =============== General =============== */
 
     public function __construct()
     {
-        $this->setUid(uniqid());
-        $this->setStarted(time());
-        $this->setUserStatus(self::STATUS_DEFAULT);
-        $this->setOperatorStatus(self::STATUS_PENDING);
+        $this->uid = uniqid();
+        $this->started_at = time();
+        $this->user_status = self::STATUS_DEFAULT;
+        $this->operator_status = self::STATUS_PENDING;
 
         $this->messages = new ArrayCollection();
-
-        $this->setModelType('chat');
     }
 
     public function __toString()
     {
         return $this->uid;
+    }
+
+    public function toArray()
+    {
+        $return = [
+            'uid' => $this->uid,
+            'started_at' => $this->started_at,
+            'ended_at' => $this->ended_at,
+            'user' => $this->user->toArray(),
+            'user_status' => $this->user_status,
+            'widget' => $this->widget->toArray()
+        ];
+
+        if ($this->operator) {
+            $return['operator'] = $this->operator->toArray();
+            $return['operator_status'] = $this->operator_status;
+        }
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */
@@ -162,69 +176,47 @@ class Chat
     }
 
     /**
-     * Set modelType
+     * Set startedAt
      *
-     * @param string $modelType
+     * @param timestamp $startedAt
      * @return self
      */
-    public function setModelType($modelType)
+    public function setStartedAt($startedAt)
     {
-        $this->model_type = $modelType;
+        $this->started_at = $startedAt;
         return $this;
     }
 
     /**
-     * Get modelType
+     * Get startedAt
      *
-     * @return string $modelType
+     * @return timestamp $startedAt
      */
-    public function getModelType()
+    public function getStartedAt()
     {
-        return $this->model_type;
+        return $this->started_at;
     }
 
     /**
-     * Set started
+     * Set endedAt
      *
-     * @param timestamp $started
+     * @param timestamp $endedAt
      * @return self
      */
-    public function setStarted($started)
+    public function setEndedAt($endedAt)
     {
-        $this->started = $started;
+        $this->ended_at = $endedAt;
         return $this;
     }
 
     /**
-     * Get started
+     * Get endedAt
      *
-     * @return timestamp $started
+     * @return timestamp $endedAt
      */
-    public function getStarted()
+    public function getEndedAt()
     {
-        return $this->started;
-    }
-
-    /**
-     * Set ended
-     *
-     * @param timestamp $ended
-     * @return self
-     */
-    public function setEnded($ended)
-    {
-        $this->ended = $ended;
-        return $this;
-    }
-
-    /**
-     * Get ended
-     *
-     * @return timestamp $ended
-     */
-    public function getEnded()
-    {
-        return $this->ended;
+        return $this->ended_at;
     }
 
     /**
@@ -242,7 +234,7 @@ class Chat
     /**
      * Get user
      *
-     * @return \Regidium\CommonBundle\Document\User $user
+     * @return Regidium\CommonBundle\Document\User $user
      */
     public function getUser()
     {
@@ -252,7 +244,7 @@ class Chat
     /**
      * Set operator
      *
-     * @param \Regidium\CommonBundle\Document\Agent $operator
+     * @param Regidium\CommonBundle\Document\Agent $operator
      * @return self
      */
     public function setOperator(\Regidium\CommonBundle\Document\Agent $operator)
@@ -264,7 +256,7 @@ class Chat
     /**
      * Get operator
      *
-     * @return \Regidium\CommonBundle\Document\Agent $operator
+     * @return Regidium\CommonBundle\Document\Agent $operator
      */
     public function getOperator()
     {
@@ -360,7 +352,7 @@ class Chat
     /**
      * Get messages
      *
-     * @return \Doctrine\Common\Collections\Collection $messages
+     * @return Doctrine\Common\Collections\Collection $messages
      */
     public function getMessages()
     {

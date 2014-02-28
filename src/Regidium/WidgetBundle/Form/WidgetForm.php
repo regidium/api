@@ -30,9 +30,9 @@ class WidgetForm extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'Regidium\CommonBundle\Document\Widget'
-        ));
+        ]);
     }
 
     /**

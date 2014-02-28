@@ -2,7 +2,9 @@
 
 namespace Regidium\ChatBundle\Handler;
 
+use Regidium\ChatBundle\Form\ChatForm;
 use Regidium\CommonBundle\Handler\AbstractHandler;
+use Regidium\CommonBundle\Document\Agent;
 use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\User;
 use Regidium\CommonBundle\Document\Widget;
@@ -10,7 +12,7 @@ use Regidium\CommonBundle\Document\Widget;
 class ChatHandler extends AbstractHandler
 {
     /**
-     * Get one chat by criteria.
+     * Получение одного чата по условию.
      *
      * @param array $criteria
      *
@@ -22,7 +24,7 @@ class ChatHandler extends AbstractHandler
     }
 
     /**
-     * Get chats by criteria.
+     * Получение чатов по условию.
      *
      * @param array $criteria
      *
@@ -34,41 +36,17 @@ class ChatHandler extends AbstractHandler
     }
 
     /**
-     * Create a new chat.
+     * Создание новой сущности
      *
-     * @param Widget $widget
-     * @param User   $user
+     * @param array $data
      *
-     * @return Chat
+     * @return object
      */
-    public function post(Widget $widget, User $user)
+    public function post(array $data)
     {
-        /** @var Chat $chat */
-        $chat = $this->createEntity();
+        $entity = $this->createEntity();
 
-        $chat->setWidget($widget);
-        $chat->setUser($user);
-
-        $this->dm->persist($chat);
-        $this->dm->flush();
-
-        return $chat;
-    }
-
-    /**
-     * Edit a chat.
-     *
-     * @todo Проверить необходимость
-     *
-     * @param Chat  $chat
-     * @param array $parameters
-     *
-     * @return Chat
-     */
-    public function put(Chat $chat, array $parameters)
-    {
-        return $chat;
-        //return $this->processForm($chat, $parameters, 'PUT');
+        return $this->processForm($entity, $data, 'POST');
     }
 
     /**
@@ -83,5 +61,46 @@ class ChatHandler extends AbstractHandler
     public function edit(Chat $chat) {
         $this->dm->flush($chat);
         return $chat;
+    }
+
+    /**
+     * Обработка формы.
+     *
+     * @param Chat   $chat
+     * @param array  $parameters
+     * @param string $method
+     *
+     * @return array|Chat
+     *
+     */
+    public function processForm(Chat $chat, array $parameters, $method = 'PUT')
+    {
+        $form = $this->formFactory->create(new ChatForm(), $chat, ['method' => $method]);
+        $form->submit($parameters, 'PATCH' !== $method);
+        if ($form->isValid()) {
+            /** @var Chat $chat */
+            $chat = $form->getData();
+            if (!$chat instanceof Chat) {
+                return 'Server error';
+            }
+
+            $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
+            $chat->setWidget($widget);
+
+            $user = $this->dm->getRepository('Regidium\CommonBundle\Document\User')->findOneBy(['uid' => $form->get('user_uid')->getData()]);
+            $chat->setUser($user);
+
+            $operator = $this->dm->getRepository('Regidium\CommonBundle\Document\Agent')->findOneBy(['uid' => $form->get('agent_uid')->getData()]);
+            if ($operator instanceof Agent) {
+                $chat->setOperator($operator);
+            }
+
+            $this->dm->persist($chat);
+            $this->dm->flush($chat);
+
+            return $chat;
+        }
+
+        return $this->getFormErrors($form);
     }
 }

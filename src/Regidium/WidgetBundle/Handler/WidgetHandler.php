@@ -48,17 +48,17 @@ class WidgetHandler extends AbstractHandler
     }
 
     /**
-     * Create a new widget.
+     * Создание новой сущности
      *
-     * @param array $parameters
+     * @param array $data
      *
-     * @return Widget
+     * @return object
      */
-    public function post(array $parameters)
+    public function post(array $data)
     {
-        $widget = $this->createEntity();
+        $entity = $this->createEntity();
 
-        return $this->processForm($widget, $parameters, 'POST');
+        return $this->processForm($entity, $data, 'POST');
     }
 
     /**
@@ -137,19 +137,16 @@ class WidgetHandler extends AbstractHandler
     /**
      * Обработка формы.
      *
-     * @param Widget $widget     Виджет для обработки
-     * @param array  $parameters Параметры для обработки
-     * @param string $method     HTTP метод
+     * @param Widget $widget Виджет для обработки
+     * @param array  $data   Данные для обработки
+     * @param string $method HTTP метод
      *
      * @return string|array|Widget
      *
      */
-    private function processForm(Widget $widget, array $parameters, $method = 'PUT')
+    public function processForm(Widget $widget, array $data, $method = 'PUT')
     {
-        $data = [
-            'status' => isset($parameters['status']) ? $parameters['status'] : Widget::STATUS_DEFAULT
-        ];
-        $form = $this->formFactory->create(new WidgetForm(), $widget, array('method' => $method));
+        $form = $this->formFactory->create(new WidgetForm(), $widget, ['method' => $method]);
         $form->submit($data, 'PATCH' !== $method);
         if ($form->isValid()) {
             $widget = $form->getData();
@@ -173,7 +170,7 @@ class WidgetHandler extends AbstractHandler
      * @return array|Widget
      *
      */
-    private function processSettingsForm(Widget $widget, array $parameters)
+    public function processSettingsForm(Widget $widget, array $parameters)
     {
         $form = $this->formFactory->create(new WidgetSettingsForm());
         $form->submit($parameters);

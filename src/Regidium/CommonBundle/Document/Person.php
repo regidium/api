@@ -17,6 +17,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Person
 {
+    /* =============== Attributes =============== */
+
     /**
      * @MongoDB\Id
      */
@@ -114,6 +116,8 @@ class Person
      */
     private $user;
 
+    /* =============== References =============== */
+
     /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="sender")
      */
@@ -124,11 +128,6 @@ class Person
      */
     private $input_messages;
 
-    /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Auth", mappedBy="person")
-     */
-    private $auths;
-
     /* =============== Constants =============== */
 
     const STATUS_DEFAULT = 1;
@@ -137,11 +136,11 @@ class Person
 
     static public function getStatuses()
     {
-        return array(
-                self::STATUS_DEFAULT,
-                self::STATUS_BLOCKED,
-                self::STATUS_DELETED
-            );
+        return [
+            self::STATUS_DEFAULT,
+            self::STATUS_BLOCKED,
+            self::STATUS_DELETED
+        ];
     }
 
     /* =============== General =============== */
@@ -155,7 +154,6 @@ class Person
         $this->chats = new ArrayCollection();
         $this->output_messages = new ArrayCollection();
         $this->input_messages = new ArrayCollection();
-        $this->auths = new ArrayCollection();
 
         $this->setModelType('person');
     }
@@ -662,35 +660,5 @@ class Person
     public function getInputMessages()
     {
         return $this->input_messages;
-    }
-
-    /**
-     * Add auth
-     *
-     * @param Regidium\CommonBundle\Document\Auth $auth
-     */
-    public function addAuth(\Regidium\CommonBundle\Document\Auth $auth)
-    {
-        $this->auths[] = $auth;
-    }
-
-    /**
-     * Remove auth
-     *
-     * @param Regidium\CommonBundle\Document\Auth $auth
-     */
-    public function removeAuth(\Regidium\CommonBundle\Document\Auth $auth)
-    {
-        $this->auths->removeElement($auth);
-    }
-
-    /**
-     * Get auths
-     *
-     * @return Doctrine\Common\Collections\Collection $auths
-     */
-    public function getAuths()
-    {
-        return $this->auths;
     }
 }

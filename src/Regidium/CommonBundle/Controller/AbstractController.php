@@ -40,7 +40,7 @@ abstract class AbstractController extends FOSRestController
     */
     protected function sendError($error, $status_code = null, array $headers = [])
     {
-        $errors = array();
+        $errors = [];
         if (!is_array($error)) {
             $errors[] = $error;
         } else {

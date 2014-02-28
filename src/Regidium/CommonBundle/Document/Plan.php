@@ -6,7 +6,6 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Regidium\CommonBundle\Document\Auth;
 use Regidium\CommonBundle\Document\Chat;
 
 /**
@@ -18,6 +17,8 @@ use Regidium\CommonBundle\Document\Chat;
  */
 class Plan
 {
+    /* =============== Attributes =============== */
+
     /**
      * @MongoDB\Id
      */
@@ -54,6 +55,8 @@ class Plan
      */
     private $type;
 
+    /* =============== References =============== */
+
     /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Widget", mappedBy="plan")
      */
@@ -67,6 +70,19 @@ class Plan
         $this->widgets = new ArrayCollection();
 
         $this->setModelType('plan');
+    }
+
+    public function toArray()
+    {
+        $return = [
+            'uid' => $this->uid,
+            'name' => $this->name,
+            'cost' => $this->cost,
+            'count_agents' => $this->count_agents,
+            'type' => $this->type
+        ];
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */

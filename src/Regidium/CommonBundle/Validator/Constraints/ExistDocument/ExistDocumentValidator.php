@@ -35,9 +35,9 @@ class ExistDocumentValidator extends ConstraintValidator
     {
         if (!$value) return;
 
-        $count = $this->container->get($constraint->repository)->count(array($constraint->property => $value));
+        $count = $this->container->get($constraint->repository)->count([$constraint->property => $value]);
         if ($count == 0) {
-            $this->context->addViolation($constraint->message, array('%value%' => $value, '%property%' => $constraint->property));
+            $this->context->addViolation($constraint->message, ['%value%' => $value, '%property%' => $constraint->property]);
             $error = new FormError(str_replace(['%value%', '%property%'], [$value, $constraint->property], $constraint->message));
             $this->context->getRoot()->addError($error);
         }

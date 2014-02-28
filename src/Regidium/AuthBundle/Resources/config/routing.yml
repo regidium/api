@@ -1,15 +1,3 @@
-#auths:
-#    type: rest
-#    prefix: /v1
-#    resource: Regidium\AuthBundle\Controller\AuthController
-#    name_prefix:  api_1_
-
-registration:
-    type: rest
-    prefix: /v1
-    resource: Regidium\AuthBundle\Controller\RegistrationController
-    name_prefix:  api_1_
-
 login:
     type: rest
     prefix: /v1

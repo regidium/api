@@ -3,8 +3,11 @@
 namespace Regidium\AuthBundle\Controller;
 
 use FOS\RestBundle\Controller\Annotations;
-
+use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use Regidium\CommonBundle\Controller\AbstractController;
+use Regidium\CommonBundle\Document\Person;
 
 /**
  * Logout controller
@@ -17,34 +20,33 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  * @Annotations\RouteResource("Logout")
  *
  */
-class LogoutController extends AbstractAuthController
+class LogoutController extends AbstractController
 {
     /**
-     * Logout exist user or agent.
+     * Выход персоны из системы.
      *
-     * @todo Create real logout
+     * @todo Не реализовано
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Logout exist user or agent.",
+     *   description = "Выход персоны из системы.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param string $uid Person UID
+     * @param string $uid UID персоны
      *
-     * @return bool
+     * @return View
      */
     public function getAction($uid)
     {
         $person = $this->get('regidium.person.handler')->one([ 'uid' => $uid ]);
 
-        if ($person) {
-            $this->get('regidium.auth.handler')->close($person);
-            return true;
+        if ($person instanceof Person) {
+            return $this->send(true);
         } else {
-            return false;
+            return $this->sendError($person);
         }
     }
 }
