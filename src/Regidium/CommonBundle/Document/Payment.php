@@ -28,18 +28,13 @@ class Payment
     private $uid;
 
     /**
-     * @MongoDB\String
-     */
-    private $model_type;
-
-    /**
      * @MongoDB\Float
      */
     private $amount;
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="payments")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="payments")
      */
     private $widget;
 
@@ -54,8 +49,6 @@ class Payment
     public function __construct()
     {
         $this->setUid(uniqid());
-
-        $this->setModelType('payment');
     }
 
     /* =============== Get/Set=============== */
@@ -102,28 +95,6 @@ class Payment
     public function getUid()
     {
         return $this->uid;
-    }
-
-    /**
-     * Set modelType
-     *
-     * @param string $modelType
-     * @return self
-     */
-    public function setModelType($modelType)
-    {
-        $this->model_type = $modelType;
-        return $this;
-    }
-
-    /**
-     * Get modelType
-     *
-     * @return string $modelType
-     */
-    public function getModelType()
-    {
-        return $this->model_type;
     }
 
     /**

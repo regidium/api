@@ -30,22 +30,20 @@ use Regidium\CommonBundle\Document\Chat;
 class WidgetUserController extends AbstractController
 {
     /**
-     * List all users in widget.
-     *
-     * @todo Проверять возможность просмотра для пользователя
+     * Получаение списка пользователей виджета.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "List all users in widget",
+     *   description = "Получаение списка пользователей виджета.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $uid Widget UID
+     * @param Request $uid UID виджета
      *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing users.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many users to return.")
+     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Смещение списка.")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="Кочиество элементов в списке.")
      *
      * @return View
      */
@@ -69,7 +67,7 @@ class WidgetUserController extends AbstractController
      *   description = "Создаем нового пользователя для виджета.",
      *   input = "Regidium\UserBundle\Form\UserForm",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
@@ -96,21 +94,7 @@ class WidgetUserController extends AbstractController
             return $this->sendError($person);
         }
 
-        $return = [
-            'uid' => $person->getUid(),
-            'model_type' => $person->getModelType(),
-            'fullname' => $person->getFullname(),
-            'avatar' => $person->getAvatar(),
-            'email' => $person->getEmail(),
-            'status' => $person->getStatus(),
-            'country' => $person->getCountry(),
-            'city' => $person->getCity(),
-            'ip' => $person->getIp(),
-            'os' => $person->getOs(),
-            'device' => $person->getDevice(),
-            'browser' => $person->getBrowser(),
-            'user_uid' => $person->getUser()->getUid()
-        ];
+        $return = $person->toArray(['user']);
 
         return $this->send($return, Codes::HTTP_CREATED);
     }
@@ -123,7 +107,7 @@ class WidgetUserController extends AbstractController
      *   description = "Обновляем существующего или создаем нового пользователя для виджета.",
      *   input = "Regidium\AgentBundle\Form\UserForm",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
@@ -172,21 +156,7 @@ class WidgetUserController extends AbstractController
             return $this->sendError($person);
         }
 
-        $return = [
-            'uid' => $person->getUid(),
-            'model_type' => $person->getModelType(),
-            'fullname' => $person->getFullname(),
-            'avatar' => $person->getAvatar(),
-            'email' => $person->getEmail(),
-            'status' => $person->getStatus(),
-            'country' => $person->getCountry(),
-            'city' => $person->getCity(),
-            'ip' => $person->getIp(),
-            'os' => $person->getOs(),
-            'device' => $person->getDevice(),
-            'browser' => $person->getBrowser(),
-            'user_uid' => $person->getUser()->getUid()
-        ];
+        $return = $person->toArray(['user']);
 
         return  $this->send($return, $statusCode);
     }
@@ -198,13 +168,13 @@ class WidgetUserController extends AbstractController
      *   resource = true,
      *   description = "Создаем новый чат для виджета.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $request   Request object
-     * @param string  $uid       Widget UID
-     * @param string  $user_uid  User UID
+     * @param Request $request   Request объект
+     * @param string  $uid       UID виджета
+     * @param string  $user_uid  UID пользователя
      *
      * @return View
      *
@@ -228,17 +198,17 @@ class WidgetUserController extends AbstractController
             return $this->sendError('User not found!');
         }
 
-        $chat = $this->get('regidium.chat.handler')->post(
-            $widget,
-            $user,
-            $request->request->all()
-        );
+        $data = $request->request->all();
+        $data['widget_uid'] = $widget->getUid();
+        $data['user_uid'] = $user->getUid();
+
+        $chat = $this->get('regidium.chat.handler')->post($data);
 
         if (!$chat instanceof Chat) {
             return $this->sendError($chat);
         }
 
-        return  $this->send($chat);
+        return  $this->send($chat->toArray());
     }
 
     private function prepareUserData(Request $request, $password)

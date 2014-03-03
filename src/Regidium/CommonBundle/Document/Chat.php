@@ -41,13 +41,13 @@ class Chat
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\User", cascade={"all"}, inversedBy="chats")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\User", cascade={"persist", "merge", "detach"}, inversedBy="chats")
      */
     private $user;
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Agent", cascade={"all"}, inversedBy="chats")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Agent", cascade={"persist", "merge", "detach"}, inversedBy="chats")
      */
     private $operator;
 
@@ -65,14 +65,14 @@ class Chat
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="chats")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="chats")
      */
     protected $widget;
 
     /* =============== Embedded =============== */
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", strategy="set")
+     * @MongoDB\EmbedMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", strategy="pushAll")
      */
     private $messages;
 
@@ -222,7 +222,7 @@ class Chat
     /**
      * Set user
      *
-     * @param Regidium\CommonBundle\Document\User $user
+     * @param \Regidium\CommonBundle\Document\User $user
      * @return self
      */
     public function setUser(\Regidium\CommonBundle\Document\User $user)
@@ -234,7 +234,7 @@ class Chat
     /**
      * Get user
      *
-     * @return Regidium\CommonBundle\Document\User $user
+     * @return \Regidium\CommonBundle\Document\User $user
      */
     public function getUser()
     {
@@ -244,7 +244,7 @@ class Chat
     /**
      * Set operator
      *
-     * @param Regidium\CommonBundle\Document\Agent $operator
+     * @param \Regidium\CommonBundle\Document\Agent $operator
      * @return self
      */
     public function setOperator(\Regidium\CommonBundle\Document\Agent $operator)
@@ -256,7 +256,7 @@ class Chat
     /**
      * Get operator
      *
-     * @return Regidium\CommonBundle\Document\Agent $operator
+     * @return \Regidium\CommonBundle\Document\Agent $operator
      */
     public function getOperator()
     {
@@ -310,7 +310,7 @@ class Chat
     /**
      * Set widget
      *
-     * @param Regidium\CommonBundle\Document\Widget $widget
+     * @param \Regidium\CommonBundle\Document\Widget $widget
      * @return self
      */
     public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
@@ -322,7 +322,7 @@ class Chat
     /**
      * Get widget
      *
-     * @return Regidium\CommonBundle\Document\Widget $widget
+     * @return \Regidium\CommonBundle\Document\Widget $widget
      */
     public function getWidget()
     {
@@ -332,7 +332,7 @@ class Chat
     /**
      * Add message
      *
-     * @param Regidium\CommonBundle\Document\ChatMessage $message
+     * @param \Regidium\CommonBundle\Document\ChatMessage $message
      */
     public function addMessage(\Regidium\CommonBundle\Document\ChatMessage $message)
     {
@@ -342,7 +342,7 @@ class Chat
     /**
      * Remove message
      *
-     * @param Regidium\CommonBundle\Document\ChatMessage $message
+     * @param \Regidium\CommonBundle\Document\ChatMessage $message
      */
     public function removeMessage(\Regidium\CommonBundle\Document\ChatMessage $message)
     {
@@ -352,7 +352,7 @@ class Chat
     /**
      * Get messages
      *
-     * @return Doctrine\Common\Collections\Collection $messages
+     * @return \Doctrine\Common\Collections\Collection $messages
      */
     public function getMessages()
     {

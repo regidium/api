@@ -3,10 +3,8 @@
 namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
@@ -32,8 +30,7 @@ class WidgetController extends AbstractController
      *   description = "Получение информации о виджете",
      *   output = "Regidium\CommonBundle\Document\Widget",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when the widget is not found"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
@@ -52,7 +49,6 @@ class WidgetController extends AbstractController
 
         $return = [
             'uid' => $widget->getUid(),
-            'model_type' => $widget->getModelType(),
             'available_agents' => $widget->getAvailableAgents(),
             'balance' => $widget->getBalance(),
             'personal_account' => $widget->getPersonalAccount(),
@@ -76,7 +72,7 @@ class WidgetController extends AbstractController
      *   description = "Creates a new widget from the submitted data.",
      *   input = "Regidium\WidgetBundle\Form\WidgetForm",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
@@ -171,7 +167,7 @@ class WidgetController extends AbstractController
      * @ApiDoc(
      *   resource = false,
      *   statusCodes = {
-     *     200 = "Always returned",
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *

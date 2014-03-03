@@ -52,16 +52,24 @@ class LoginController extends AbstractController
         ]);
 
         if (!$person instanceof Person) {
-            return $this->sendError('User not found');
+            return $this->sendError('Person not found');
         }
 
         $return = $person->toArray();
 
-        if ($person instanceof Person) {
-            return $this->send($return);
-        } else {
-            return $this->sendError('Login service error!');
+        if ($person->getAgent()) {
+            $agent = $person->getAgent();
+            $return['agent'] = $agent->toArray();
+            $return['agent']['widget'] = $agent->getWidget()->toArray();
         }
+
+        if ($person->getUser()) {
+            $user = $person->getUser();
+            $return['user'] = $user->toArray();
+            $return['user']['widget'] = $user->getWidget()->toArray();
+        }
+
+        return $this->send($return);
     }
 
     /**
@@ -86,6 +94,18 @@ class LoginController extends AbstractController
 
         if($person instanceof Person) {
             $return = $person->toArray();
+
+            if ($person->getAgent()) {
+                $agent = $person->getAgent();
+                $return['agent'] = $agent->toArray();
+                $return['agent']['widget'] = $agent->getWidget()->toArray();
+            }
+
+            if ($person->getUser()) {
+                $user = $person->getUser();
+                $return['user'] = $user->toArray();
+                $return['user']['widget'] = $user->getWidget()->toArray();
+            }
 
             return $this->send($return);
         } else {

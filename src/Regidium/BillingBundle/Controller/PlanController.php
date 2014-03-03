@@ -21,12 +21,13 @@ use Regidium\CommonBundle\Controller\AbstractController;
 class PlanController extends AbstractController
 {
     /**
-     * List all plans.
+     * Получение списка всех планов.
      *
      * @ApiDoc(
      *   resource = false,
+     *   description = "Получение списка всех планов.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
@@ -35,7 +36,7 @@ class PlanController extends AbstractController
      *   statusCode=200
      * )
      *
-     * @param Request $request request object
+     * @param Request $request Request объект
      *
      * @return array
      */

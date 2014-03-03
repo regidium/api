@@ -33,11 +33,6 @@ class Widget
 
     /**
      * @MongoDB\String
-     */
-    private $model_type;
-
-    /**
-     * @MongoDB\String
      * @MongoDB\UniqueIndex(safe="true")
      */
     private $personal_account;
@@ -74,7 +69,7 @@ class Widget
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"all"}, inversedBy="widgets")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"persist", "merge", "detach"}, inversedBy="widgets")
      */
     private $plan;
 
@@ -126,8 +121,6 @@ class Widget
         $this->settings = [
             'header_color' => '#ec1d23'
         ];
-
-        $this->setModelType('widget');
     }
 
     public function __toString()
@@ -195,28 +188,6 @@ class Widget
     public function getUid()
     {
         return $this->uid;
-    }
-
-    /**
-     * Set modelType
-     *
-     * @param string $modelType
-     * @return self
-     */
-    public function setModelType($modelType)
-    {
-        $this->model_type = $modelType;
-        return $this;
-    }
-
-    /**
-     * Get modelType
-     *
-     * @return string $modelType
-     */
-    public function getModelType()
-    {
-        return $this->model_type;
     }
 
     /**

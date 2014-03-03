@@ -21,12 +21,13 @@ use Regidium\CommonBundle\Controller\AbstractController;
 class PaymentMethodController extends AbstractController
 {
     /**
-     * List all payment methods.
+     * Получение списка всех методов оплаты.
      *
      * @ApiDoc(
      *   resource = false,
+     *   description = "Получение списка всех методов оплаты.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *

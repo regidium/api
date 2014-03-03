@@ -56,7 +56,7 @@ class Agent
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="agents")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="agents")
      */
     private $widget;
 
@@ -123,9 +123,7 @@ class Agent
             'job_title' => $this->job_title,
             'status' => $this->status,
             'type' => $this->type,
-            'accept_chats' => $this->accept_chats,
-            'person' => $this->person->toArray(),
-            'widget' => $this->widget->toArray()
+            'accept_chats' => $this->accept_chats
         ];
 
         return $return;
@@ -280,7 +278,7 @@ class Agent
     /**
      * Get widget
      *
-     * @return Regidium\CommonBundle\Document\Widget $widget
+     * @return \Regidium\CommonBundle\Document\Widget $widget
      */
     public function getWidget()
     {
@@ -302,7 +300,7 @@ class Agent
     /**
      * Get person
      *
-     * @return Regidium\CommonBundle\Document\Person $person
+     * @return \Regidium\CommonBundle\Document\Person $person
      */
     public function getPerson()
     {

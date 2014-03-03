@@ -3,9 +3,7 @@
 namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use FOS\RestBundle\Controller\Annotations;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;

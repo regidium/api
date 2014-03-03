@@ -3,23 +3,18 @@
 namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Util\Codes;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-
 use Regidium\CommonBundle\Document\Agent;
 use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Widget;
 
 /**
  * Widget Agent controller
- *
- * @todo Update response for HTML format
  *
  * @package Regidium\UserBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -29,22 +24,20 @@ use Regidium\CommonBundle\Document\Widget;
 class WidgetAgentController extends AbstractController
 {
     /**
-     * List all agents in widget.
-     *
-     * @todo Проверять возможность просмотра для пользователя
+     * Получаем список агентов виджета.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "List all agents in widget",
+     *   description = "Получаем список агентов виджета.",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $uid Widget UID
+     * @param Request $uid UID виджета
      *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing users.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many users to return.")
+     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Смещение списка.")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="Кочиество элементов в списке.")
      *
      * @return View
      */
@@ -74,8 +67,7 @@ class WidgetAgentController extends AbstractController
                     'status' => $agent->getStatus(),
                     'job_title' => $agent->getJobTitle(),
                     'type' => $agent->getType(),
-                    'accept_chats' => $agent->getAcceptChats(),
-                    'model_type' => $agent->getModelType()
+                    'accept_chats' => $agent->getAcceptChats()
                 ]
             ];
         }

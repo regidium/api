@@ -33,11 +33,6 @@ class Person
     /**
      * @MongoDB\String
      */
-    private $model_type;
-
-    /**
-     * @MongoDB\String
-     */
     private $fullname;
 
     /**
@@ -154,8 +149,6 @@ class Person
         $this->chats = new ArrayCollection();
         $this->output_messages = new ArrayCollection();
         $this->input_messages = new ArrayCollection();
-
-        $this->setModelType('person');
     }
 
     public function __toString()
@@ -163,9 +156,9 @@ class Person
         return $this->fullname;
     }
 
-    public function toArray()
+    public function toArray(array $options = [])
     {
-        return [
+        $return = [
            'uid' => $this->uid,
            'fullname' => $this->fullname,
            'avatar' => $this->avatar,
@@ -180,6 +173,18 @@ class Person
            'language' => $this->language,
            'status' => $this->status
         ];
+
+        if (in_array('user', $options)) {
+            $return['user'] = $this->user->toArray();
+        }
+
+        if (in_array('agent', $options)) {
+            if ($this->agent) {
+                $return['agent'] = $this->agent->toArray();
+            }
+        }
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */
@@ -226,28 +231,6 @@ class Person
     public function getUid()
     {
         return $this->uid;
-    }
-
-    /**
-     * Set modelType
-     *
-     * @param string $modelType
-     * @return self
-     */
-    public function setModelType($modelType)
-    {
-        $this->model_type = $modelType;
-        return $this;
-    }
-
-    /**
-     * Get modelType
-     *
-     * @return string $modelType
-     */
-    public function getModelType()
-    {
-        return $this->model_type;
     }
 
     /**

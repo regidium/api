@@ -33,11 +33,6 @@ class Plan
     /**
      * @MongoDB\String
      */
-    private $model_type;
-
-    /**
-     * @MongoDB\String
-     */
     private $name;
 
     /**
@@ -68,8 +63,6 @@ class Plan
     {
         $this->setUid(uniqid());
         $this->widgets = new ArrayCollection();
-
-        $this->setModelType('plan');
     }
 
     public function toArray()
@@ -129,28 +122,6 @@ class Plan
     public function getUid()
     {
         return $this->uid;
-    }
-
-    /**
-     * Set modelType
-     *
-     * @param string $modelType
-     * @return self
-     */
-    public function setModelType($modelType)
-    {
-        $this->model_type = $modelType;
-        return $this;
-    }
-
-    /**
-     * Get modelType
-     *
-     * @return string $modelType
-     */
-    public function getModelType()
-    {
-        return $this->model_type;
     }
 
     /**

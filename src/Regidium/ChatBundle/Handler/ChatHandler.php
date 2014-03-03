@@ -77,6 +77,7 @@ class ChatHandler extends AbstractHandler
     {
         $form = $this->formFactory->create(new ChatForm(), $chat, ['method' => $method]);
         $form->submit($parameters, 'PATCH' !== $method);
+        //var_dump($parameters);die();
         if ($form->isValid()) {
             /** @var Chat $chat */
             $chat = $form->getData();
@@ -90,7 +91,7 @@ class ChatHandler extends AbstractHandler
             $user = $this->dm->getRepository('Regidium\CommonBundle\Document\User')->findOneBy(['uid' => $form->get('user_uid')->getData()]);
             $chat->setUser($user);
 
-            $operator = $this->dm->getRepository('Regidium\CommonBundle\Document\Agent')->findOneBy(['uid' => $form->get('agent_uid')->getData()]);
+            $operator = $this->dm->getRepository('Regidium\CommonBundle\Document\Agent')->findOneBy(['uid' => $form->get('operator_uid')->getData()]);
             if ($operator instanceof Agent) {
                 $chat->setOperator($operator);
             }

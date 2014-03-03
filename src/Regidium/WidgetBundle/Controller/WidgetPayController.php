@@ -3,20 +3,16 @@
 namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use FOS\RestBundle\Controller\Annotations;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Payment;
 use Regidium\CommonBundle\Document\PaymentMethod;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
 /**
  * Widget payment controller
- *
- * @todo Update response for HTML format
  *
  * @package Regidium\WidgetBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -25,26 +21,6 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  */
 class WidgetPayController extends AbstractController
 {
-    /**
-     * @todo Not realized
-     * List all widget payments.
-     *
-     * @ApiDoc(
-     *   resource = false,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     * @param Request $uid Widget UID
-     *
-     * @return View
-     */
-    public function cgetAction($uid)
-    {
-        return true;
-    }
-
     /**
      * Create widget payment.
      *

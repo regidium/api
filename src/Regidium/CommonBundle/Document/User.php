@@ -31,11 +31,6 @@ class User
     private $uid;
 
     /**
-     * @MongoDB\String
-     */
-    private $model_type;
-
-    /**
      * @MongoDB\Int
      */
     private $status;
@@ -49,7 +44,7 @@ class User
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"all"}, inversedBy="users")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="users")
      */
     private $widget;
 
@@ -81,8 +76,6 @@ class User
         $this->setStatus(self::STATUS_DEFAULT);
 
         $this->chats = new ArrayCollection();
-
-        $this->setModelType('user');
     }
 
     public function __toString()
@@ -94,9 +87,7 @@ class User
     {
         $return = [
             'uid' => $this->uid,
-            'status' => $this->status,
-            'person' => $this->person->toArray(),
-            'widget' => $this->widget->toArray()
+            'status' => $this->status
         ];
 
         return $return;
@@ -146,28 +137,6 @@ class User
     public function getUid()
     {
         return $this->uid;
-    }
-
-    /**
-     * Set modelType
-     *
-     * @param string $modelType
-     * @return self
-     */
-    public function setModelType($modelType)
-    {
-        $this->model_type = $modelType;
-        return $this;
-    }
-
-    /**
-     * Get modelType
-     *
-     * @return string $modelType
-     */
-    public function getModelType()
-    {
-        return $this->model_type;
     }
 
     /**

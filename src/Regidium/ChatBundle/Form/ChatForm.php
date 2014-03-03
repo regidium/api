@@ -19,38 +19,42 @@ class ChatForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('ended', 'datetime', [
+            ->add('started_at', 'integer', [
+                    'required' => false
+                ])
+            ->add('ended_at', 'integer', [
                 'required' => false
             ])
             ->add('user_status', 'choice', [
-                    'required' => false,
-                    'choices' => Chat::getStatuses()
-                ])
+                'required' => false,
+                'choices' => Chat::getStatuses(),
+                'empty_data' => Chat::STATUS_DEFAULT
+            ])
             ->add('operator_status', 'choice', [
-                    'required' => false,
-                    'choices' => Chat::getStatuses()
-                ])
+                'required' => false,
+                'choices' => Chat::getStatuses(),
+                'empty_data' => Chat::STATUS_PENDING
+            ])
             ->add('user_uid', 'hidden', [
                 'mapped' => false,
-                'constraints' => array(
+                'constraints' => [
                     new Constraints\NotBlank(array('message' => 'User not found!')),
                     new ExistDocument(['repository' => 'regidium.user.repository', 'property' => 'uid'])
-                )
+                ]
             ])
             ->add('operator_uid', 'hidden', [
                 'mapped' => false,
                 'required' => false,
-                'constraints' => array(
-                    new Constraints\NotBlank(array('message' => 'Agent not found!')),
+                'constraints' => [
                     new ExistDocument(['repository' => 'regidium.agent.repository', 'property' => 'uid'])
-                )
+                ]
             ])
             ->add('widget_uid', 'hidden', [
                 'mapped' => false,
-                'constraints' => array(
+                'constraints' => [
                     new Constraints\NotBlank(array('message' => 'Widget not found!')),
                     new ExistDocument(['repository' => 'regidium.widget.repository', 'property' => 'uid'])
-                )
+                ]
             ])
         ;
     }

@@ -56,8 +56,8 @@ class AgentChatController extends AbstractController
         foreach($chats as $chat) {
             $return = [
                 'uid' => $chat->getUid(),
-                'started' => intval($chat->getStarted()),
-                'ended' => intval($chat->getEnded()),
+                'started_at' => intval($chat->getStartedAt()),
+                'ended_at' => intval($chat->getEndedAt()),
                 'user' => [
                     'uid' => $chat->getUser()->getUid(),
                     'person' => [

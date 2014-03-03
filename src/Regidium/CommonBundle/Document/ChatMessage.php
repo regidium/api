@@ -39,6 +39,11 @@ class ChatMessage
     private $text;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $archived;
+
+    /**
      * @Assert\NotBlank
      * @MongoDB\Int
      */
@@ -52,13 +57,13 @@ class ChatMessage
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"all"}, inversedBy="output_messages")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"persist", "merge", "detach"}, inversedBy="output_messages")
      */
     private $sender;
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"all"}, inversedBy="input_messages")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"persist", "merge", "detach"}, inversedBy="input_messages")
      */
     private $receiver;
 
@@ -88,6 +93,7 @@ class ChatMessage
         $this->setUpdatedAt(time());
         $this->setSenderStatus(self::STATUS_DEFAULT);
         $this->setReceiverStatus(self::STATUS_NOT_READED);
+        $this->setArchived(false);
     }
 
     public function __toString()
@@ -312,5 +318,27 @@ class ChatMessage
     public function getReceiver()
     {
         return $this->receiver;
+    }
+
+    /**
+     * Set archived
+     *
+     * @param boolean $archived
+     * @return self
+     */
+    public function setArchived($archived)
+    {
+        $this->archived = $archived;
+        return $this;
+    }
+
+    /**
+     * Get archived
+     *
+     * @return boolean $archived
+     */
+    public function getArchived()
+    {
+        return $this->archived;
     }
 }

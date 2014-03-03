@@ -27,11 +27,13 @@ class ChatMessageForm extends AbstractType
             ])
             ->add('sender_status', 'choice', [
                 'required' => false,
-                'choices' => ChatMessage::getStatuses()
+                'choices' => ChatMessage::getStatuses(),
+                'empty_data' => ChatMessage::STATUS_DEFAULT
             ])
             ->add('receiver_status', 'choice', [
                 'required' => false,
-                'choices' => ChatMessage::getStatuses()
+                'choices' => ChatMessage::getStatuses(),
+                'empty_data' => ChatMessage::STATUS_DEFAULT
             ])
             ->add('sender_uid', 'hidden', [
                 'mapped' => false,
@@ -40,14 +42,13 @@ class ChatMessageForm extends AbstractType
                     new ExistDocument(['repository' => 'regidium.person.repository', 'property' => 'uid'])
                 )
             ])
-            ->add('receiver_uid', 'hidden', [
-                'required' => false,
-                'mapped' => false,
-                'constraints' => array(
-                    new Constraints\NotBlank(array('message' => 'Receiver not found!')),
-                    new ExistDocument(['repository' => 'regidium.person.repository', 'property' => 'uid'])
-                )
-            ])
+            ->add('chat_uid', 'hidden', [
+                    'mapped' => false,
+                    'constraints' => array(
+                        new Constraints\NotBlank(array('message' => 'Chat not found!')),
+                        new ExistDocument(['repository' => 'regidium.chat.repository', 'property' => 'uid'])
+                    )
+                ])
         ;
     }
 
