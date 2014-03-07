@@ -23,11 +23,11 @@ use Regidium\CommonBundle\Document\Widget;
 class WidgetController extends AbstractController
 {
     /**
-     * Получение информации о виджете
+     * Получение информации о виджете.
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Получение информации о виджете",
+     *   description = "Получение информации о виджете.",
      *   output = "Regidium\CommonBundle\Document\Widget",
      *   statusCodes = {
      *     200 = "Возвращает при успешном выполнении"
@@ -61,7 +61,7 @@ class WidgetController extends AbstractController
             ]
         ];
 
-        return $this->send($return);
+        return $this->send($widget->toArray(['plan', 'triggers']));
     }
 
     /**

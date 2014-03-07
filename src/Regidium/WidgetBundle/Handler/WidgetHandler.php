@@ -108,14 +108,14 @@ class WidgetHandler extends AbstractHandler
      * @return bool|int
      */
     public function delete($criteria) {
-        $widget = $this->one($criteria);
-        if (!$widget instanceof Widget) {
+        $entity = $this->one($criteria);
+        if (!$entity instanceof Widget) {
             return 404;
         }
 
         try {
-            $this->dm->remove($widget);
-            $this->dm->flush();
+            $this->dm->remove($entity);
+            $this->dm->flush($entity);
             return 200;
         } catch (\Exception $e) {
             return 500;
@@ -125,13 +125,14 @@ class WidgetHandler extends AbstractHandler
     /**
      * Save edit Widget
      *
-     * @param Widget  $widget
+     * @param Widget  $entity
      *
      * @return Widget
      */
-    public function edit(Widget $widget) {
-        $this->dm->flush($widget);
-        return $widget;
+    public function edit(Widget $entity) {
+        $this->dm->persist($entity);
+        $this->dm->flush($entity);
+        return $entity;
     }
 
     /**

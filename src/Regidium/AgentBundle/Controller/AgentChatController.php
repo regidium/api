@@ -107,8 +107,7 @@ class AgentChatController extends AbstractController
         }
 
         $return = [
-            'chat_uid' => $chat->getUid(),
-            'messages' => $chat->getMessages()
+            'chat' => $chat->toArray()
         ];
 
         return $this->send($return);

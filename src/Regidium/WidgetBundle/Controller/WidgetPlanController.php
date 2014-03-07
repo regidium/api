@@ -33,9 +33,9 @@ class WidgetPlanController extends AbstractController
      *   }
      * )
      *
-     * @param Request $request
-     * @param string  $uid     Widget UID
-     * @param int     $plan    Plan UID
+     * @param Request $request Request объект
+     * @param string  $uid     UID виджета
+     * @param int     $plan    UID плана
      *
      * @return View
      */
@@ -48,11 +48,11 @@ class WidgetPlanController extends AbstractController
 
         $plan = $this->get('regidium.billing.plan.handler')->one(['type' => (int)$plan]);
         if (!$plan instanceof Plan) {
-            return $this->view(['errors' => ['Plan not found!']]);
+            return $this->sendError('Plan not found!');
         }
 
         if ($widget->getBalance() < $plan->getCost()) {
-            return $this->view(['errors' => ['Not enough money!']]);
+            return $this->sendError('Not enough money!');
         }
 
         $widget->setPlan($plan);
@@ -60,6 +60,6 @@ class WidgetPlanController extends AbstractController
         $widget->setAvailableAgents($plan->getCountAgents());
         $this->get('regidium.widget.handler')->edit($widget);
 
-        return $this->view($widget);
+        return $this->send($widget->toArray());
     }
 }

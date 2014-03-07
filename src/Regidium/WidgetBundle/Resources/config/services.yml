@@ -4,9 +4,15 @@ imports:
 parameters:
     regidium.widget.handler.class: Regidium\WidgetBundle\Handler\WidgetHandler
     regidium.widget.document.class: Regidium\CommonBundle\Document\Widget
+    regidium.trigger.handler.class: Regidium\WidgetBundle\Handler\TriggerHandler
+    regidium.trigger.document.class: Regidium\CommonBundle\Document\Trigger
 
 
 services:
     regidium.widget.handler:
         class: %regidium.widget.handler.class%
         arguments: [ @form.factory, @doctrine_mongodb, %regidium.widget.document.class% ]
+
+    regidium.trigger.handler:
+        class: %regidium.trigger.handler.class%
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.trigger.document.class% ]

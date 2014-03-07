@@ -6,7 +6,11 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @MongoDB\EmbeddedDocument
+ * @MongoDB\Document(
+ *      repositoryClass="Regidium\CommonBundle\Repository\ChatMessageRepository",
+ *      collection="chat_messages",
+ *      requireIndexes=false
+ *  )
  */
 class ChatMessage
 {
@@ -67,6 +71,12 @@ class ChatMessage
      */
     private $receiver;
 
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"all"}, inversedBy="messages")
+     */
+    private $chat;
+
     /* =============== Constants =============== */
 
     const STATUS_NOT_READED = 1;
@@ -105,8 +115,8 @@ class ChatMessage
     {
         $return = [
             'uid' => $this->uid,
-            'created' => $this->created,
-            'updated' => $this->updated,
+            'created' => $this->created_at,
+            'updated' => $this->updated_at,
             'text' => $this->text,
             'sender' => $this->sender,
             'sender_status' => $this->sender_status
@@ -340,5 +350,27 @@ class ChatMessage
     public function getArchived()
     {
         return $this->archived;
+    }
+
+    /**
+     * Set chat
+     *
+     * @param Regidium\CommonBundle\Document\Person $chat
+     * @return self
+     */
+    public function setChat(\Regidium\CommonBundle\Document\Person $chat)
+    {
+        $this->chat = $chat;
+        return $this;
+    }
+
+    /**
+     * Get chat
+     *
+     * @return Regidium\CommonBundle\Document\Person $chat
+     */
+    public function getChat()
+    {
+        return $this->chat;
     }
 }

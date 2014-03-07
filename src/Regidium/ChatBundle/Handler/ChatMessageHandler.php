@@ -36,42 +36,38 @@ class ChatMessageHandler extends AbstractHandler
      */
     public function processForm(ChatMessage $chat_message, array $data, $method = 'PUT')
     {
-        $form_chat_message = $this->formFactory->create(new ChatMessageForm(), $chat_message, ['method' => $method]);
-        $form_chat_message->submit($data, 'PATCH' !== $method);
-        if ($form_chat_message->isValid()) {
+        $form = $this->formFactory->create(new ChatMessageForm(), $chat_message, ['method' => $method]);
+        $form->submit($data, 'PATCH' !== $method);
+        if ($form->isValid()) {
             /** @var ChatMessage $chat_message */
-            $chat_message = $form_chat_message->getData();
+            $chat_message = $form->getData();
             if (!$chat_message instanceof ChatMessage) {
                 return 'Server error';
             }
 
-            $chat = $this->dm->getRepository('Regidium\CommonBundle\Document\chat')->findOneBy(['uid' => $form_chat_message->get('chat_uid')->getData()]);
+            //$chat = $this->dm->getRepository('Regidium\CommonBundle\Document\Chat')->findOneBy(['uid' => $form->get('chat_uid')->getData()]);
 
             // Архивируем сообщения, по критерию "все до последних X"
-            $chat_messages = $chat->getMessages();
+            $old_messages = $this->dm->getRepository('Regidium\CommonBundle\Document\ChatMessage')->findBy(['chat.uid' => $form->get('chat_uid')->getData(), 'archived' => false]);
             /** @todo Поменять количество сообщений для архивации, после проверки */
-            if (count($chat_messages) > 5) {
-                $message_to_archive = $chat->getMessages()->filter(function($e) { return !$e->getArchived(); })->first();
-                //$messages_to_archive = $chat->getMessages()->slice(count($chat_messages) - 1, 1);
+            if (count($old_messages) > 5) {
+                $message_to_archive = $old_messages->first();
                 if($message_to_archive) {
                     $message_to_archive->setArchived(true);
                     $this->dm->persist($message_to_archive);
                 }
             }
-            unset($chat_messages);
+            unset($old_messages);
 
-            $sender = $this->dm->getRepository('Regidium\CommonBundle\Document\person')->findOneBy(['uid' => $form_chat_message->get('sender_uid')->getData()]);
+            $sender = $this->dm->getRepository('Regidium\CommonBundle\Document\person')->findOneBy(['uid' => $form->get('sender_uid')->getData()]);
             $chat_message->setSender($sender);
 
-            $chat->addMessage($chat_message);
-
-            $this->dm->persist($chat);
-
+            $this->dm->persist($chat_message);
             $this->dm->flush();
 
             return $chat_message;
         }
 
-        return $this->getFormErrors($form_chat_message);
+        return $this->getFormErrors($form);
     }
 }

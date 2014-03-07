@@ -48,7 +48,7 @@ class WidgetChatController extends AbstractController
         }
 
         /** @var Chat[] $chats */
-        $chats = $this->get('regidium.chat.handler')->one(['widget.id' => $widget->getId(), 'messages.archive' => true]);
+        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'messages.archived' => true]);
 
         return  $this->sendArray($chats);
     }

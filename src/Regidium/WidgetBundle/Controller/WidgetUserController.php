@@ -208,7 +208,7 @@ class WidgetUserController extends AbstractController
             return $this->sendError($chat);
         }
 
-        return  $this->send($chat->toArray());
+        return  $this->send($chat->toArray(['widget', 'user', 'operator']));
     }
 
     private function prepareUserData(Request $request, $password)

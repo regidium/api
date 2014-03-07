@@ -43,12 +43,12 @@ class ChatMessageForm extends AbstractType
                 )
             ])
             ->add('chat_uid', 'hidden', [
-                    'mapped' => false,
-                    'constraints' => array(
-                        new Constraints\NotBlank(array('message' => 'Chat not found!')),
-                        new ExistDocument(['repository' => 'regidium.chat.repository', 'property' => 'uid'])
-                    )
-                ])
+                'mapped' => false,
+                'constraints' => array(
+                    new Constraints\NotBlank(array('message' => 'Chat not found!')),
+                    new ExistDocument(['repository' => 'regidium.chat.repository', 'property' => 'uid'])
+                )
+            ])
         ;
     }
 

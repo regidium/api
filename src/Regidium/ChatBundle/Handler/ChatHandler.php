@@ -59,6 +59,7 @@ class ChatHandler extends AbstractHandler
      * @return Chat
      */
     public function edit(Chat $chat) {
+        $this->dm->persist($chat);
         $this->dm->flush($chat);
         return $chat;
     }

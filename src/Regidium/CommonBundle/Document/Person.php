@@ -114,12 +114,12 @@ class Person
     /* =============== References =============== */
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="sender")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", mappedBy="sender")
      */
     private $output_messages;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="receiver")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", mappedBy="receiver")
      */
     private $input_messages;
 

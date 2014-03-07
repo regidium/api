@@ -90,6 +90,11 @@ class Widget
      */
     private $chats;
 
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Trigger", mappedBy="widget")
+     */
+    private $triggers;
+
     /* =============== Constants =============== */
 
     const STATUS_DEFAULT = 1;
@@ -118,6 +123,8 @@ class Widget
         $this->agents = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->chats = new ArrayCollection();
+        $this->triggers = new ArrayCollection();
+
         $this->settings = [
             'header_color' => '#ec1d23'
         ];
@@ -128,7 +135,7 @@ class Widget
         return $this->personal_account;
     }
 
-    public function toArray()
+    public function toArray(array $options = [])
     {
         $return = [
             'uid' => $this->uid,
@@ -138,8 +145,15 @@ class Widget
             'url' => $this->url,
             'available_agents' => $this->available_agents,
             'settings' => $this->settings,
-            'plan' => $this->plan->toArray()
         ];
+
+        if (in_array('plan', $options) && $this->plan) {
+            $return['plan'] = $this->plan->toArray();
+        }
+
+        if (in_array('triggers', $options) && $this->triggers) {
+            $return['triggers'] = $this->triggers->toArray();
+        }
 
         return $return;
     }
@@ -454,5 +468,35 @@ class Widget
     public function getSettings()
     {
         return $this->settings;
+    }
+
+    /**
+     * Add trigger
+     *
+     * @param Regidium\CommonBundle\Document\Trigger $trigger
+     */
+    public function addTrigger(\Regidium\CommonBundle\Document\Trigger $trigger)
+    {
+        $this->triggers[] = $trigger;
+    }
+
+    /**
+     * Remove trigger
+     *
+     * @param Regidium\CommonBundle\Document\Trigger $trigger
+     */
+    public function removeTrigger(\Regidium\CommonBundle\Document\Trigger $trigger)
+    {
+        $this->triggers->removeElement($trigger);
+    }
+
+    /**
+     * Get triggers
+     *
+     * @return Doctrine\Common\Collections\Collection $triggers
+     */
+    public function getTriggers()
+    {
+        return $this->triggers;
     }
 }

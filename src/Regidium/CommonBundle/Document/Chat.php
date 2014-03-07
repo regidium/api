@@ -72,7 +72,7 @@ class Chat
     /* =============== Embedded =============== */
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", strategy="pushAll")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", mappedBy="chat")
      */
     private $messages;
 
@@ -110,18 +110,24 @@ class Chat
         return $this->uid;
     }
 
-    public function toArray()
+    public function toArray(array $options = [])
     {
         $return = [
             'uid' => $this->uid,
             'started_at' => $this->started_at,
-            'ended_at' => $this->ended_at,
-            'user' => $this->user->toArray(),
-            'user_status' => $this->user_status,
-            'widget' => $this->widget->toArray()
+            'ended_at' => $this->ended_at
         ];
 
-        if ($this->operator) {
+        if (isset($options['widget'])) {
+            $return['widget'] = $this->widget->toArray();
+        }
+
+        if (isset($options['user'])) {
+            $return['user'] = $this->user->toArray();
+            $return['user_status'] = $this->user_status;
+        }
+
+        if (isset($options['operator']) && $this->operator) {
             $return['operator'] = $this->operator->toArray();
             $return['operator_status'] = $this->operator_status;
         }
