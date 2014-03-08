@@ -18,25 +18,31 @@ class TriggerForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('uid', 'text', [
+                'required' => false
+            ])
             ->add('name', 'text', [
                 'required' => false
             ])
             ->add('priority', 'integer', [
                 'required' => false
             ])
-            ->add('event', 'choice', [
+            ->add('event', 'number', [
                 'required' => false,
-                'choices' => Trigger::getEvents()
+                //'choices' => Trigger::getEvents()
             ])
             ->add('event_params', 'text', [
                 'required' => false
             ])
-            ->add('result', 'choice', [
+            ->add('result', 'number', [
                 'required' => false,
-                'choices' => Trigger::getEvents()
+                //'choices' => Trigger::getEvents()
             ])
             ->add('result_params', 'text', [
                 'required' => false
+            ])
+            ->add('widget_uid', 'hidden', [
+                'mapped' => false
             ])
         ;
     }

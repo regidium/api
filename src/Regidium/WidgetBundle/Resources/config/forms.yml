@@ -1,8 +1,14 @@
 parameters:
     regidium.widget.form.type.class: Regidium\WidgetBundle\Form\WidgetForm
+    regidium.trigger.form.type.class: Regidium\WidgetBundle\Form\TriggerForm
 
 services:
     regidium.widget.form.type:
         class: %regidium.widget.form.type.class%
         tags:
             - { name: form.type, alias: "widget" }
+
+    regidium.trigger.form.type:
+        class: %regidium.trigger.form.type.class%
+        tags:
+            - { name: form.type, alias: "trigger" }

@@ -33,3 +33,8 @@ widget_settings:
     type:     rest
     parent:   widgets
     resource: Regidium\WidgetBundle\Controller\WidgetSettingsController
+
+widget_trigger:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetTriggerController

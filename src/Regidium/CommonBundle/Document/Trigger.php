@@ -71,6 +71,10 @@ class Trigger
     const EVENT_VISIT_PAGE = 4;
     const EVENT_VISIT_FROM_URL = 5;
     const EVENT_VISIT_FROM_KEY_WORD = 6;
+    const EVENT_CHAT_OPENED = 7;
+    const EVENT_CHAT_CLOSED = 8;
+    const EVENT_MESSAGE_START = 9;
+    const EVENT_MESSAGE_SEND = 10;
 
     static public function getEvents()
     {
@@ -80,7 +84,11 @@ class Trigger
             self::EVENT_TIME_ONE_PAGE,
             self::EVENT_VISIT_PAGE,
             self::EVENT_VISIT_FROM_URL,
-            self::EVENT_VISIT_FROM_KEY_WORD
+            self::EVENT_VISIT_FROM_KEY_WORD,
+            self::EVENT_CHAT_OPENED,
+            self::EVENT_CHAT_CLOSED,
+            self::EVENT_MESSAGE_START,
+            self::EVENT_MESSAGE_SEND,
         ];
     }
 
@@ -112,6 +120,7 @@ class Trigger
         $return = [
             'uid' => $this->uid,
             'name' => $this->name,
+            'priority' => $this->priority,
             'event' => $this->event,
             'event_params' => $this->event_params,
             'result' => $this->result,

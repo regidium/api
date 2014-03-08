@@ -4,6 +4,7 @@ namespace Regidium\WidgetBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations;
+use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
@@ -21,13 +22,48 @@ use Regidium\CommonBundle\Document\Trigger;
 class WidgetTriggerController extends AbstractController
 {
     /**
+     * Получаение списка триггеров виджета.
+     *
+     * @ApiDoc(
+     *   resource = false,
+     *   description = "Получаение списка триггеров виджета.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $uid UID виджета
+     *
+     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Смещение списка.")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="Кочиество элементов в списке.")
+     *
+     * @return View
+     */
+    public function cgetAction($uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $return = [];
+        $triggers = $widget->getTriggers();
+        foreach($triggers as $trigger) {
+            $return[] = $trigger->toArray();
+        }
+
+        return $this->sendArray($return);
+    }
+
+    /**
      * Создаем или редактируем триггер.
      *
      * @ApiDoc(
      *   resource = false,
      *   description = "Создаем или редактируем триггер.",
      *   statusCodes = {
-     *     200 = "Возвращает при успешном редактировании"
+     *     200 = "Возвращает при успешном редактировании",
      *     204 = "Возвращает при успешном создании"
      *   }
      * )
@@ -54,14 +90,10 @@ class WidgetTriggerController extends AbstractController
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {
-            $statusCode = Codes::HTTP_OK;
-
             $trigger = $this->get('regidium.trigger.handler')->post(
                 $data
             );
         } else {
-            $statusCode = Codes::HTTP_OK;
-
             $trigger = $this->get('regidium.trigger.handler')->put(
                 $trigger,
                 $data
@@ -72,6 +104,6 @@ class WidgetTriggerController extends AbstractController
             return $this->sendError($trigger);
         }
 
-        return  $this->send($trigger->toArray(), $statusCode);
+        return  $this->send($trigger->toArray());
     }
 }
