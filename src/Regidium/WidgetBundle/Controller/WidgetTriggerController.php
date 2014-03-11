@@ -106,4 +106,33 @@ class WidgetTriggerController extends AbstractController
 
         return  $this->send($trigger->toArray());
     }
+
+    /**
+     * Удаление существующего триггера.
+     *
+     * @ApiDoc(
+     *   resource = false,
+     *   description = "Удаление существующего триггера.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param string $trigger_uid UID триггера
+     *
+     * @return View
+     *
+     */
+    public function deleteAction($trigger_uid)
+    {
+        $result = $this->get('regidium.trigger.handler')->delete([ 'uid' => $trigger_uid ]);
+
+        if ($result === 404) {
+            return $this->sendError('Trigger not found!');
+        } elseif ($result === 500) {
+            return $this->sendError('Server error!');
+        }
+
+        return $this->sendSuccess();
+    }
 }
