@@ -74,7 +74,7 @@ class WidgetTriggerController extends AbstractController
      *
      * @return View
      */
-    public function putAction(Request $request, $uid, $trigger_uid = null)
+    public function putAction(Request $request, $uid, $trigger_uid)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
@@ -82,7 +82,7 @@ class WidgetTriggerController extends AbstractController
         }
 
         $trigger = null;
-        if ($trigger_uid && !$trigger_uid === 'new') {
+        if (!$trigger_uid === 'new') {
             $trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
         }
 
@@ -90,6 +90,8 @@ class WidgetTriggerController extends AbstractController
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {
+            $data['uid'] = uniqid();
+
             $trigger = $this->get('regidium.trigger.handler')->post(
                 $data
             );
@@ -117,13 +119,13 @@ class WidgetTriggerController extends AbstractController
      *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
-     *
+     * @param string $uid         UID виджета
      * @param string $trigger_uid UID триггера
      *
      * @return View
      *
      */
-    public function deleteAction($trigger_uid)
+    public function deleteAction($uid, $trigger_uid)
     {
         $result = $this->get('regidium.trigger.handler')->delete([ 'uid' => $trigger_uid ]);
 
