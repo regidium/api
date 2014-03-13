@@ -44,22 +44,8 @@ class WidgetController extends AbstractController
         $widget = $this->getOr404(['uid' => $uid]);
 
         if (!$widget instanceof Widget) {
-            return $widget;
+            return $this->sendError($widget);
         }
-
-        $return = [
-            'uid' => $widget->getUid(),
-            'available_agents' => $widget->getAvailableAgents(),
-            'balance' => $widget->getBalance(),
-            'personal_account' => $widget->getPersonalAccount(),
-            'url' => $widget->getUrl(),
-            'settings' => $widget->getSettings(),
-            'plan' => [
-                'name' => $widget->getPlan()->getName(),
-                'cost' => $widget->getPlan()->getCost(),
-                'count_agents' => $widget->getPlan()->getCountAgents()
-            ]
-        ];
 
         return $this->send($widget->toArray(['plan', 'triggers']));
     }
