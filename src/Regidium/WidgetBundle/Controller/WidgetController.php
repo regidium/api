@@ -41,10 +41,10 @@ class WidgetController extends AbstractController
      */
     public function getAction($uid)
     {
-        $widget = $this->getOr404(['uid' => $uid]);
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
 
         if (!$widget instanceof Widget) {
-            return $this->sendError($widget);
+            return $this->sendError('Widget resource was not found.');
         }
 
         return $this->send($widget->toArray(['plan', 'triggers']));
@@ -173,22 +173,5 @@ class WidgetController extends AbstractController
         }
 
         return $this->view(['success' => true]);
-    }
-
-    /**
-     * Fetch a widget or throw an 404 Exception.
-     *
-     * @param array $criteria
-     *
-     * @return Widget
-     *
-     */
-    protected function getOr404(array $criteria)
-    {
-        if (!($widget = $this->get('regidium.widget.handler')->one($criteria))) {
-            return $this->sendError('The resource was not found.');
-        }
-
-        return $widget;
     }
 }
