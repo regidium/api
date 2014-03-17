@@ -55,6 +55,12 @@ class Chat
      * @Assert\NotBlank
      * @MongoDB\Int
      */
+    private $status;
+
+    /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
     private $user_status;
 
     /**
@@ -78,16 +84,22 @@ class Chat
 
     /* =============== Constants =============== */
 
-    const STATUS_PENDING  = 1;
-    const STATUS_DEFAULT  = 2;
-    const STATUS_ARCHIVED = 3;
-    const STATUS_DELETED  = 4;
+    const STATUS_CLOSED   = 1;
+    const STATUS_OPENED   = 2;
+    const STATUS_OFFLINE  = 3;
+    const STATUS_DEFAULT  = 4;
+    const STATUS_PENDING  = 5;
+    const STATUS_ARCHIVED = 6;
+    const STATUS_DELETED  = 7;
 
     static public function getStatuses()
     {
         return [
-            self::STATUS_PENDING,
+            self::STATUS_CLOSED,
+            self::STATUS_OPENED,
+            self::STATUS_OFFLINE,
             self::STATUS_DEFAULT,
+            self::STATUS_PENDING,
             self::STATUS_ARCHIVED,
             self::STATUS_DELETED
         ];
@@ -99,6 +111,7 @@ class Chat
     {
         $this->uid = uniqid();
         $this->started_at = time();
+        $this->status = self::STATUS_CLOSED;
         $this->user_status = self::STATUS_DEFAULT;
         $this->operator_status = self::STATUS_PENDING;
 
@@ -114,6 +127,7 @@ class Chat
     {
         $return = [
             'uid' => $this->uid,
+            'status' => $this->status,
             'started_at' => $this->started_at,
             'ended_at' => $this->ended_at
         ];
@@ -130,6 +144,10 @@ class Chat
         if (isset($options['operator']) && $this->operator) {
             $return['operator'] = $this->operator->toArray();
             $return['operator_status'] = $this->operator_status;
+        }
+
+        if (isset($options['messages']) && $this->messages) {
+            $return['messages'] = $this->messages->toArray();
         }
 
         return $return;
@@ -267,6 +285,28 @@ class Chat
     public function getOperator()
     {
         return $this->operator;
+    }
+
+    /**
+     * Set status
+     *
+     * @param int $status
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return int $status
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     /**

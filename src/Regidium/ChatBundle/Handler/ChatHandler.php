@@ -50,6 +50,19 @@ class ChatHandler extends AbstractHandler
     }
 
     /**
+     * Disconnect Chat
+     *
+     * @param Chat $chat
+     *
+     * @return Chat
+     */
+    public function offline(Chat $chat) {
+        $chat->setStatus(Chat::STATUS_OFFLINE);
+        $this->edit($chat);
+        return $chat;
+    }
+
+    /**
      * @todo убрать
      *
      * Save edited Chat
