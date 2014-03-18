@@ -175,6 +175,8 @@ class WidgetChatController extends AbstractController
         }
 
         $this->get('regidium.chat.handler')->offline($chat);
+
+        return $this->sendSuccess();
     }
 
     /**
