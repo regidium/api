@@ -222,7 +222,7 @@ class WidgetUserController extends AbstractController
             'status' => $request->get('status', User::STATUS_DEFAULT),
             'country' => $request->get('country', null),
             'city' => $request->get('city', null),
-            'ip' => $request->getClientIp(),
+            'ip' => $request->get('ip', null),
             'device' => $request->get('device', null),
             'os' => $request->get('os', null),
             'browser' => $request->get('browser', null),
