@@ -58,6 +58,11 @@ class Chat
     private $status;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $opened;
+
+    /**
      * @Assert\NotBlank
      * @MongoDB\Int
      */
@@ -84,22 +89,18 @@ class Chat
 
     /* =============== Constants =============== */
 
-    const STATUS_CLOSED   = 1;
-    const STATUS_OPENED   = 2;
+    const STATUS_ONLINE   = 1;
+    const STATUS_CHATTING = 2;
     const STATUS_OFFLINE  = 3;
-    const STATUS_DEFAULT  = 4;
-    const STATUS_PENDING  = 5;
-    const STATUS_ARCHIVED = 6;
-    const STATUS_DELETED  = 7;
+    const STATUS_ARCHIVED = 4;
+    const STATUS_DELETED  = 5;
 
     static public function getStatuses()
     {
         return [
-            self::STATUS_CLOSED,
-            self::STATUS_OPENED,
+            self::STATUS_ONLINE,
+            self::STATUS_CHATTING,
             self::STATUS_OFFLINE,
-            self::STATUS_DEFAULT,
-            self::STATUS_PENDING,
             self::STATUS_ARCHIVED,
             self::STATUS_DELETED
         ];
@@ -111,9 +112,10 @@ class Chat
     {
         $this->uid = uniqid();
         $this->started_at = time();
-        $this->status = self::STATUS_CLOSED;
-        $this->user_status = self::STATUS_DEFAULT;
-        $this->operator_status = self::STATUS_PENDING;
+        $this->opened = false;
+        $this->status = self::STATUS_ONLINE;
+        $this->user_status = self::STATUS_ONLINE;
+        $this->operator_status = self::STATUS_OFFLINE;
 
         $this->messages = new ArrayCollection();
     }
@@ -127,6 +129,7 @@ class Chat
     {
         $return = [
             'uid' => $this->uid,
+            'opened' => $this->opened,
             'status' => $this->status,
             'started_at' => $this->started_at,
             'ended_at' => $this->ended_at
@@ -148,6 +151,8 @@ class Chat
 
         if (isset($options['messages']) && $this->messages) {
             $return['messages'] = $this->messages->toArray();
+        } elseif (isset($options['messages']) && !$this->messages) {
+            $return['messages'] = [];
         }
 
         return $return;
@@ -403,5 +408,27 @@ class Chat
     public function getMessages()
     {
         return $this->messages;
+    }
+
+    /**
+     * Set opened
+     *
+     * @param boolean $opened
+     * @return self
+     */
+    public function setOpened($opened)
+    {
+        $this->opened = $opened;
+        return $this;
+    }
+
+    /**
+     * Get opened
+     *
+     * @return boolean $opened
+     */
+    public function getOpened()
+    {
+        return $this->opened;
     }
 }

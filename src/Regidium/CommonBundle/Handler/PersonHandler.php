@@ -73,6 +73,30 @@ class PersonHandler extends AbstractHandler
     }
 
     /**
+     * Измнение авторизационных данных пользователя.
+     *
+     * @param Person $person
+     * @param array  $data
+     *
+     * @return Person
+     */
+    public function auth(Person $person, array $data)
+    {
+        if (isset($data['email'])) {
+            $person->setEmail($data['email']);
+        }
+
+        if (isset($data['fullname'])) {
+            $person->setFullname($data['fullname']);
+        }
+
+        $this->dm->persist($person);
+        $this->dm->flush($person);
+
+        return $person;
+    }
+
+    /**
      * Remove exist person
      *
      * @todo Удалять Agent, User

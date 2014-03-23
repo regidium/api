@@ -50,7 +50,33 @@ class ChatHandler extends AbstractHandler
     }
 
     /**
-     * Disconnect Chat
+     * Подключение чата
+     *
+     * @param Chat $chat
+     *
+     * @return Chat
+     */
+    public function online(Chat $chat) {
+        $chat->setStatus(Chat::STATUS_ONLINE);
+        $this->edit($chat);
+        return $chat;
+    }
+
+    /**
+     * Общение в чате
+     *
+     * @param Chat $chat
+     *
+     * @return Chat
+     */
+    public function chatting(Chat $chat) {
+        $chat->setStatus(Chat::STATUS_CHATTING);
+        $this->edit($chat);
+        return $chat;
+    }
+
+    /**
+     * Отключение чата
      *
      * @param Chat $chat
      *
@@ -91,7 +117,7 @@ class ChatHandler extends AbstractHandler
     {
         $form = $this->formFactory->create(new ChatForm(), $chat, ['method' => $method]);
         $form->submit($parameters, 'PATCH' !== $method);
-        //var_dump($parameters);die();
+
         if ($form->isValid()) {
             /** @var Chat $chat */
             $chat = $form->getData();
@@ -115,7 +141,7 @@ class ChatHandler extends AbstractHandler
 
             return $chat;
         }
-
+        var_dump($form->getErrors());die();
         return $this->getFormErrors($form);
     }
 }

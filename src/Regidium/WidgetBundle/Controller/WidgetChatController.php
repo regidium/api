@@ -61,6 +61,42 @@ class WidgetChatController extends AbstractController
     }
 
     /**
+     * Получаем список чатов с состоянием В чате
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Получаем список чатов с состоянием В чате.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param string  $uid       Widget UID
+     *
+     * @return View
+     *
+     */
+    public function cgetOnlineAction($uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        /** @var Chat[] $chats */
+        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
+        $return = [];
+        foreach ($chats as $chat) {
+            $c = [];
+            $c['chat'] = $chat->toArray();
+            $c['person'] = $chat->getUser()->getPerson(['user'])->toArray();
+            $return[] = $c;
+        }
+
+        return  $this->sendArray($return);
+    }
+
+    /**
      * Получаем список архивных чатов
      *
      * @ApiDoc(
@@ -145,6 +181,41 @@ class WidgetChatController extends AbstractController
     }
 
     /**
+     * Подключение чата
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Подключение чата.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     * @param string  $chat_uid  Chat UID
+     *
+     * @return View
+     *
+     */
+    public function putOnlineAction(Request $request, $uid, $chat_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $this->get('regidium.chat.handler')->online($chat);
+
+        return $this->sendSuccess();
+    }
+
+    /**
      * Отключение чата
      *
      * @ApiDoc(
@@ -222,13 +293,15 @@ class WidgetChatController extends AbstractController
         $data['chat_uid'] = $chat->getUid();
 
         $chat_message = $this->get('regidium.chat.message.handler')->post($data);
+        $this->get('regidium.chat.handler')->chatting($chat);
 
         if (!$chat_message instanceof ChatMessage) {
             return $this->sendError($chat_message);
         }
 
         $return = [
-            'uid' => $chat_message->getUid()
+            'uid' => $chat_message->getUid(),
+            'chat' => $chat_message->getChat()->toArray()
         ];
 
         return $this->send($return);

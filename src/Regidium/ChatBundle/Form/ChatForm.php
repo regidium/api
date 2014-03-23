@@ -20,30 +20,34 @@ class ChatForm extends AbstractType
     {
         $builder
             ->add('started_at', 'integer', [
-                    'required' => false
-                ])
+                'required' => false
+            ])
             ->add('ended_at', 'integer', [
                 'required' => false
             ])
             ->add('status', 'choice', [
                 'required' => false,
                 'choices' => Chat::getStatuses(),
-                'empty_data' => Chat::STATUS_CLOSED
+                'empty_data' => Chat::STATUS_ONLINE
             ])
             ->add('user_status', 'choice', [
                 'required' => false,
                 'choices' => Chat::getStatuses(),
-                'empty_data' => Chat::STATUS_DEFAULT
+                'empty_data' => Chat::STATUS_ONLINE
             ])
             ->add('operator_status', 'choice', [
                 'required' => false,
                 'choices' => Chat::getStatuses(),
-                'empty_data' => Chat::STATUS_PENDING
+                'empty_data' => Chat::STATUS_OFFLINE
+            ])
+            ->add('opened', 'radio', [
+                'required' => false,
+                'empty_data' => false
             ])
             ->add('user_uid', 'hidden', [
                 'mapped' => false,
                 'constraints' => [
-                    new Constraints\NotBlank(array('message' => 'User not found!')),
+                    new Constraints\NotBlank(['message' => 'User not found!']),
                     new ExistDocument(['repository' => 'regidium.user.repository', 'property' => 'uid'])
                 ]
             ])
@@ -57,7 +61,7 @@ class ChatForm extends AbstractType
             ->add('widget_uid', 'hidden', [
                 'mapped' => false,
                 'constraints' => [
-                    new Constraints\NotBlank(array('message' => 'Widget not found!')),
+                    new Constraints\NotBlank(['message' => 'Widget not found!']),
                     new ExistDocument(['repository' => 'regidium.widget.repository', 'property' => 'uid'])
                 ]
             ])
@@ -79,6 +83,6 @@ class ChatForm extends AbstractType
      */
     public function getName()
     {
-        return 'chat_form';
+        return '';
     }
 }

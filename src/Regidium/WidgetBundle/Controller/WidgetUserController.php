@@ -161,6 +161,51 @@ class WidgetUserController extends AbstractController
         return  $this->send($return, $statusCode);
     }
 
+
+    /**
+     * Пользователь авторизировался
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Пользователь авторизировался.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request     Request object
+     * @param string  $uid         Widget UID
+     * @param string  $person_uid  Person UID
+     *
+     * @return View
+     *
+     */
+    public function putAuthAction(Request $request, $uid, $person_uid = null)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $person = $this->get('regidium.person.handler')->one(['uid' => $person_uid]);
+        if (!$person instanceof Person) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $person = $this->get('regidium.person.handler')->auth(
+            $person,
+            $request->request->all()
+        );
+
+        if (!$person instanceof Person) {
+            return $this->sendError($person);
+        }
+
+        $return = $person->toArray();
+
+        return  $this->send($return);
+    }
+
     /**
      * Создаем новый чат для виджета.
      *

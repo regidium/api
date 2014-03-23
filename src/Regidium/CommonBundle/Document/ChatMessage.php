@@ -73,7 +73,7 @@ class ChatMessage
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"all"}, inversedBy="messages")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Chat", cascade={"all"}, inversedBy="messages")
      */
     private $chat;
 
@@ -355,10 +355,10 @@ class ChatMessage
     /**
      * Set chat
      *
-     * @param Regidium\CommonBundle\Document\Person $chat
+     * @param \Regidium\CommonBundle\Document\Chat $chat
      * @return self
      */
-    public function setChat(\Regidium\CommonBundle\Document\Person $chat)
+    public function setChat(\Regidium\CommonBundle\Document\Chat $chat)
     {
         $this->chat = $chat;
         return $this;
@@ -367,7 +367,7 @@ class ChatMessage
     /**
      * Get chat
      *
-     * @return Regidium\CommonBundle\Document\Person $chat
+     * @return \Regidium\CommonBundle\Document\Chat $chat
      */
     public function getChat()
     {
