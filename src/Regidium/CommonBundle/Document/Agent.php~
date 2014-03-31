@@ -7,9 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @todo Увеличивать кол-во чатов при добавлении чата
- */
-/**
  * @MongoDB\Document(
  *      repositoryClass="Regidium\CommonBundle\Repository\AgentRepository",
  *      collection="agents",
@@ -30,6 +27,32 @@ class Agent
      * @MongoDB\UniqueIndex(safe="true")
      */
     private $uid;
+
+    /**
+     * @MongoDB\String
+     */
+    private $first_name;
+
+    /**
+     * @MongoDB\String
+     */
+    private $last_name;
+
+    /**
+     * @MongoDB\String
+     */
+    private $avatar;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $email;
+
+    /**
+     * @MongoDB\String
+     */
+    private $password;
 
     /**
      * @MongoDB\String
@@ -55,6 +78,11 @@ class Agent
     private $accept_chats;
 
     /**
+     * @MongoDB\Hash
+     */
+    private $external_service;
+
+    /**
      * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="agents")
      */
@@ -63,12 +91,7 @@ class Agent
     /* =============== References =============== */
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", mappedBy="agent")
-     */
-    private $person;
-
-    /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="operator")
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="agent")
      */
     private $chats;
 
@@ -105,9 +128,12 @@ class Agent
     public function __construct()
     {
         $this->uid = uniqid();
+        $this->job_title = '';
         $this->type = self::TYPE_ADMINISTRATOR;
         $this->status = self::STATUS_DEFAULT;
         $this->accept_chats = true;
+        $this->external_service = [];
+
         $this->chats = new ArrayCollection();
     }
 
@@ -116,15 +142,23 @@ class Agent
         return $this->uid;
     }
 
-    public function toArray()
+    public function toArray(array $options = [])
     {
         $return = [
             'uid' => $this->uid,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'avatar' => $this->avatar,
+            'email' => $this->email,
             'job_title' => $this->job_title,
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats
         ];
+
+        if (in_array('widget', $options)) {
+            $return['widget'] = $this->widget->toArray();
+        }
 
         return $return;
     }
@@ -173,6 +207,116 @@ class Agent
     public function getUid()
     {
         return $this->uid;
+    }
+
+    /**
+     * Set firstName
+     *
+     * @param string $firstName
+     * @return self
+     */
+    public function setFirstName($firstName)
+    {
+        $this->first_name = $firstName;
+        return $this;
+    }
+
+    /**
+     * Get firstName
+     *
+     * @return string $firstName
+     */
+    public function getFirstName()
+    {
+        return $this->first_name;
+    }
+
+    /**
+     * Set lastName
+     *
+     * @param string $lastName
+     * @return self
+     */
+    public function setLastName($lastName)
+    {
+        $this->last_name = $lastName;
+        return $this;
+    }
+
+    /**
+     * Get lastName
+     *
+     * @return string $lastName
+     */
+    public function getLastName()
+    {
+        return $this->last_name;
+    }
+
+    /**
+     * Set avatar
+     *
+     * @param string $avatar
+     * @return self
+     */
+    public function setAvatar($avatar)
+    {
+        $this->avatar = $avatar;
+        return $this;
+    }
+
+    /**
+     * Get avatar
+     *
+     * @return string $avatar
+     */
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string $email
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     * @return self
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string $password
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     /**
@@ -264,9 +408,31 @@ class Agent
     }
 
     /**
+     * Set externalService
+     *
+     * @param hash $externalService
+     * @return self
+     */
+    public function setExternalService($externalService)
+    {
+        $this->external_service = $externalService;
+        return $this;
+    }
+
+    /**
+     * Get externalService
+     *
+     * @return hash $externalService
+     */
+    public function getExternalService()
+    {
+        return $this->external_service;
+    }
+
+    /**
      * Set widget
      *
-     * @param \Regidium\CommonBundle\Document\Widget $widget
+     * @param Regidium\CommonBundle\Document\Widget $widget
      * @return self
      */
     public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
@@ -278,33 +444,11 @@ class Agent
     /**
      * Get widget
      *
-     * @return \Regidium\CommonBundle\Document\Widget $widget
+     * @return Regidium\CommonBundle\Document\Widget $widget
      */
     public function getWidget()
     {
         return $this->widget;
-    }
-
-    /**
-     * Set person
-     *
-     * @param Regidium\CommonBundle\Document\Person $person
-     * @return self
-     */
-    public function setPerson(\Regidium\CommonBundle\Document\Person $person)
-    {
-        $this->person = $person;
-        return $this;
-    }
-
-    /**
-     * Get person
-     *
-     * @return \Regidium\CommonBundle\Document\Person $person
-     */
-    public function getPerson()
-    {
-        return $this->person;
     }
 
     /**

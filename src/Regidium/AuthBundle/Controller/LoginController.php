@@ -8,7 +8,7 @@ use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\Agent;
 
 /**
  * Login controller
@@ -22,11 +22,11 @@ use Regidium\CommonBundle\Document\Person;
 class LoginController extends AbstractController
 {
     /**
-     * Авторизация персоны.
+     * Авторизация агента.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Login exist person from submitted data.",
+     *   description = "Авторизация агента.",
      *   input = "Regidium\AuthBundle\Form\Login\LoginForm",
      *   statusCodes = {
      *     200 = "Возвращает при успешном выполнении"
@@ -46,28 +46,18 @@ class LoginController extends AbstractController
             return  $this->sendError('Login or password not valid');
         }
 
-        $person = $this->get('regidium.person.handler')->one([
+        $agent = $this->get('regidium.agent.handler')->one([
             'email' => $email,
             'password' => $password,
         ]);
 
-        if (!$person instanceof Person) {
-            return $this->sendError('Person not found');
+        if (!$agent instanceof Agent) {
+            return $this->sendError('Agent not found');
         }
 
-        $return = $person->toArray();
-
-        if ($person->getAgent()) {
-            $agent = $person->getAgent();
-            $return['agent'] = $agent->toArray();
-            $return['agent']['widget'] = $agent->getWidget()->toArray();
-        }
-
-        if ($person->getUser()) {
-            $user = $person->getUser();
-            $return['user'] = $user->toArray();
-            $return['user']['widget'] = $user->getWidget()->toArray();
-        }
+        $return = [
+            'agent' => $agent->toArray(['widget'])
+        ];
 
         return $this->send($return);
     }
@@ -89,27 +79,17 @@ class LoginController extends AbstractController
      */
     public function getCheckAction($uid)
     {
-        /** @var Person $person */
-        $person = $this->get('regidium.person.handler')->one([ 'uid' => $uid  ]);
+        /** @var Agent $agent */
+        $agent = $this->get('regidium.agent.handler')->one([ 'uid' => $uid  ]);
 
-        if($person instanceof Person) {
-            $return = $person->toArray();
-
-            if ($person->getAgent()) {
-                $agent = $person->getAgent();
-                $return['agent'] = $agent->toArray();
-                $return['agent']['widget'] = $agent->getWidget()->toArray();
-            }
-
-            if ($person->getUser()) {
-                $user = $person->getUser();
-                $return['user'] = $user->toArray();
-                $return['user']['widget'] = $user->getWidget()->toArray();
-            }
-
-            return $this->send($return);
-        } else {
-            return $this->sendError('Person not found.');
+        if(!$agent instanceof Agent) {
+            return $this->sendError('Agent not found.');
         }
+
+        $return = [
+            'agent' => $agent->toArray(['widget'])
+        ];
+
+        return $this->send($return);
     }
 }

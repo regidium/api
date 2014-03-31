@@ -3,7 +3,7 @@
 namespace Regidium\BillingBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
-use Regidium\BillingBundle\Document\PaymentMethod;
+use Regidium\CommonBundle\Document\PaymentMethod;
 
 class PaymentMethodHandler extends AbstractHandler
 {

@@ -21,7 +21,7 @@ class LoginForm extends AbstractType
                     'constraints' => [
                         new Constraints\Email(['message' => 'Wrong Email']),
                         new Constraints\NotBlank(['message' => 'Blank Email']),
-                        new ExistDocument(['repository' => 'regidium.user.repository', 'property' => 'email'])
+                        new ExistDocument(['repository' => 'regidium.agent.repository', 'property' => 'email'])
                     ]
                 ])
             ->add('password', 'password')

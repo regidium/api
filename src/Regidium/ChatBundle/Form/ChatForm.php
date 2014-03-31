@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints;
 
 use Regidium\CommonBundle\Validator\Constraints\ExistDocument\ExistDocument;
 use Regidium\CommonBundle\Document\Chat;
+use Regidium\ChatBundle\Form\UserForm;
 
 class ChatForm extends AbstractType
 {
@@ -30,34 +31,13 @@ class ChatForm extends AbstractType
                 'choices' => Chat::getStatuses(),
                 'empty_data' => Chat::STATUS_ONLINE
             ])
-            ->add('user_status', 'choice', [
-                'required' => false,
-                'choices' => Chat::getStatuses(),
-                'empty_data' => Chat::STATUS_ONLINE
-            ])
-            ->add('operator_status', 'choice', [
-                'required' => false,
-                'choices' => Chat::getStatuses(),
-                'empty_data' => Chat::STATUS_OFFLINE
-            ])
             ->add('opened', 'radio', [
                 'required' => false,
                 'empty_data' => false
             ])
-            ->add('user_uid', 'hidden', [
-                'mapped' => false,
-                'constraints' => [
-                    new Constraints\NotBlank(['message' => 'User not found!']),
-                    new ExistDocument(['repository' => 'regidium.user.repository', 'property' => 'uid'])
-                ]
-            ])
-            ->add('operator_uid', 'hidden', [
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new ExistDocument(['repository' => 'regidium.agent.repository', 'property' => 'uid'])
-                ]
-            ])
+            ->add('user', 'hidden', [
+                    //'data_class' => 'Regidium\CommonBundle\Document\User'
+                ])
             ->add('widget_uid', 'hidden', [
                 'mapped' => false,
                 'constraints' => [

@@ -2,39 +2,16 @@
 
 namespace Regidium\ChatBundle\Handler;
 
-use Regidium\ChatBundle\Form\ChatForm;
 use Regidium\CommonBundle\Handler\AbstractHandler;
-use Regidium\CommonBundle\Document\Agent;
-use Regidium\CommonBundle\Document\Chat;
+
+use Regidium\ChatBundle\Form\ChatForm;
+use Regidium\ChatBundle\Form\UserForm;
 use Regidium\CommonBundle\Document\User;
+use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\Widget;
 
 class ChatHandler extends AbstractHandler
 {
-    /**
-     * Получение одного чата по условию.
-     *
-     * @param array $criteria
-     *
-     * @return Chat
-     */
-    public function one(array $criteria)
-    {
-        return $this->repository->findOneBy($criteria);
-    }
-
-    /**
-     * Получение чатов по условию.
-     *
-     * @param array $criteria
-     *
-     * @return Chat[]
-     */
-    public function get(array $criteria)
-    {
-        return $this->repository->findBy($criteria);
-    }
-
     /**
      * Создание новой сущности
      *
@@ -46,7 +23,32 @@ class ChatHandler extends AbstractHandler
     {
         $entity = $this->createEntity();
 
-        return $this->processForm($entity, $data, 'POST');
+        $user = new User();
+        $user_form = $this->formFactory->create(new UserForm(), $user, ['method' => 'POST']);
+        $user_form->submit($data['user'], false);
+        $user = $user_form->getData();
+        $data['user'] = $user;
+
+        $form = $this->formFactory->create(new ChatForm(), $entity, ['method' => 'POST']);
+        $form->submit($data, false);
+
+        if ($form->isValid()) {
+            /** @var Chat $chat */
+            $chat = $form->getData();
+            if (!$chat instanceof Chat) {
+                return 'Server error';
+            }
+
+            $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
+            $chat->setWidget($widget);
+
+            $this->dm->persist($chat);
+            $this->dm->flush($chat);
+
+            return $chat;
+        }
+
+        return $this->getFormErrors($form);
     }
 
     /**
@@ -72,6 +74,7 @@ class ChatHandler extends AbstractHandler
     public function chatting(Chat $chat) {
         $chat->setStatus(Chat::STATUS_CHATTING);
         $this->edit($chat);
+
         return $chat;
     }
 
@@ -85,6 +88,27 @@ class ChatHandler extends AbstractHandler
     public function offline(Chat $chat) {
         $chat->setStatus(Chat::STATUS_OFFLINE);
         $this->edit($chat);
+
+        return $chat;
+    }
+
+
+    /**
+     * Авторизационные данные пользователя
+     *
+     * @param Chat $chat
+     * @param array $data
+     *
+     * @return Chat
+     */
+    public function auth(Chat $chat, $data) {
+        $user = $chat->getUser();
+        $user->setFirstName($data['first_name']);
+        $user->setEmail($data['email']);
+
+        $chat->setUser($user);
+        $this->edit($chat);
+
         return $chat;
     }
 
@@ -100,48 +124,7 @@ class ChatHandler extends AbstractHandler
     public function edit(Chat $chat) {
         $this->dm->persist($chat);
         $this->dm->flush($chat);
+
         return $chat;
-    }
-
-    /**
-     * Обработка формы.
-     *
-     * @param Chat   $chat
-     * @param array  $parameters
-     * @param string $method
-     *
-     * @return array|Chat
-     *
-     */
-    public function processForm(Chat $chat, array $parameters, $method = 'PUT')
-    {
-        $form = $this->formFactory->create(new ChatForm(), $chat, ['method' => $method]);
-        $form->submit($parameters, 'PATCH' !== $method);
-
-        if ($form->isValid()) {
-            /** @var Chat $chat */
-            $chat = $form->getData();
-            if (!$chat instanceof Chat) {
-                return 'Server error';
-            }
-
-            $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
-            $chat->setWidget($widget);
-
-            $user = $this->dm->getRepository('Regidium\CommonBundle\Document\User')->findOneBy(['uid' => $form->get('user_uid')->getData()]);
-            $chat->setUser($user);
-
-            $operator = $this->dm->getRepository('Regidium\CommonBundle\Document\Agent')->findOneBy(['uid' => $form->get('operator_uid')->getData()]);
-            if ($operator instanceof Agent) {
-                $chat->setOperator($operator);
-            }
-
-            $this->dm->persist($chat);
-            $this->dm->flush($chat);
-
-            return $chat;
-        }
-        var_dump($form->getErrors());die();
-        return $this->getFormErrors($form);
     }
 }

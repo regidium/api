@@ -1,8 +1,0 @@
-parameters:
-    regidium.person.handler.class: Regidium\CommonBundle\Handler\PersonHandler
-    regidium.person.document.class: Regidium\CommonBundle\Document\Person
-
-services:
-    regidium.person.handler:
-        class: %regidium.person.handler.class%
-        arguments: [ @form.factory, @doctrine_mongodb, %regidium.person.document.class% ]

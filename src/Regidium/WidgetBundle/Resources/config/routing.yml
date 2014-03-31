@@ -19,11 +19,6 @@ widget_agent:
     parent:   widgets
     resource: Regidium\WidgetBundle\Controller\WidgetAgentController
 
-widget_user:
-    type:     rest
-    parent:   widgets
-    resource: Regidium\WidgetBundle\Controller\WidgetUserController
-
 widget_chat:
     type:     rest
     parent:   widgets

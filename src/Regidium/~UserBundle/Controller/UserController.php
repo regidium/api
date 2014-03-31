@@ -52,14 +52,12 @@ class UserController extends AbstractController
     }
 
 
-    protected function prepareUserData(Request $request, $password)
+    protected function prepareUserData(Request $request)
     {
         return [
-            'fullname' => $request->request->get('fullname', null),
-            'avatar' => $request->request->get('avatar', null),
+            'first_name' => $request->request->get('first_name', null),
+            'last_name' => $request->request->get('last_name', null),
             'email' => $request->request->get('email', null),
-            'password' => $password,
-            'status' => $request->request->get('status', User::STATUS_DEFAULT),
             'country' => $request->request->get('country', null),
             'city' => $request->request->get('city', null),
             'ip' => $request->request->get('ip', null),

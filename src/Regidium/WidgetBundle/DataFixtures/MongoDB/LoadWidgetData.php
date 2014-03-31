@@ -23,7 +23,7 @@ class LoadWidgetData extends AbstractFixture implements OrderedFixtureInterface
         $widget->setPlan($this->getReference('plan_base'));
 
         $manager->persist($widget);
-        $manager->flush();
+        $manager->flush($widget);
 
         $this->addReference('widget_regidium_my', $widget);
     }

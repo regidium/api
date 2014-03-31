@@ -10,14 +10,13 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Regidium\CommonBundle\Controller\AbstractController;
 
 use Regidium\CommonBundle\Document\Widget;
-use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\ChatMessage;
 
 /**
  * Widget Chat controller
  *
- * @package Regidium\UserBundle\Controller
+ * @package Regidium\CommonBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
  * @Annotations\RouteResource("Chat")
@@ -51,10 +50,9 @@ class WidgetChatController extends AbstractController
         $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId()]);
         $return = [];
         foreach ($chats as $chat) {
-            $c = [];
-            $c['chat'] = $chat->toArray();
-            $c['person'] = $chat->getUser()->getPerson(['user'])->toArray();
-            $return[] = $c;
+            $return[] = [
+                'chat' => $chat->toArray()
+            ];
         }
 
         return  $this->sendArray($return);
@@ -87,10 +85,9 @@ class WidgetChatController extends AbstractController
         $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
         $return = [];
         foreach ($chats as $chat) {
-            $c = [];
-            $c['chat'] = $chat->toArray();
-            $c['person'] = $chat->getUser()->getPerson(['user'])->toArray();
-            $return[] = $c;
+            $return[] = [
+                'chat' => $chat->toArray()
+            ];
         }
 
         return  $this->sendArray($return);
@@ -158,26 +155,15 @@ class WidgetChatController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        $person = $this->get('regidium.person.handler')->one(['uid' => $request->get('person_uid', null)]);
-        if (!$person instanceof Person) {
-            return $this->sendError('User not found!');
-        }
-
         $data = $request->request->all();
         $data['widget_uid'] = $widget->getUid();
-        $data['user_uid'] = $person->getUser()->getUid();
 
         $chat = $this->get('regidium.chat.handler')->post($data);
-
         if (!$chat instanceof Chat) {
             return $this->sendError($chat);
         }
 
-        $return = [
-            'uid' => $chat->getUid()
-        ];
-
-        return  $this->send($return);
+        return  $this->send($chat->toArray());
     }
 
     /**
@@ -251,6 +237,46 @@ class WidgetChatController extends AbstractController
     }
 
     /**
+     * Пользователь ввел авторизационные данные
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Пользователь ввел авторизационные данные.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     * @param string  $chat_uid  Chat UID
+     *
+     * @return View
+     *
+     */
+    public function putAuthAction(Request $request, $uid, $chat_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $data = [
+            'first_name' => $request->request->get('first_name', ''),
+            'email' => $request->request->get('email', '')
+        ];
+
+        $this->get('regidium.chat.handler')->auth($chat, $data);
+
+        return $this->sendSuccess();
+    }
+
+    /**
      * Создаем новое сообщение для чата.
      *
      * @ApiDoc(
@@ -305,5 +331,23 @@ class WidgetChatController extends AbstractController
         ];
 
         return $this->send($return);
+    }
+
+    private function prepareUserData(Request $request)
+    {
+        /** @todo Получать IP для proxy */
+        return [
+            'first_name' => $request->get('first_name', null),
+            'last_name' => $request->get('last_name', null),
+            'email' => $request->get('email', null),
+            'country' => $request->get('country', null),
+            'city' => $request->get('city', null),
+            'ip' => $request->get('ip', null),
+            'device' => $request->get('device', null),
+            'os' => $request->get('os', null),
+            'browser' => $request->get('browser', null),
+            'keyword' => $request->get('keyword', null),
+            'language' => $request->get('language', 'ru')
+        ];
     }
 }

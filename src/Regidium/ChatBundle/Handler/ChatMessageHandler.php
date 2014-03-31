@@ -6,7 +6,6 @@ use Regidium\ChatBundle\Form\ChatMessageForm;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\ChatMessage;
-use Regidium\CommonBundle\Document\Person;
 
 class ChatMessageHandler extends AbstractHandler
 {
@@ -21,23 +20,8 @@ class ChatMessageHandler extends AbstractHandler
     {
         $entity = $this->createEntity();
 
-        return $this->processForm($entity, $data, 'POST');
-    }
-
-    /**
-     * Обработка формы.
-     *
-     * @param ChatMessage  $chat_message
-     * @param array        $data
-     * @param string       $method
-     *
-     * @return array|ChatMessage
-     *
-     */
-    public function processForm(ChatMessage $chat_message, array $data, $method = 'PUT')
-    {
-        $form = $this->formFactory->create(new ChatMessageForm(), $chat_message, ['method' => $method]);
-        $form->submit($data, 'PATCH' !== $method);
+        $form = $this->formFactory->create(new ChatMessageForm(), $entity, ['method' => 'POST']);
+        $form->submit($data, false);
         if ($form->isValid()) {
             /** @var ChatMessage $chat_message */
             $chat_message = $form->getData();
@@ -58,9 +42,6 @@ class ChatMessageHandler extends AbstractHandler
                 }
             }
             unset($old_messages);
-
-            $sender = $this->dm->getRepository('Regidium\CommonBundle\Document\person')->findOneBy(['uid' => $form->get('sender_uid')->getData()]);
-            $chat_message->setSender($sender);
 
             $this->dm->persist($chat_message);
             $this->dm->flush();

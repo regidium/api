@@ -27,7 +27,7 @@ class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
 
         $this->addReference('plan_base', $plan);
 
-        // Expanded
+        // Company
         $plan = new Plan();
         $plan->setName('Company');
         $plan->setCost(500);
@@ -39,7 +39,7 @@ class LoadPlanData extends AbstractFixture implements OrderedFixtureInterface
 
         $this->addReference('plan_company', $plan);
 
-        // Unlimited
+        // Corporation
         $plan = new Plan();
         $plan->setName('Corporation');
         $plan->setCost(550);

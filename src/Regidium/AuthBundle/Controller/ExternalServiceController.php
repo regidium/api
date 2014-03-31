@@ -8,7 +8,7 @@ use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\Agent;
 
 /**
  * External Service controller
@@ -24,11 +24,11 @@ use Regidium\CommonBundle\Document\Person;
 class ExternalServiceController extends AbstractController
 {
     /**
-     * Авторизация персоны через внешние сервисы.
+     * Авторизация агента через внешние сервисы.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Авторизация персоны через внешние сервисы.",
+     *   description = "Авторизация агента через внешние сервисы.",
      *   statusCodes = {
      *     200 = "Возвращает при успешном выполнении"
      *   }
@@ -41,7 +41,7 @@ class ExternalServiceController extends AbstractController
      */
     public function postAction(Request $request, $provider)
     {
-
+        /** @todo Вынести в конфиг */
         if (!in_array($provider, ['facebook', 'vkontakte', 'google', 'twitter'])) {
             return  $this->sendError('The provider '.$provider.' was not found.');
         };
@@ -50,18 +50,18 @@ class ExternalServiceController extends AbstractController
         $data = $request->request->get('data', []);
         $security = $request->request->get('security', null);
 
-        $person = $this->get('regidium.person.handler')->oneByExternalService($provider, $data['id']);
+        $agent = $this->get('regidium.agent.handler')->oneByExternalService($provider, $data['id']);
 
-        if ($person instanceof Person) {
-            if (isset($data['uid']) && $data['uid'] != $person->getUid()) {
+        if ($agent instanceof Agent) {
+            if (isset($data['uid']) && $data['uid'] != $agent->getUid()) {
                 return $this->sendError('External account already used');
             } else {
-                return $this->send($person->toArray());
+                return $this->send($agent->toArray());
             }
         } elseif($uid) {
-            $person = $this->get('regidium.person.handler')->one(['uid' => $uid]);
+            $agent = $this->get('regidium.agent.handler')->one(['uid' => $uid]);
         } elseif (isset($data['email'])) {
-            $person = $this->get('regidium.person.handler')->one(['email' => $data['email']]);
+            $agent = $this->get('regidium.agent.handler')->one(['email' => $data['email']]);
         }
 
         $external_service[$provider] = [
@@ -70,27 +70,27 @@ class ExternalServiceController extends AbstractController
             'security' => $security
         ];
 
-        if ($person) {
-            $person->setExternalService($external_service);
-            $person = $this->get('regidium.person.handler')->edit($person);
-            return $this->send($person);
+        if ($agent) {
+            $agent->setExternalService($external_service);
+            $agent = $this->get('regidium.agent.handler')->edit($agent);
+            return $this->send($agent);
         } else {
-            $person_data = [];
+            $agent_data = [];
             if (isset($data['fullname'])) {
-                $person_data['fullname'] = $data['fullname'];
+                $agent_data['fullname'] = $data['fullname'];
             }
 
             if (isset($data['email'])) {
-                $person_data['email'] = $data['email'];
+                $agent_data['email'] = $data['email'];
             }
 
-            $person = $this->get('regidium.person.handler')->post($person_data);
+            $agent = $this->get('regidium.agent.handler')->post($agent_data);
 
-            if ($person instanceof Person) {
-                $person->setExternalService($external_service);
-                $person = $this->get('regidium.person.handler')->edit($person);
+            if ($agent instanceof Agent) {
+                $agent->setExternalService($external_service);
+                $agent = $this->get('regidium.agent.handler')->edit($agent);
 
-                return $this->send($person->toArray());
+                return $this->send($agent->toArray());
             } else {
                 return $this->sendError('Error connect external service!');
             }
@@ -98,13 +98,13 @@ class ExternalServiceController extends AbstractController
     }
 
     /**
-     * Отключение внешнего сервиса персоны.
+     * Отключение внешнего сервиса агента.
      *
      * @todo Не реализовано
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Отключение внешнего сервиса персоны.",
+     *   description = "Отключение внешнего сервиса агента.",
      *   statusCodes = {
      *     200 = "Возвращает при успешном выполнении"
      *   }

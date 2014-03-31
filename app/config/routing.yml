@@ -18,12 +18,6 @@ agents:
     prefix: /api
     resource: "@RegidiumAgentBundle/Resources/config/routing.yml"
 
-# RegidiumUserBundle
-users:
-    type: rest
-    prefix: /api
-    resource: "@RegidiumUserBundle/Resources/config/routing.yml"
-
 # RegidiumAuthBundle
 auths:
     type: rest

@@ -6,8 +6,6 @@ parameters:
     regidium.billing.payment_method.document.class: Regidium\CommonBundle\Document\PaymentMethod
     regidium.chat.document.class: Regidium\CommonBundle\Document\Chat
     regidium.chat.message.document.class: Regidium\CommonBundle\Document\ChatMessage
-    regidium.user.document.class: Regidium\CommonBundle\Document\User
-    regidium.person.document.class: Regidium\CommonBundle\Document\Person
     regidium.widget.document.class: Regidium\CommonBundle\Document\Widget
 
     # Repositories
@@ -17,8 +15,6 @@ parameters:
     regidium.billing.payment_method.repository.class: Regidium\CommonBundle\Repository\PaymentMethodRepository
     regidium.chat.repository.class: Regidium\CommonBundle\Repository\ChatRepository
     regidium.chat.message.repository.class: Regidium\CommonBundle\Repository\ChatMessageRepository
-    regidium.user.repository.class: Regidium\CommonBundle\Repository\UserRepository
-    regidium.person.repository.class: Regidium\CommonBundle\Repository\PersonRepository
     regidium.widget.repository.class: Regidium\CommonBundle\Repository\WidgetRepository
 
 services:
@@ -63,20 +59,6 @@ services:
         factory_method: getRepository
         public: true
         arguments: [ %regidium.chat.message.document.class% ]
-
-    regidium.user.repository:
-        class: %regidium.user.repository.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.user.document.class% ]
-
-    regidium.person.repository:
-        class: %regidium.person.repository.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.person.document.class% ]
 
     regidium.widget.repository:
         class: %regidium.widget.repository.class%

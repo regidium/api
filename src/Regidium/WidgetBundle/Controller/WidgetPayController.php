@@ -23,13 +23,12 @@ use Regidium\CommonBundle\Document\PaymentMethod;
 class WidgetPayController extends AbstractController
 {
     /**
-     * Create widget payment.
+     * Создание оплаты виджета.
      *
      * @ApiDoc(
      *   resource = false,
      *   statusCodes = {
-     *     204 = "Returned when successful",
-     *     400 = "Returned when has errors"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
@@ -37,7 +36,7 @@ class WidgetPayController extends AbstractController
      *
      * @param Request $request
      * @param string  $uid Widget UID
-     * @param int  $payment_method
+     * @param int     $payment_method
      *
      * @return View
      */
@@ -68,7 +67,7 @@ class WidgetPayController extends AbstractController
             return $this->view(['errors' => ['Payment save error!']]);
         }
 
-        /** @todo Запись дейсвий */
+        /** @todo Запись действий */
         $widget->setBalance($widget->getBalance() + $amount);
         $this->get('regidium.widget.handler')->edit($widget);
 

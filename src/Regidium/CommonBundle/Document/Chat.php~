@@ -1,0 +1,165 @@
+<?php
+
+namespace Regidium\CommonBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
+ * @MongoDB\Document(
+ *      repositoryClass="Regidium\CommonBundle\Repository\ChatRepository",
+ *      collection="chats",
+ *      requireIndexes=false
+ *  )
+ *
+ */
+class Chat
+{
+    /* =============== Attributes =============== */
+
+    /**
+     * @MongoDB\Id
+     */
+    private $id;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $uid;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    private $started_at;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    private $ended_at;
+
+    /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $status;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $opened;
+
+    /**
+     * @MongoDB\EmbedOne(targetDocument="Regidium\CommonBundle\Document\User", strategy="set")
+     */
+    private $user;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Agent", cascade={"persist", "merge", "detach"}, inversedBy="chats")
+     */
+    private $agent;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="chats")
+     */
+    protected $widget;
+
+    /* =============== Embedded =============== */
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\ChatMessage", mappedBy="chat")
+     */
+    private $messages;
+
+    /* =============== Constants =============== */
+
+    const STATUS_ONLINE   = 1;
+    const STATUS_CHATTING = 2;
+    const STATUS_OFFLINE  = 3;
+    const STATUS_ARCHIVED = 4;
+    const STATUS_DELETED  = 5;
+
+    static public function getStatuses()
+    {
+        return [
+            self::STATUS_ONLINE,
+            self::STATUS_CHATTING,
+            self::STATUS_OFFLINE,
+            self::STATUS_ARCHIVED,
+            self::STATUS_DELETED
+        ];
+    }
+
+    /* =============== General =============== */
+
+    public function __construct()
+    {
+        $this->uid = uniqid();
+        $this->started_at = time();
+        $this->opened = false;
+        $this->status = self::STATUS_ONLINE;
+
+        $this->user = [];
+        $this->messages = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->uid;
+    }
+
+    public function toArray(array $options = [])
+    {
+        $return = [
+            'uid' => $this->uid,
+            'opened' => $this->opened,
+            'status' => $this->status,
+            'started_at' => intval($this->started_at),
+            'ended_at' => intval($this->ended_at),
+            'user' => $this->user
+        ];
+
+        if (isset($options['agent']) && $this->agent) {
+            $return['agent'] = $this->agent->toArray();
+        }
+
+        if (isset($options['widget'])) {
+            $return['widget'] = $this->widget->toArray();
+        }
+
+        if (isset($options['messages']) && $this->messages) {
+            $return['messages'] = $this->messages->toArray();
+        } elseif (isset($options['messages']) && !$this->messages) {
+            $return['messages'] = [];
+        }
+
+        return $return;
+    }
+
+    /* =============== Get/Set=============== */
+
+    /**
+     * Set id
+     *
+     * @param string $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}

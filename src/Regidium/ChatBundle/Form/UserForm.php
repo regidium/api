@@ -1,34 +1,16 @@
 <?php
 
-namespace Regidium\CommonBundle\Form;
+namespace Regidium\ChatBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 
-use Regidium\CommonBundle\Validator\Constraints\UniqueDocument\UniqueDocument;
-use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\User;
 
-class PersonForm extends AbstractType
+class UserForm extends AbstractType
 {
-    /**
-     * @var string
-    */
-    protected $email_exclusion;
-
-    /**
-     * Construct
-     *
-     * @param array $options
-    */
-    public function __construct($options = [])
-    {
-        if (array_key_exists('email_exclusion', $options)) {
-            $this->email_exclusion = $options['email_exclusion'];
-        }
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -36,27 +18,15 @@ class PersonForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fullname', 'text', [
-                    'required' => false
-                ])
-            ->add('avatar', 'text', [
-                    'required' => false
-                ])
-            ->add('email', 'email', [
-                    'required' => false,
-                    'constraints' => [
-                        new UniqueDocument([
-                            'repository' => 'regidium.person.repository', 'property' => 'email', 'exclusion' => $this->email_exclusion
-                        ])
-                    ]
-                ])
-            ->add('password', 'password', [
-                    'required' => false
-                ])
-            ->add('status', 'choice', [
-                    'required' => false,
-                    'choices' => Person::getStatuses()
-                ])
+            ->add('first_name', 'text', [
+               'required' => false
+            ])
+            ->add('last_name', 'text', [
+                'required' => false
+            ])
+            ->add('email', 'text', [
+                'required' => false
+            ])
             ->add('country', 'text', [
                     'required' => false
                 ])
@@ -90,7 +60,7 @@ class PersonForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Regidium\CommonBundle\Document\Person'
+            'data_class' => 'Regidium\CommonBundle\Document\User'
         ]);
     }
 
@@ -99,6 +69,6 @@ class PersonForm extends AbstractType
      */
     public function getName()
     {
-        return '';
+        return 'user';
     }
 }

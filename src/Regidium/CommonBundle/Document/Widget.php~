@@ -81,11 +81,6 @@ class Widget
     private $agents;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\User", mappedBy="widget")
-     */
-    private $users;
-
-    /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="widget")
      */
     private $chats;
@@ -121,7 +116,6 @@ class Widget
         $this->setStatus(self::STATUS_DEFAULT);
 
         $this->agents = new ArrayCollection();
-        $this->users = new ArrayCollection();
         $this->chats = new ArrayCollection();
         $this->triggers = new ArrayCollection();
 
@@ -386,36 +380,6 @@ class Widget
     public function getAgents()
     {
         return $this->agents;
-    }
-
-    /**
-     * Add user
-     *
-     * @param Regidium\CommonBundle\Document\User $user
-     */
-    public function addUser(\Regidium\CommonBundle\Document\User $user)
-    {
-        $this->users[] = $user;
-    }
-
-    /**
-     * Remove user
-     *
-     * @param Regidium\CommonBundle\Document\User $user
-     */
-    public function removeUser(\Regidium\CommonBundle\Document\User $user)
-    {
-        $this->users->removeElement($user);
-    }
-
-    /**
-     * Get users
-     *
-     * @return Doctrine\Common\Collections\Collection $users
-     */
-    public function getUsers()
-    {
-        return $this->users;
     }
 
     /**

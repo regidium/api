@@ -7,7 +7,7 @@ use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
-use Regidium\CommonBundle\Document\Person;
+use Regidium\CommonBundle\Document\Agent;
 
 /**
  * Logout controller
@@ -23,13 +23,13 @@ use Regidium\CommonBundle\Document\Person;
 class LogoutController extends AbstractController
 {
     /**
-     * Выход персоны из системы.
+     * Выход агента из системы.
      *
      * @todo Не реализовано
      *
      * @ApiDoc(
      *   resource = false,
-     *   description = "Выход персоны из системы.",
+     *   description = "Выход агента из системы.",
      *   statusCodes = {
      *     200 = "Возвращает при успешном выполнении"
      *   }
@@ -41,12 +41,12 @@ class LogoutController extends AbstractController
      */
     public function getAction($uid)
     {
-        $person = $this->get('regidium.person.handler')->one([ 'uid' => $uid ]);
+        $agent = $this->get('regidium.agent.handler')->one([ 'uid' => $uid ]);
 
-        if ($person instanceof Person) {
+        if ($agent instanceof Agent) {
             return $this->send(true);
         } else {
-            return $this->sendError($person);
+            return $this->sendError($agent);
         }
     }
 }

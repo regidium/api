@@ -33,11 +33,6 @@ class ChatMessage
     private $created_at;
 
     /**
-     * @MongoDB\Timestamp
-     */
-    private $updated_at;
-
-    /**
      * @MongoDB\String
      */
     private $text;
@@ -48,28 +43,9 @@ class ChatMessage
     private $archived;
 
     /**
-     * @Assert\NotBlank
      * @MongoDB\Int
      */
-    private $sender_status;
-
-    /**
-     * @Assert\NotBlank
-     * @MongoDB\Int
-     */
-    private $receiver_status;
-
-    /**
-     * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"persist", "merge", "detach"}, inversedBy="output_messages")
-     */
-    private $sender;
-
-    /**
-     * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Person", cascade={"persist", "merge", "detach"}, inversedBy="input_messages")
-     */
-    private $receiver;
+    private $sender_type;
 
     /**
      * @MongoDB\Index
@@ -82,15 +58,26 @@ class ChatMessage
     const STATUS_NOT_READED = 1;
     const STATUS_DEFAULT = 2;
     const STATUS_ARCHIVED = 3;
-    const STATUS_DELETED = 4;
+
+    const SENDER_TYPE_USER = 1;
+    const SENDER_TYPE_AGENT = 2;
+    const SENDER_TYPE_ROBOT = 2;
 
     static public function getStatuses()
     {
         return [
             self::STATUS_NOT_READED,
             self::STATUS_DEFAULT,
-            self::STATUS_ARCHIVED,
-            self::STATUS_DELETED
+            self::STATUS_ARCHIVED
+        ];
+    }
+
+    static public function getSenderTypes()
+    {
+        return [
+            self::SENDER_TYPE_USER,
+            self::SENDER_TYPE_AGENT,
+            self::SENDER_TYPE_ROBOT
         ];
     }
 
@@ -101,8 +88,6 @@ class ChatMessage
         $this->setUid(uniqid());
         $this->setCreatedAt(time());
         $this->setUpdatedAt(time());
-        $this->setSenderStatus(self::STATUS_DEFAULT);
-        $this->setReceiverStatus(self::STATUS_NOT_READED);
         $this->setArchived(false);
     }
 
@@ -116,16 +101,9 @@ class ChatMessage
         $return = [
             'uid' => $this->uid,
             'created' => $this->created_at,
-            'updated' => $this->updated_at,
             'text' => $this->text,
-            'sender' => $this->sender,
-            'sender_status' => $this->sender_status
+            'sender_type' => $this->sender_type
         ];
-
-        if ($this->receiver) {
-            $return['receiver'] = $this->receiver->toArray();
-            $return['receiver_status'] = $this->receiver_status;
-        }
 
         return $return;
     }
@@ -199,28 +177,6 @@ class ChatMessage
     }
 
     /**
-     * Set updatedAt
-     *
-     * @param timestamp $updatedAt
-     * @return self
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updated_at = $updatedAt;
-        return $this;
-    }
-
-    /**
-     * Get updatedAt
-     *
-     * @return timestamp $updatedAt
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updated_at;
-    }
-
-    /**
      * Set text
      *
      * @param string $text
@@ -240,94 +196,6 @@ class ChatMessage
     public function getText()
     {
         return $this->text;
-    }
-
-    /**
-     * Set senderStatus
-     *
-     * @param int $senderStatus
-     * @return self
-     */
-    public function setSenderStatus($senderStatus)
-    {
-        $this->sender_status = $senderStatus;
-        return $this;
-    }
-
-    /**
-     * Get senderStatus
-     *
-     * @return int $senderStatus
-     */
-    public function getSenderStatus()
-    {
-        return $this->sender_status;
-    }
-
-    /**
-     * Set receiverStatus
-     *
-     * @param int $receiverStatus
-     * @return self
-     */
-    public function setReceiverStatus($receiverStatus)
-    {
-        $this->receiver_status = $receiverStatus;
-        return $this;
-    }
-
-    /**
-     * Get receiverStatus
-     *
-     * @return int $receiverStatus
-     */
-    public function getReceiverStatus()
-    {
-        return $this->receiver_status;
-    }
-
-    /**
-     * Set sender
-     *
-     * @param Regidium\CommonBundle\Document\Person $sender
-     * @return self
-     */
-    public function setSender(\Regidium\CommonBundle\Document\Person $sender)
-    {
-        $this->sender = $sender;
-        return $this;
-    }
-
-    /**
-     * Get sender
-     *
-     * @return Regidium\CommonBundle\Document\Person $sender
-     */
-    public function getSender()
-    {
-        return $this->sender;
-    }
-
-    /**
-     * Set receiver
-     *
-     * @param Regidium\CommonBundle\Document\Person $receiver
-     * @return self
-     */
-    public function setReceiver(\Regidium\CommonBundle\Document\Person $receiver)
-    {
-        $this->receiver = $receiver;
-        return $this;
-    }
-
-    /**
-     * Get receiver
-     *
-     * @return Regidium\CommonBundle\Document\Person $receiver
-     */
-    public function getReceiver()
-    {
-        return $this->receiver;
     }
 
     /**
@@ -353,9 +221,31 @@ class ChatMessage
     }
 
     /**
+     * Set senderType
+     *
+     * @param int $senderType
+     * @return self
+     */
+    public function setSenderType($senderType)
+    {
+        $this->sender_type = $senderType;
+        return $this;
+    }
+
+    /**
+     * Get senderType
+     *
+     * @return int $senderType
+     */
+    public function getSenderType()
+    {
+        return $this->sender_type;
+    }
+
+    /**
      * Set chat
      *
-     * @param \Regidium\CommonBundle\Document\Chat $chat
+     * @param Regidium\CommonBundle\Document\Chat $chat
      * @return self
      */
     public function setChat(\Regidium\CommonBundle\Document\Chat $chat)
@@ -367,7 +257,7 @@ class ChatMessage
     /**
      * Get chat
      *
-     * @return \Regidium\CommonBundle\Document\Chat $chat
+     * @return Regidium\CommonBundle\Document\Chat $chat
      */
     public function getChat()
     {

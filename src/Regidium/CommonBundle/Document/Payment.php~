@@ -34,21 +34,35 @@ class Payment
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="payments")
-     */
-    private $widget;
-
-    /**
-     * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\PaymentMethod")
      */
     private $payment_method;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="payments")
+     */
+    private $widget;
 
     /* ============= COMMON ============= */
 
     public function __construct()
     {
         $this->setUid(uniqid());
+    }
+
+    public function toArray(array $options = [])
+    {
+        $return = [
+            'uid' => $this->uid,
+            'amount' => $this->amount
+        ];
+
+        if (isset($options['payment_method'])) {
+            $return['payment_method'] = $this->payment_method->toArray();
+        }
+
+        return $return;
     }
 
     /* =============== Get/Set=============== */

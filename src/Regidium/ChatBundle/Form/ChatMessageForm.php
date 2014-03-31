@@ -25,22 +25,9 @@ class ChatMessageForm extends AbstractType
                     new Constraints\NotBlank(array('message' => 'Text is empty!'))
                 )
             ])
-            ->add('sender_status', 'choice', [
+            ->add('sender_type', 'choice', [
                 'required' => false,
-                'choices' => ChatMessage::getStatuses(),
-                'empty_data' => ChatMessage::STATUS_DEFAULT
-            ])
-            ->add('receiver_status', 'choice', [
-                'required' => false,
-                'choices' => ChatMessage::getStatuses(),
-                'empty_data' => ChatMessage::STATUS_DEFAULT
-            ])
-            ->add('sender_uid', 'hidden', [
-                'mapped' => false,
-                'constraints' => array(
-                    new Constraints\NotBlank(array('message' => 'Sender not found!')),
-                    new ExistDocument(['repository' => 'regidium.person.repository', 'property' => 'uid'])
-                )
+                'choices' => ChatMessage::getSenderTypes()
             ])
             ->add('chat_uid', 'hidden', [
                 'mapped' => false,

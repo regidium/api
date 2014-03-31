@@ -5,18 +5,16 @@ namespace Regidium\WidgetBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\View\View;
-use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 use Regidium\CommonBundle\Document\Agent;
-use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Widget;
 
 /**
  * Widget Agent controller
  *
- * @package Regidium\UserBundle\Controller
+ * @package Regidium\CommonBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
  *
  * @Annotations\RouteResource("Agent")
@@ -34,10 +32,11 @@ class WidgetAgentController extends AbstractController
      *   }
      * )
      *
-     * @param Request $uid UID виджета
-     *
      * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Смещение списка.")
      * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="Кочиество элементов в списке.")
+     *
+     *
+     * @param Request $uid UID виджета
      *
      * @return View
      */
@@ -51,25 +50,12 @@ class WidgetAgentController extends AbstractController
         }
 
         /** @var Agent[] $agents */
-        $agents = $widget->getAgents()->getValues();
+        $agents = $widget->getAgents();
 
         $return = [];
 
         foreach($agents as $agent) {
-            $person = $agent->getPerson();
-            $return[] = [
-                'uid' => $person->getUid(),
-                'fullname' => $person->getFullname(),
-                'email' => $person->getEmail(),
-                'avatar' => $person->getAvatar(),
-                'agent' => [
-                    'uid' => $agent->getUid(),
-                    'status' => $agent->getStatus(),
-                    'job_title' => $agent->getJobTitle(),
-                    'type' => $agent->getType(),
-                    'accept_chats' => $agent->getAcceptChats()
-                ]
-            ];
+            $return[] = $agent->toArray();
         }
 
         return $this->sendArray($return);
@@ -77,21 +63,32 @@ class WidgetAgentController extends AbstractController
 
 
     /**
-     * Create agent from submitted data.
+     * Создание нового агента для виджета.
      *
      * @deprecated
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Create agent from submitted data.",
+     *   description = "Создание нового агента для виджета.",
      *   input = "Regidium\AgentBundle\Form\AgentForm",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $request Request object
-     * @param Request $uid Widget UID
+     * @Annotations\QueryParam(name="first_name", requirements="\w+", nullable=true, description="Имя агента.")
+     * @Annotations\QueryParam(name="last_name",  requirements="\w+", nullable=true, description="Фамилия агента.")
+     * @Annotations\QueryParam(name="job_title",  requirements="\w+", nullable=true, description="Заголовок агента.")
+     * @Annotations\QueryParam(name="avatar",     requirements="\w+", nullable=true, description="Аватар агента.")
+     * @Annotations\QueryParam(name="email",      requirements="\w+", nullable=true, description="Email пользователя.")
+     * @Annotations\QueryParam(name="password",   requirements="\w+", nullable=true, description="Пароль агента.")
+     * @Annotations\QueryParam(name="type",       requirements="\d+", nullable=true, description="Тип агента.")
+     * @Annotations\QueryParam(name="status",     requirements="\d+", nullable=true, description="Статус агента.")
+     * @Annotations\QueryParam(name="type",                           nullable=true, description="Принимать ли чаты.")
+     *
+     *
+     * @param Request $request Request объект
+     * @param Request $uid     Widget UID
      *
      * @return View
      */
@@ -103,35 +100,46 @@ class WidgetAgentController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        $person = $this->get('regidium.agent.handler')->post($widget, $this->prepareAgentData($request, $request->request->get('password', null)));
+        $agent = $this->get('regidium.agent.handler')->post($widget, $this->prepareAgentData($request, $request->request->get('password', null)));
 
-        if (!$person instanceof Person) {
-            return $this->sendError($person);
+        if (!$agent instanceof Agent) {
+            return $this->sendError($agent);
         }
 
-        return $this->send($person, Codes::HTTP_CREATED);
+        return $this->send($agent->toArray());
     }
 
     /**
-     * Update existing agent from submitted data or create new agent.
+     * Изменение существующего или создание нового агента.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Update existing agent from submitted data or create new agent.",
+     *   description = "Изменение существующего или создание нового агента.",
      *   input = "Regidium\AgentBundle\Form\AgentForm",
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
-     * @param Request $request    Request object
+     * @Annotations\QueryParam(name="first_name", requirements="\w+", nullable=true,  description="Имя агента.")
+     * @Annotations\QueryParam(name="last_name",  requirements="\w+", nullable=true,  description="Фамилия агента.")
+     * @Annotations\QueryParam(name="job_title",  requirements="\w+", nullable=true,  description="Заголовок агента.")
+     * @Annotations\QueryParam(name="avatar",     requirements="\w+", nullable=true,  description="Аватар агента.")
+     * @Annotations\QueryParam(name="email",      requirements="\w+", nullable=false, description="Email пользователя.")
+     * @Annotations\QueryParam(name="password",   requirements="\w+", nullable=false, description="Пароль агента.")
+     * @Annotations\QueryParam(name="type",       requirements="\d+", nullable=true,  description="Тип агента.")
+     * @Annotations\QueryParam(name="status",     requirements="\d+", nullable=true,  description="Статус агента.")
+     * @Annotations\QueryParam(name="type",                           nullable=true,  description="Принимать ли чаты.")
+     *
+     *
+     * @param Request $request    Request объект
      * @param string  $uid        Widget UID
-     * @param string  $person_uid Person UID
+     * @param string  $agent_uid  Agent UID
      *
      * @return View
      *
      */
-    public function putAction(Request $request, $uid, $person_uid = null)
+    public function putAction(Request $request, $uid, $agent_uid = null)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
 
@@ -139,60 +147,48 @@ class WidgetAgentController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        $person = null;
-        if ($person_uid) {
-            $person = $this->get('regidium.person.handler')->one(['uid' => $person_uid]);
+        $agent = null;
+        if ($agent_uid) {
+            $agent = $this->get('regidium.agent.handler')->one(['uid' => $agent_uid]);
         }
 
-        if (!$person) {
-            $status_code = Codes::HTTP_OK;
-
-            $person = $this->get('regidium.agent.handler')->post(
+        $password = $request->request->get('password', null);
+        if (!$agent) {
+            $agent = $this->get('regidium.agent.handler')->post(
                 $widget,
-                $this->prepareAgentData($request, $request->request->get('password', null))
+                $this->prepareAgentData($request, $password)
             );
         } else {
-            $status_code = Codes::HTTP_OK;
-
-            $password = $request->request->get('password', null);
-            if ($person->getPassword() != null && $password == null) {
-                $password = $person->getPassword();
+            if ($agent->getPassword() != null && $password == null) {
+                $password = $agent->getPassword();
             }
 
-            $person = $this->get('regidium.agent.handler')->put(
-                $person,
+            $agent = $this->get('regidium.agent.handler')->put(
+                $agent,
                 $this->prepareAgentData($request, $password)
             );
         }
 
-        if (!$person instanceof Person) {
-            return $this->sendError($person);
+        if (!$agent instanceof Agent) {
+            return $this->sendError($agent);
         }
 
-        $return = [
-            'uid' => $person->getUid(),
-            'fullname' => $person->getFullname(),
-            'avatar' => $person->getAvatar(),
-            'email' => $person->getEmail(),
-            'country' => $person->getCountry(),
-            'city' => $person->getCity(),
-            'status' => $person->getStatus(),
-            'agent' => [
-                'uid' => $person->getAgent()->getUid(),
-                'job_title' => $person->getAgent()->getJobTitle(),
-                'status' => $person->getAgent()->getStatus(),
-                'type' => $person->getAgent()->getType(),
-                'accept_chats' => $person->getAgent()->getAcceptChats()
-            ]
-        ];
-
-        return $this->send($return, $status_code);
+        return $this->send($agent->toArray());
     }
 
+    /**
+     * Подготовка данных об агенте из пришедших данных
+     *
+     * @param Request $request  Request объект
+     * @param string $password Пароль
+     *
+     * @return array
+     */
     protected function prepareAgentData(Request $request, $password)
     {
         return [
-            'fullname' => $request->request->get('fullname', null),
+            'first_name' => $request->request->get('first_name', null),
+            'last_name' => $request->request->get('last_name', null),
             'job_title' => $request->request->get('job_title', null),
             'avatar' => $request->request->get('avatar', null),
             'email' => $request->request->get('email', null),

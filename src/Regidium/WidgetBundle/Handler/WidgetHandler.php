@@ -48,26 +48,24 @@ class WidgetHandler extends AbstractHandler
     }
 
     /**
-     * Создание новой сущности
+     * Создание нового виджета
      *
-     * @param array $data
-     *
-     * @return object
+     * @return string|array|Widget
      */
-    public function post(array $data)
+    public function post()
     {
         $entity = $this->createEntity();
 
-        return $this->processForm($entity, $data, 'POST');
+        return $this->processForm($entity, [], 'POST');
     }
 
     /**
-     * Edit a widget.
+     * Изменение существующего виджета
      *
      * @param Widget $widget
      * @param array  $parameters
      *
-     * @return Widget
+     * @return string|array|Widget
      */
     public function put(Widget $widget, array $parameters)
     {
@@ -160,7 +158,6 @@ class WidgetHandler extends AbstractHandler
 
         return $this->getFormErrors($form);
     }
-
 
     /**
      * Обработка формы настроек

@@ -4,56 +4,16 @@ namespace Regidium\AgentBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\AgentBundle\Form\AgentForm;
-use Regidium\CommonBundle\Form\PersonForm;
-use Regidium\CommonBundle\Document\Widget;
-use Regidium\CommonBundle\Document\Person;
 use Regidium\CommonBundle\Document\Agent;
 
 class AgentHandler extends AbstractHandler
 {
     /**
-     * Получение одного агента по условию.
-     *
-     * @param array $criteria
-     *
-     * @return Agent
-     */
-    public function one(array $criteria)
-    {
-        return $this->repository->findOneBy($criteria);
-    }
-
-    /**
-     * Получение агентов по условию.
-     *
-     * @param array $criteria
-     *
-     * @return Agent
-     */
-    public function get(array $criteria)
-    {
-        return $this->repository->findBy($criteria);
-    }
-
-    /**
-     * * Получение списка всех агентов.
-     *
-     * @param int $limit  limit of the result
-     * @param int $offset starting from the offset
-     *
-     * @return array
-     */
-    public function all($limit = 5, $offset = 0)
-    {
-        return $this->repository->findBy([], null, $limit, $offset);
-    }
-
-    /**
      * Создание новой сущности
      *
      * @param array $data
      *
-     * @return object
+     * @return string|array|Agent
      */
     public function post(array $data)
     {
@@ -65,19 +25,18 @@ class AgentHandler extends AbstractHandler
     /**
      * Изменение агента.
      *
-     * @param Person $person
-     * @param array  $parameters
+     * @param Agent $agent
+     * @param array $parameters
      *
-     * @return string|array|Person
+     * @return string|array|Agent
      */
-    public function put(Person $person, array $parameters)
+    public function put(Agent $agent, array $parameters)
     {
-        $agent = $person->getAgent();
-
         return $this->processForm($agent, $parameters, 'PUT');
     }
 
     /**
+     * @todo Принимать сущность
      * Удаление агента
      *
      * @param string $criteria
@@ -124,7 +83,7 @@ class AgentHandler extends AbstractHandler
      */
     public function oneByExternalService($provider, $id) {
         return $this->repository
-            ->field("external_service.{$provider}.data.id")->equals($id)
+            ->field('external_service.'.$provider.'.data.id')->equals($id)
             ->getQuery()
             ->getSingleResult()
         ;
@@ -137,7 +96,7 @@ class AgentHandler extends AbstractHandler
      * @param array  $data
      * @param string $method
      *
-     * @return string|array|Person
+     * @return string|array|Agent
      *
      */
     public function processForm(Agent $agent, array $data, $method = 'PUT')

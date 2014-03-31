@@ -20,7 +20,8 @@ class WidgetForm extends AbstractType
         $builder
             ->add('status', 'choice', [
                 'required' => false,
-                'choices' => Widget::getStatuses()
+                'choices' => Widget::getStatuses(),
+                'empty_value' => Widget::STATUS_DEFAULT
             ])
         ;
     }

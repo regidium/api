@@ -11,7 +11,7 @@ use Regidium\CommonBundle\Controller\AbstractController;
 /**
  * Payment Method controller
  *
- * @todo Update response for HTML format
+ * @todo Security
  *
  * @package Regidium\BillingBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -42,8 +42,13 @@ class PaymentMethodController extends AbstractController
      */
     public function cgetAction(Request $request)
     {
-        $return = $this->get('regidium.billing.payment_method.handler')->all();
+        $payment_methods = $this->get('regidium.billing.payment_method.handler')->all();
 
-        return $this->view($return);
+        $return = [];
+        foreach($payment_methods as $payment_method) {
+            $return[] = $payment_method->toArray();
+        }
+
+        return $this->sendArray($return);
     }
 }

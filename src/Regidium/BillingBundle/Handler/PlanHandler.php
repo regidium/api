@@ -3,7 +3,7 @@
 namespace Regidium\BillingBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
-use Regidium\BillingBundle\Document\Plan;
+use Regidium\CommonBundle\Document\Plan;
 
 class PlanHandler extends AbstractHandler
 {

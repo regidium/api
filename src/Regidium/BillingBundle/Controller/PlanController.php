@@ -11,7 +11,7 @@ use Regidium\CommonBundle\Controller\AbstractController;
 /**
  * Plan controller
  *
- * @todo Update response for HTML format
+ * @todo Security
  *
  * @package Regidium\BillingBundle\Controller
  * @author Alexey Volkov <alexey.wild88@gmail.com>
@@ -31,19 +31,19 @@ class PlanController extends AbstractController
      *   }
      * )
      *
-     * @Annotations\View(
-     *   templateVar="plans",
-     *   statusCode=200
-     * )
-     *
      * @param Request $request Request объект
      *
      * @return array
      */
     public function cgetAction(Request $request)
     {
-        $return = $this->get('regidium.billing.plan.handler')->all();
+        $payment_plans = $this->get('regidium.billing.plan.handler')->all();
 
-        return $this->view($return);
+        $return = [];
+        foreach($payment_plans as $payment_plan) {
+            $return[] = $payment_plan->toArray();
+        }
+
+        return $this->sendArray($return);
     }
 }

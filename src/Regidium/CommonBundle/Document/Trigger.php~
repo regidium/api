@@ -93,7 +93,7 @@ class Trigger
     }
 
     const RESULT_MESSAGE_SEND = 1;
-    const RESULT_OPERATORS_ALERT = 2;
+    const RESULT_AGENTS_ALERT = 2;
     const RESULT_WIDGET_OPEN = 3;
     const RESULT_WIDGET_BELL = 4;
 
@@ -101,7 +101,7 @@ class Trigger
     {
         return [
             self::RESULT_MESSAGE_SEND,
-            self::RESULT_OPERATORS_ALERT,
+            self::RESULT_AGENTS_ALERT,
             self::RESULT_WIDGET_OPEN,
             self::RESULT_WIDGET_BELL
         ];

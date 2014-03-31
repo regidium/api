@@ -44,6 +44,43 @@ abstract class AbstractHandler
     }
 
     /**
+     * Получение одного документа по условию.
+     *
+     * @param array $criteria
+     *
+     * @return Object
+     */
+    public function one(array $criteria)
+    {
+        return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Получение документов по условию.
+     *
+     * @param array $criteria
+     *
+     * @return Object[]
+     */
+    public function get(array $criteria)
+    {
+        return $this->repository->findBy($criteria);
+    }
+
+    /**
+     * * Получение списка всех документов.
+     *
+     * @param int $limit  количество результатов
+     * @param int $offset начальная позиция списка
+     *
+     * @return Object[]
+     */
+    public function all($limit = 5, $offset = 0)
+    {
+        return $this->repository->findBy([], null, $limit, $offset);
+    }
+
+    /**
      * @param Form $form
      *
      * @return array
