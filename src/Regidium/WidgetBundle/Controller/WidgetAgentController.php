@@ -40,11 +40,9 @@ class WidgetAgentController extends AbstractController
      *
      * @return View
      */
-    public function cgetAction($uid)
+    public function cgetExistedAction($uid)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
-
-        /** @todo вернуть ошибку */
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
         }
@@ -65,7 +63,7 @@ class WidgetAgentController extends AbstractController
     /**
      * Создание нового агента для виджета.
      *
-     * @deprecated
+     * @todo
      *
      * @ApiDoc(
      *   resource = true,
@@ -174,6 +172,47 @@ class WidgetAgentController extends AbstractController
         }
 
         return $this->send($agent->toArray());
+    }
+
+    /**
+     * Удаление существующего агента.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Удаление существующего агента.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request    Request объект
+     * @param string  $uid        Widget UID
+     * @param string  $agent_uid  Agent UID
+     *
+     * @return View
+     *
+     */
+    public function deleteAction(Request $request, $uid, $agent_uid = null)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $agent = $this->get('regidium.agent.handler')->one(['uid' => $agent_uid]);
+        if (!$agent instanceof Agent) {
+            return $this->sendError('Agent not found!');
+        }
+
+        $result = $this->get('regidium.agent.handler')->delete(
+            $agent
+        );
+
+        if (!$result !== true) {
+            return $this->sendError($result);
+        }
+
+        return $this->sendSuccess();
     }
 
     /**

@@ -36,26 +36,20 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
-     * @todo Принимать сущность
      * Удаление агента
      *
-     * @param string $criteria
+     * @param Agent $agent
      *
      * @return bool|int
      */
-    public function delete($criteria) {
-        $agent = $this->one($criteria);
-        if (!$agent instanceof Agent) {
-            return 404;
-        }
-
+    public function delete($agent) {
         try {
             $this->dm->remove($agent);
             $this->dm->flush($agent);
 
-            return 200;
+            return true;
         } catch (\Exception $e) {
-            return 500;
+            return $e;
         }
     }
 
