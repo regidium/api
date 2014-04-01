@@ -151,10 +151,11 @@ class WidgetAgentController extends AbstractController
         }
 
         $password = $request->request->get('password', null);
+        $data = $this->prepareAgentData($request, $password);
+        $data['widget_uid'] = $uid;
         if (!$agent) {
             $agent = $this->get('regidium.agent.handler')->post(
-                $widget,
-                $this->prepareAgentData($request, $password)
+                $data
             );
         } else {
             if ($agent->getPassword() != null && $password == null) {
@@ -226,15 +227,15 @@ class WidgetAgentController extends AbstractController
     protected function prepareAgentData(Request $request, $password)
     {
         return [
-            'first_name' => $request->request->get('first_name', null),
-            'last_name' => $request->request->get('last_name', null),
-            'job_title' => $request->request->get('job_title', null),
-            'avatar' => $request->request->get('avatar', null),
-            'email' => $request->request->get('email', null),
+            'first_name' => strval($request->request->get('first_name', null)),
+            'last_name' => strval($request->request->get('last_name', null)),
+            'job_title' => strval($request->request->get('job_title', null)),
+            'avatar' => strval($request->request->get('avatar', null)),
+            'email' => strval($request->request->get('email', null)),
             'password' => $password,
-            'type' => $request->request->get('type', Agent::TYPE_OPERATOR),
-            'status' => $request->request->get('status', Agent::STATUS_DEFAULT),
-            'accept_chats' => $request->request->get('accept_chats', true)
+            'type' => intval($request->request->get('type', Agent::TYPE_OPERATOR)),
+            'status' => intval($request->request->get('status', Agent::STATUS_DEFAULT)),
+            'accept_chats' => boolval($request->request->get('accept_chats', true))
         ];
     }
 }

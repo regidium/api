@@ -26,13 +26,13 @@ class AgentHandler extends AbstractHandler
      * Изменение агента.
      *
      * @param Agent $agent
-     * @param array $parameters
+     * @param array $data
      *
      * @return string|array|Agent
      */
-    public function put(Agent $agent, array $parameters)
+    public function put(Agent $agent, array $data)
     {
-        return $this->processForm($agent, $parameters, 'PUT');
+        return $this->processForm($agent, $data, 'PUT');
     }
 
     /**

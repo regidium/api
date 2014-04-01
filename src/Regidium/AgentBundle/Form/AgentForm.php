@@ -41,19 +41,20 @@ class AgentForm extends AbstractType
             ->add('accept_chats', 'radio', [
                     'required' => false
                 ])
-            ->add('type', 'choice', [
+            ->add('type', 'integer', [
                     'required' => false,
                     'description' => 'Agent type',
-                    'choices' => Agent::getTypes()
+                    'data' => Agent::TYPE_OPERATOR
                 ])
-            ->add('status', 'choice', [
+            ->add('status', 'integer', [
                     'required' => false,
                     'description' => 'Agent status',
-                    'choices' => Agent::getStatuses()
+                    'data' => Agent::STATUS_DEFAULT
                 ])
             ->add('accept_chats', 'choice', [
                     'required' => false,
-                    'choices'   => [true, false]
+                    'choices'   => [true, false],
+                    'data' => true
                 ])
             ->add('widget_uid', 'hidden', [
                     'required' => true,
