@@ -209,7 +209,7 @@ class WidgetAgentController extends AbstractController
             $agent
         );
 
-        if (!$result !== true) {
+        if ($result !== true) {
             return $this->sendError($result);
         }
 
