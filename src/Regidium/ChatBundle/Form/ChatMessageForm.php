@@ -19,6 +19,9 @@ class ChatMessageForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('created_at', 'integer', [
+                'required' => false
+            ])
             ->add('text', 'text', [
                 'required' => false,
                 'constraints' => array(

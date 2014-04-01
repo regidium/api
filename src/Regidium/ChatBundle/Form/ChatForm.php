@@ -9,7 +9,6 @@ use Symfony\Component\Validator\Constraints;
 
 use Regidium\CommonBundle\Validator\Constraints\ExistDocument\ExistDocument;
 use Regidium\CommonBundle\Document\Chat;
-use Regidium\ChatBundle\Form\UserForm;
 
 class ChatForm extends AbstractType
 {
@@ -35,9 +34,7 @@ class ChatForm extends AbstractType
                 'required' => false,
                 'empty_data' => false
             ])
-            ->add('user', 'hidden', [
-                    //'data_class' => 'Regidium\CommonBundle\Document\User'
-                ])
+            ->add('user', 'hidden')
             ->add('widget_uid', 'hidden', [
                 'mapped' => false,
                 'constraints' => [

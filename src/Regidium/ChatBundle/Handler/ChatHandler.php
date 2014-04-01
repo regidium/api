@@ -29,6 +29,9 @@ class ChatHandler extends AbstractHandler
         $user = $user_form->getData();
         $data['user'] = $user;
 
+        /** @todo не присылать */
+        unset($data['messages']);
+
         $form = $this->formFactory->create(new ChatForm(), $entity, ['method' => 'POST']);
         $form->submit($data, false);
 

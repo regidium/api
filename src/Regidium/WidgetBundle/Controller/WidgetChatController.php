@@ -50,9 +50,7 @@ class WidgetChatController extends AbstractController
         $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId()]);
         $return = [];
         foreach ($chats as $chat) {
-            $return[] = [
-                'chat' => $chat->toArray()
-            ];
+            $return[] = $chat->toArray();
         }
 
         return  $this->sendArray($return);
@@ -83,11 +81,10 @@ class WidgetChatController extends AbstractController
 
         /** @var Chat[] $chats */
         $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
+
         $return = [];
         foreach ($chats as $chat) {
-            $return[] = [
-                'chat' => $chat->toArray()
-            ];
+            $return[] = $chat->toArray();
         }
 
         return  $this->sendArray($return);
@@ -119,7 +116,12 @@ class WidgetChatController extends AbstractController
         /** @var Chat[] $chats */
         $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'messages.archived' => true]);
 
-        return  $this->sendArray($chats);
+        $return = [];
+        foreach ($chats as $chat) {
+            $return[] = $chat->toArray();
+        }
+
+        return  $this->sendArray($return);
     }
 
     /**
@@ -325,12 +327,7 @@ class WidgetChatController extends AbstractController
             return $this->sendError($chat_message);
         }
 
-        $return = [
-            'uid' => $chat_message->getUid(),
-            'chat' => $chat_message->getChat()->toArray()
-        ];
-
-        return $this->send($return);
+        return $this->send($chat_message->toArray());
     }
 
     private function prepareUserData(Request $request)
