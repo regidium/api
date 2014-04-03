@@ -6,6 +6,7 @@ use Regidium\CommonBundle\Handler\AbstractHandler;
 
 use Regidium\ChatBundle\Form\ChatForm;
 use Regidium\ChatBundle\Form\UserForm;
+use Regidium\CommonBundle\Document\Agent;
 use Regidium\CommonBundle\Document\User;
 use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\Widget;
@@ -62,8 +63,10 @@ class ChatHandler extends AbstractHandler
      * @return Chat
      */
     public function online(Chat $chat) {
+        $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_ONLINE);
         $this->edit($chat);
+
         return $chat;
     }
 
@@ -75,6 +78,7 @@ class ChatHandler extends AbstractHandler
      * @return Chat
      */
     public function chatting(Chat $chat) {
+        $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_CHATTING);
         $this->edit($chat);
 
@@ -89,6 +93,7 @@ class ChatHandler extends AbstractHandler
      * @return Chat
      */
     public function offline(Chat $chat) {
+        $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_OFFLINE);
         $this->edit($chat);
 
@@ -110,6 +115,22 @@ class ChatHandler extends AbstractHandler
         $user->setEmail($data['email']);
 
         $chat->setUser($user);
+        $this->edit($chat);
+
+        return $chat;
+    }
+
+    /**
+     * Агент подключился
+     *
+     * @param Chat $chat
+     * @param Agent $agent
+     *
+     * @return Chat
+     */
+    public function agentEnter(Chat $chat, Agent $agent) {
+        $chat->setAgent($agent);
+        $chat->setStatus(Chat::STATUS_CHATTING);
         $this->edit($chat);
 
         return $chat;

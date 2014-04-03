@@ -30,6 +30,11 @@ class ChatForm extends AbstractType
                 'choices' => Chat::getStatuses(),
                 'empty_data' => Chat::STATUS_ONLINE
             ])
+            ->add('old_status', 'choice', [
+                'required' => false,
+                'choices' => Chat::getStatuses(),
+                'empty_data' => Chat::STATUS_ONLINE
+            ])
             ->add('opened', 'radio', [
                 'required' => false,
                 'empty_data' => false

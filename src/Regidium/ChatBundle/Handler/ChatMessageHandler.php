@@ -29,7 +29,8 @@ class ChatMessageHandler extends AbstractHandler
                 return 'Server error';
             }
 
-            //$chat = $this->dm->getRepository('Regidium\CommonBundle\Document\Chat')->findOneBy(['uid' => $form->get('chat_uid')->getData()]);
+            $chat = $this->dm->getRepository('Regidium\CommonBundle\Document\Chat')->findOneBy(['uid' => $form->get('chat_uid')->getData()]);
+            $chat_message->setChat($chat);
 
             // Архивируем сообщения, по критерию "все до последних X"
             $old_messages = $this->dm->getRepository('Regidium\CommonBundle\Document\ChatMessage')->findBy(['chat.uid' => $form->get('chat_uid')->getData(), 'archived' => false]);
@@ -48,6 +49,8 @@ class ChatMessageHandler extends AbstractHandler
 
             return $chat_message;
         }
+
+        var_dump($form->getErrors());die();
 
         return $this->getFormErrors($form);
     }

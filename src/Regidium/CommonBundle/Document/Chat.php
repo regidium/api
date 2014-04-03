@@ -46,6 +46,12 @@ class Chat
     private $status;
 
     /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $old_status;
+
+    /**
      * @MongoDB\Boolean
      */
     private $opened;
@@ -101,6 +107,7 @@ class Chat
         $this->started_at = time();
         $this->opened = false;
         $this->status = self::STATUS_ONLINE;
+//        $this->old_status = self::STATUS_ONLINE;
 
         $this->user = [];
         $this->messages = new ArrayCollection();
@@ -117,23 +124,23 @@ class Chat
             'uid' => $this->uid,
             'opened' => $this->opened,
             'status' => $this->status,
-            'started_at' => intval((string)$this->started_at),
-            'ended_at' => intval((string)$this->ended_at),
-            'user' => $this->user
+            'old_status' => $this->old_status,
+            'started_at' =>  intval((string)$this->started_at),
+            'ended_at' =>  intval((string)$this->ended_at),
+            'user' => $this->user,
+            'messages' => $this->messages
         ];
 
         if (isset($options['agent']) && $this->agent) {
             $return['agent'] = $this->agent->toArray();
         }
 
+//        if (isset($options['messages'])) {
+//            $return['messages'] = $this->messages;
+//        }
+
         if (isset($options['widget'])) {
             $return['widget'] = $this->widget->toArray();
-        }
-
-        if (isset($options['messages']) && $this->messages) {
-            $return['messages'] = $this->messages->toArray();
-        } elseif (isset($options['messages']) && !$this->messages) {
-            $return['messages'] = [];
         }
 
         return $return;
@@ -249,6 +256,29 @@ class Chat
     public function getStatus()
     {
         return $this->status;
+    }
+
+
+    /**
+     * Set old_status
+     *
+     * @param int $old_status
+     * @return self
+     */
+    public function setOldStatus($old_status)
+    {
+        $this->old_status = $old_status;
+        return $this;
+    }
+
+    /**
+     * Get old_status
+     *
+     * @return int $old_status
+     */
+    public function getOldStatus()
+    {
+        return $this->old_status;
     }
 
     /**

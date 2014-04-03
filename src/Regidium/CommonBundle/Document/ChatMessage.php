@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collection="chat_messages",
  *      requireIndexes=false
  *  )
+ *
+ * @MongoDB\HasLifecycleCallbacks
  */
 class ChatMessage
 {
@@ -99,7 +101,7 @@ class ChatMessage
     {
         $return = [
             'uid' => $this->uid,
-            'created' => $this->created_at,
+            'created_at' => intval((string)$this->created_at),
             'text' => $this->text,
             'sender_type' => $this->sender_type
         ];
@@ -107,7 +109,15 @@ class ChatMessage
         return $return;
     }
 
-    /* =============== Get/Set=============== */
+    /* =============== Events =============== */
+
+    /** @MongoDB\PostLoad */
+    public function postLoad()
+    {
+        $this->created_at = intval(strval($this->created_at));
+    }
+
+    /* =============== Get/Set =============== */
 
     /**
      * Set id
