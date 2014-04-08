@@ -85,7 +85,7 @@ class AgentController extends AbstractController
             return $this->sendError($agent);
         }
 
-        return $this->send($agent);
+        return $this->send($agent->toArray());
     }
 
     protected function prepareAgentData(Request $request, $password)
