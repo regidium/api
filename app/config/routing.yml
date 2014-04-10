@@ -24,12 +24,6 @@ auths:
     prefix: /api
     resource: "@RegidiumAuthBundle/Resources/config/routing.yml"
 
-# RegidiumChatBundle
-chats:
-    type: rest
-    prefix: /api
-    resource: "@RegidiumChatBundle/Resources/config/routing.yml"
-
 # RegidiumWidgetBundle
 widgets:
     type: rest
@@ -41,3 +35,9 @@ billings:
     type: rest
     prefix: /api
     resource: "@RegidiumBillingBundle/Resources/config/routing.yml"
+
+# RegidiumServiceBundle
+services:
+    type: rest
+    prefix: /api
+    resource: "@RegidiumServiceBundle/Resources/config/routing.yml"

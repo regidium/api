@@ -68,6 +68,12 @@ class User
 
     /* =============== Constants =============== */
 
+    public function __construct()
+    {
+        $this->setFirstName('Client');
+        $this->setEmail('');
+    }
+
     public function toArray()
     {
         $return = [

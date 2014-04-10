@@ -1,5 +1,0 @@
-chats:
-    type: rest
-    prefix: /v1
-    resource: Regidium\ChatBundle\Controller\ChatController
-    name_prefix:  api_1_

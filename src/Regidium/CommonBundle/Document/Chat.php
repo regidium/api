@@ -52,6 +52,11 @@ class Chat
     private $old_status;
 
     /**
+     * @MongoDB\String
+     */
+    private $socket_id;
+
+    /**
      * @MongoDB\Boolean
      */
     private $opened;
@@ -124,20 +129,23 @@ class Chat
             'uid' => $this->uid,
             'opened' => $this->opened,
             'status' => $this->status,
+            'socket_id' => $this->socket_id,
             'old_status' => $this->old_status,
             'started_at' =>  intval((string)$this->started_at),
             'ended_at' =>  intval((string)$this->ended_at),
-            'user' => $this->user,
-            'messages' => $this->messages
+            'user' => $this->user
         ];
 
         if (isset($options['agent']) && $this->agent) {
             $return['agent'] = $this->agent->toArray();
         }
 
-//        if (isset($options['messages'])) {
-//            $return['messages'] = $this->messages;
-//        }
+        if (isset($options['messages'])) {
+            $return['messages'] = [];
+            foreach($this->messages as $message) {
+                $return['messages'][] = $message->toArray();
+            }
+        }
 
         if (isset($options['widget'])) {
             $return['widget'] = $this->widget->toArray();
@@ -258,27 +266,48 @@ class Chat
         return $this->status;
     }
 
-
     /**
-     * Set old_status
+     * Set oldStatus
      *
-     * @param int $old_status
+     * @param int $oldStatus
      * @return self
      */
-    public function setOldStatus($old_status)
+    public function setOldStatus($oldStatus)
     {
-        $this->old_status = $old_status;
+        $this->old_status = $oldStatus;
         return $this;
     }
 
     /**
-     * Get old_status
+     * Get oldStatus
      *
-     * @return int $old_status
+     * @return int $oldStatus
      */
     public function getOldStatus()
     {
         return $this->old_status;
+    }
+
+    /**
+     * Set socketId
+     *
+     * @param string $socketId
+     * @return self
+     */
+    public function setSocketId($socketId)
+    {
+        $this->socket_id = $socketId;
+        return $this;
+    }
+
+    /**
+     * Get socketId
+     *
+     * @return string $socketId
+     */
+    public function getSocketId()
+    {
+        return $this->socket_id;
     }
 
     /**
@@ -328,7 +357,7 @@ class Chat
     /**
      * Set agent
      *
-     * @param Regidium\CommonBundle\Document\Agent $agent
+     * @param \Regidium\CommonBundle\Document\Agent $agent
      * @return self
      */
     public function setAgent(\Regidium\CommonBundle\Document\Agent $agent)
@@ -340,7 +369,7 @@ class Chat
     /**
      * Get agent
      *
-     * @return Regidium\CommonBundle\Document\Agent $agent
+     * @return \Regidium\CommonBundle\Document\Agent $agent
      */
     public function getAgent()
     {
@@ -350,7 +379,7 @@ class Chat
     /**
      * Set widget
      *
-     * @param Regidium\CommonBundle\Document\Widget $widget
+     * @param \Regidium\CommonBundle\Document\Widget $widget
      * @return self
      */
     public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
@@ -362,7 +391,7 @@ class Chat
     /**
      * Get widget
      *
-     * @return Regidium\CommonBundle\Document\Widget $widget
+     * @return \Regidium\CommonBundle\Document\Widget $widget
      */
     public function getWidget()
     {
@@ -372,7 +401,7 @@ class Chat
     /**
      * Add message
      *
-     * @param Regidium\CommonBundle\Document\ChatMessage $message
+     * @param \Regidium\CommonBundle\Document\ChatMessage $message
      */
     public function addMessage(\Regidium\CommonBundle\Document\ChatMessage $message)
     {
@@ -382,7 +411,7 @@ class Chat
     /**
      * Remove message
      *
-     * @param Regidium\CommonBundle\Document\ChatMessage $message
+     * @param \Regidium\CommonBundle\Document\ChatMessage $message
      */
     public function removeMessage(\Regidium\CommonBundle\Document\ChatMessage $message)
     {
@@ -392,7 +421,7 @@ class Chat
     /**
      * Get messages
      *
-     * @return Doctrine\Common\Collections\Collection $messages
+     * @return \Doctrine\Common\Collections\Collection $messages
      */
     public function getMessages()
     {

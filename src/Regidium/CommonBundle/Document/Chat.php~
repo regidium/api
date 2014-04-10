@@ -46,6 +46,17 @@ class Chat
     private $status;
 
     /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $old_status;
+
+    /**
+     * @MongoDB\String
+     */
+    private $socket_id;
+
+    /**
      * @MongoDB\Boolean
      */
     private $opened;
@@ -101,6 +112,7 @@ class Chat
         $this->started_at = time();
         $this->opened = false;
         $this->status = self::STATUS_ONLINE;
+//        $this->old_status = self::STATUS_ONLINE;
 
         $this->user = [];
         $this->messages = new ArrayCollection();
@@ -117,23 +129,24 @@ class Chat
             'uid' => $this->uid,
             'opened' => $this->opened,
             'status' => $this->status,
-            'started_at' => intval($this->started_at),
-            'ended_at' => intval($this->ended_at),
-            'user' => $this->user
+            'socket_id' => $this->socket_id,
+            'old_status' => $this->old_status,
+            'started_at' =>  intval((string)$this->started_at),
+            'ended_at' =>  intval((string)$this->ended_at),
+            'user' => $this->user,
+            'messages' => $this->messages
         ];
 
         if (isset($options['agent']) && $this->agent) {
             $return['agent'] = $this->agent->toArray();
         }
 
+//        if (isset($options['messages'])) {
+//            $return['messages'] = $this->messages;
+//        }
+
         if (isset($options['widget'])) {
             $return['widget'] = $this->widget->toArray();
-        }
-
-        if (isset($options['messages']) && $this->messages) {
-            $return['messages'] = $this->messages->toArray();
-        } elseif (isset($options['messages']) && !$this->messages) {
-            $return['messages'] = [];
         }
 
         return $return;

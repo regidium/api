@@ -30,7 +30,8 @@ class AppKernel extends Kernel
             new Regidium\AuthBundle\RegidiumAuthBundle(),
             new Regidium\ChatBundle\RegidiumChatBundle(),
             new Regidium\WidgetBundle\RegidiumWidgetBundle(),
-            new Regidium\BillingBundle\RegidiumBillingBundle()
+            new Regidium\BillingBundle\RegidiumBillingBundle(),
+            new Regidium\ServiceBundle\RegidiumServiceBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

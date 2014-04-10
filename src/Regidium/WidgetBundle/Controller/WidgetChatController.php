@@ -199,6 +199,8 @@ class WidgetChatController extends AbstractController
             return $this->sendError('Chat not found!');
         }
 
+        $chat->setSocketId($request->get('socket_id'));
+
         $this->get('regidium.chat.handler')->online($chat);
 
         return $this->sendSuccess();
@@ -268,6 +270,8 @@ class WidgetChatController extends AbstractController
         if (!$chat instanceof Chat) {
             return $this->sendError('Chat not found!');
         }
+
+        $chat->setSocketId($request->get('socket_id'));
 
         $this->get('regidium.chat.handler')->chatting($chat);
 

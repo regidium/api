@@ -1,0 +1,5 @@
+services:
+    type: rest
+    prefix: /v1
+    resource: Regidium\ServiceBundle\Controller\ServiceController
+    name_prefix:  api_1_

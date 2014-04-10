@@ -1,0 +1,7 @@
+parameters:
+    regidium.service.handler.class: Regidium\ServiceBundle\Handler\ServiceHandler
+
+services:
+    regidium.service.handler:
+        class: %regidium.service.handler.class%
+        arguments: [ @doctrine_mongodb ]
