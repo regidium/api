@@ -136,16 +136,21 @@ class Chat
             'user' => $this->user
         ];
 
+        $return['messages'] = [];
+        foreach($this->messages as $message) {
+            $return['messages'][] = $message->toArray();
+        }
+
         if (isset($options['agent']) && $this->agent) {
             $return['agent'] = $this->agent->toArray();
         }
 
-        if (isset($options['messages'])) {
-            $return['messages'] = [];
-            foreach($this->messages as $message) {
-                $return['messages'][] = $message->toArray();
-            }
-        }
+        // if (isset($options['messages'])) {
+        //     $return['messages'] = [];
+        //     foreach($this->messages as $message) {
+        //         $return['messages'][] = $message->toArray();
+        //     }
+        // }
 
         if (isset($options['widget'])) {
             $return['widget'] = $this->widget->toArray();
