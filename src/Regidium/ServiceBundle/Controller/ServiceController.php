@@ -31,15 +31,17 @@ class ServiceController extends AbstractController
      *   }
      * )
      *
+     * @Annotations\QueryParam(name="chats_uids", nullable=true, description="Массив UID активных")
+     *
      * @param Request $request Request объект
      *
      * @return array
      */
     public function putDisconnectUsersAction(Request $request)
     {
-        $socket_ids = $request->get('socket_ids', []);
+        $chats_uids = $request->get('chats_uids', []);
 
-        $this->get('regidium.service.handler')->disconnect($socket_ids);
+        $this->get('regidium.service.handler')->disconnect($chats_uids);
 
         return $this->sendSuccess();
     }

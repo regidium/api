@@ -22,15 +22,15 @@ class ServiceHandler
     /**
      * Отключение повисших пользователей (после перезагрузки)
      *
-     * @param array $socket_ids
+     * @param array $chats_uids
      */
-    public function disconnect(array $socket_ids = [])
+    public function disconnect(array $chats_uids = [])
     {
         $this->dm->createQueryBuilder('Regidium\CommonBundle\Document\Chat')
             ->update()
             ->multiple(true)
             ->field('status')->set(Chat::STATUS_OFFLINE)
-            ->field('socket_id')->notIn($socket_ids)
+            ->field('uid')->notIn($chats_uids)
             ->getQuery()
             ->execute()
         ;

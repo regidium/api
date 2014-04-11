@@ -151,6 +151,10 @@ class WidgetAgentController extends AbstractController
         }
 
         $password = $request->request->get('password', null);
+        if ($agent->getPassword() != null && $password == null) {
+            $password = $agent->getPassword();
+        }
+
         $data = $this->prepareAgentData($request, $password);
         $data['widget_uid'] = $uid;
         if (!$agent) {
@@ -158,13 +162,9 @@ class WidgetAgentController extends AbstractController
                 $data
             );
         } else {
-            if ($agent->getPassword() != null && $password == null) {
-                $password = $agent->getPassword();
-            }
-
             $agent = $this->get('regidium.agent.handler')->put(
                 $agent,
-                $this->prepareAgentData($request, $password)
+                $data
             );
         }
 
