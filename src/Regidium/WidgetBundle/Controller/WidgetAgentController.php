@@ -176,6 +176,40 @@ class WidgetAgentController extends AbstractController
     }
 
     /**
+     * Агент авторизировался.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Агент авторизировался.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param string  $uid        Widget UID
+     * @param string  $agent_uid  Agent UID
+     *
+     * @return View
+     *
+     */
+    public function postAuthAction(Request $request, $uid, $agent_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $agent = $this->get('regidium.agent.handler')->one(['uid' => $agent_uid]);
+        if (!$agent instanceof Agent) {
+            return $this->sendError('Agent not found!');
+        }
+
+        $this->get('regidium.agent.handler')->edit($agent);
+
+        return $this->sendSuccess();
+    }
+
+    /**
      * Удаление существующего агента.
      *
      * @ApiDoc(
@@ -235,7 +269,8 @@ class WidgetAgentController extends AbstractController
             'password' => $password,
             'type' => intval($request->request->get('type', Agent::TYPE_OPERATOR)),
             'status' => intval($request->request->get('status', Agent::STATUS_DEFAULT)),
-            'accept_chats' => boolval($request->request->get('accept_chats', true))
+            'accept_chats' => boolval($request->request->get('accept_chats', true)),
+            'render_visitors_period' => boolval($request->request->get('render_visitors_period', Auth::RENDER_VISITORS_PERIOD_SESSION)),
         ];
     }
 }

@@ -65,6 +65,7 @@ class ChatHandler extends AbstractHandler
     public function online(Chat $chat) {
         $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_ONLINE);
+        $chat->setEndedAt(null);
         $this->edit($chat);
 
         return $chat;
@@ -80,6 +81,7 @@ class ChatHandler extends AbstractHandler
     public function chatting(Chat $chat) {
         $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_CHATTING);
+        $chat->setEndedAt(null);
         $this->edit($chat);
 
         return $chat;
@@ -95,6 +97,7 @@ class ChatHandler extends AbstractHandler
     public function offline(Chat $chat) {
         $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_OFFLINE);
+        $chat->setEndedAt(time());
         $this->edit($chat);
 
         return $chat;

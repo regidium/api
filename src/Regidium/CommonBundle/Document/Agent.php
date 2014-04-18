@@ -78,6 +78,17 @@ class Agent
     private $accept_chats;
 
     /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $render_visitors_period;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    private $last_visit;
+
+    /**
      * @MongoDB\Hash
      */
     private $external_service;
@@ -123,6 +134,19 @@ class Agent
         ];
     }
 
+    const RENDER_VISITORS_PERIOD_SESSION = 1;
+    const RENDER_VISITORS_PERIOD_DAY     = 2;
+    const RENDER_VISITORS_PERIOD_WEEK    = 3;
+
+    static public function getRenderVisitorsPeriods()
+    {
+        return [
+            self::RENDER_VISITORS_PERIOD_SESSION,
+            self::RENDER_VISITORS_PERIOD_DAY,
+            self::RENDER_VISITORS_PERIOD_WEEK
+        ];
+    }
+
     /* =============== General =============== */
 
     public function __construct()
@@ -131,7 +155,9 @@ class Agent
         $this->job_title = '';
         $this->type = self::TYPE_ADMINISTRATOR;
         $this->status = self::STATUS_DEFAULT;
+        $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
+        $this->last_visit = time();
         $this->external_service = [];
 
         $this->chats = new ArrayCollection();
@@ -148,6 +174,7 @@ class Agent
             'uid' => $this->uid,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
+            'render_visitors_period' => $this->render_visitors_period,
             'avatar' => $this->avatar,
             'email' => $this->email,
             'job_title' => $this->job_title,
@@ -479,5 +506,49 @@ class Agent
     public function getChats()
     {
         return $this->chats;
+    }
+
+    /**
+     * Set renderVisitorsPeriod
+     *
+     * @param int $renderVisitorsPeriod
+     * @return self
+     */
+    public function setRenderVisitorsPeriod($renderVisitorsPeriod)
+    {
+        $this->render_visitors_period = $renderVisitorsPeriod;
+        return $this;
+    }
+
+    /**
+     * Get renderVisitorsPeriod
+     *
+     * @return int $renderVisitorsPeriod
+     */
+    public function getRenderVisitorsPeriod()
+    {
+        return $this->render_visitors_period;
+    }
+
+    /**
+     * Set lastVisit
+     *
+     * @param timestamp $lastVisit
+     * @return self
+     */
+    public function setLastVisit($lastVisit)
+    {
+        $this->last_visit = $lastVisit;
+        return $this;
+    }
+
+    /**
+     * Get lastVisit
+     *
+     * @return timestamp $lastVisit
+     */
+    public function getLastVisit()
+    {
+        return $this->last_visit;
     }
 }

@@ -72,6 +72,8 @@ class ExternalServiceController extends AbstractController
 
         if ($agent) {
             $agent->setExternalService($external_service);
+            // Записываем последний визит агента
+            $agent->setLastVisit(time());
             $agent = $this->get('regidium.agent.handler')->edit($agent);
             return $this->send($agent);
         } else {

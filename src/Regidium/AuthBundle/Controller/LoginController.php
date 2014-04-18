@@ -55,6 +55,10 @@ class LoginController extends AbstractController
             return $this->sendError('Agent not found');
         }
 
+        // Записываем последний визит агента
+        $agent->setLastVisit(time());
+        $this->get('regidium.agent.handler')->edit($agent);
+
         $return = [
             'agent' => $agent->toArray(['widget'])
         ];

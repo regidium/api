@@ -133,17 +133,24 @@ class Chat
             'old_status' => $this->old_status,
             'started_at' =>  intval((string)$this->started_at),
             'ended_at' =>  intval((string)$this->ended_at),
-            'user' => $this->user,
-            'messages' => $this->messages
+            'user' => $this->user
         ];
+
+        $return['messages'] = [];
+        foreach($this->messages as $message) {
+            $return['messages'][] = $message->toArray();
+        }
 
         if (isset($options['agent']) && $this->agent) {
             $return['agent'] = $this->agent->toArray();
         }
 
-//        if (isset($options['messages'])) {
-//            $return['messages'] = $this->messages;
-//        }
+        // if (isset($options['messages'])) {
+        //     $return['messages'] = [];
+        //     foreach($this->messages as $message) {
+        //         $return['messages'][] = $message->toArray();
+        //     }
+        // }
 
         if (isset($options['widget'])) {
             $return['widget'] = $this->widget->toArray();
@@ -174,5 +181,255 @@ class Chat
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set uid
+     *
+     * @param string $uid
+     * @return self
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+    /**
+     * Get uid
+     *
+     * @return string $uid
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * Set startedAt
+     *
+     * @param timestamp $startedAt
+     * @return self
+     */
+    public function setStartedAt($startedAt)
+    {
+        $this->started_at = $startedAt;
+        return $this;
+    }
+
+    /**
+     * Get startedAt
+     *
+     * @return timestamp $startedAt
+     */
+    public function getStartedAt()
+    {
+        return $this->started_at;
+    }
+
+    /**
+     * Set endedAt
+     *
+     * @param timestamp $endedAt
+     * @return self
+     */
+    public function setEndedAt($endedAt)
+    {
+        $this->ended_at = $endedAt;
+        return $this;
+    }
+
+    /**
+     * Get endedAt
+     *
+     * @return timestamp $endedAt
+     */
+    public function getEndedAt()
+    {
+        return $this->ended_at;
+    }
+
+    /**
+     * Set status
+     *
+     * @param int $status
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return int $status
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set oldStatus
+     *
+     * @param int $oldStatus
+     * @return self
+     */
+    public function setOldStatus($oldStatus)
+    {
+        $this->old_status = $oldStatus;
+        return $this;
+    }
+
+    /**
+     * Get oldStatus
+     *
+     * @return int $oldStatus
+     */
+    public function getOldStatus()
+    {
+        return $this->old_status;
+    }
+
+    /**
+     * Set socketId
+     *
+     * @param string $socketId
+     * @return self
+     */
+    public function setSocketId($socketId)
+    {
+        $this->socket_id = $socketId;
+        return $this;
+    }
+
+    /**
+     * Get socketId
+     *
+     * @return string $socketId
+     */
+    public function getSocketId()
+    {
+        return $this->socket_id;
+    }
+
+    /**
+     * Set opened
+     *
+     * @param boolean $opened
+     * @return self
+     */
+    public function setOpened($opened)
+    {
+        $this->opened = $opened;
+        return $this;
+    }
+
+    /**
+     * Get opened
+     *
+     * @return boolean $opened
+     */
+    public function getOpened()
+    {
+        return $this->opened;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \Regidium\CommonBundle\Document\User $user
+     * @return self
+     */
+    public function setUser(\Regidium\CommonBundle\Document\User $user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \Regidium\CommonBundle\Document\User $user
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set agent
+     *
+     * @param \Regidium\CommonBundle\Document\Agent $agent
+     * @return self
+     */
+    public function setAgent(\Regidium\CommonBundle\Document\Agent $agent)
+    {
+        $this->agent = $agent;
+        return $this;
+    }
+
+    /**
+     * Get agent
+     *
+     * @return \Regidium\CommonBundle\Document\Agent $agent
+     */
+    public function getAgent()
+    {
+        return $this->agent;
+    }
+
+    /**
+     * Set widget
+     *
+     * @param \Regidium\CommonBundle\Document\Widget $widget
+     * @return self
+     */
+    public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
+    {
+        $this->widget = $widget;
+        return $this;
+    }
+
+    /**
+     * Get widget
+     *
+     * @return \Regidium\CommonBundle\Document\Widget $widget
+     */
+    public function getWidget()
+    {
+        return $this->widget;
+    }
+
+    /**
+     * Add message
+     *
+     * @param \Regidium\CommonBundle\Document\ChatMessage $message
+     */
+    public function addMessage(\Regidium\CommonBundle\Document\ChatMessage $message)
+    {
+        $this->messages[] = $message;
+    }
+
+    /**
+     * Remove message
+     *
+     * @param \Regidium\CommonBundle\Document\ChatMessage $message
+     */
+    public function removeMessage(\Regidium\CommonBundle\Document\ChatMessage $message)
+    {
+        $this->messages->removeElement($message);
+    }
+
+    /**
+     * Get messages
+     *
+     * @return \Doctrine\Common\Collections\Collection $messages
+     */
+    public function getMessages()
+    {
+        return $this->messages;
     }
 }

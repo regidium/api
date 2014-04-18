@@ -26,6 +26,7 @@ class LoadAgentData extends AbstractFixture implements OrderedFixtureInterface
         $dummyAgent->setType(Agent::TYPE_OWNER);
         $dummyAgent->setWidget($this->getReference('widget_regidium_my'));
         $dummyAgent->setAvatar('http://widget.project.rossiysky.net/img/employee-photo.jpg');
+        $dummyAgent->setRenderVisitorsPeriod(Agent::RENDER_VISITORS_PERIOD_SESSION);
         $manager->persist($dummyAgent);
         $manager->flush($dummyAgent);
 

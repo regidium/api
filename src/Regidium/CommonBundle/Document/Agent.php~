@@ -78,6 +78,17 @@ class Agent
     private $accept_chats;
 
     /**
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $render_visitors_period;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    private $last_visit;
+
+    /**
      * @MongoDB\Hash
      */
     private $external_service;
@@ -123,6 +134,19 @@ class Agent
         ];
     }
 
+    const RENDER_VISITORS_SESSION = 1;
+    const RENDER_VISITORS_DAY     = 2;
+    const RENDER_VISITORS_WEEK    = 3;
+
+    static public function getRenderVisitorPeriods()
+    {
+        return [
+            self::RENDER_VISITORS_PERIOD_SESSION,
+            self::RENDER_VISITORS_PERIOD_DAY,
+            self::RENDER_VISITORS_PERIOD_WEEK
+        ];
+    }
+
     /* =============== General =============== */
 
     public function __construct()
@@ -131,7 +155,9 @@ class Agent
         $this->job_title = '';
         $this->type = self::TYPE_ADMINISTRATOR;
         $this->status = self::STATUS_DEFAULT;
+        $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
+        $this->last_visit = time();
         $this->external_service = [];
 
         $this->chats = new ArrayCollection();
@@ -479,5 +505,27 @@ class Agent
     public function getChats()
     {
         return $this->chats;
+    }
+
+    /**
+     * Set renderVisitorsPeriod
+     *
+     * @param int $renderVisitorsPeriod
+     * @return self
+     */
+    public function setRenderVisitorsPeriod($renderVisitorsPeriod)
+    {
+        $this->render_visitors_period = $renderVisitorsPeriod;
+        return $this;
+    }
+
+    /**
+     * Get renderVisitorsPeriod
+     *
+     * @return int $renderVisitorsPeriod
+     */
+    public function getRenderVisitorsPeriod()
+    {
+        return $this->render_visitors_period;
     }
 }

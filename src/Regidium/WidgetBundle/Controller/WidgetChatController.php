@@ -25,30 +25,48 @@ use Regidium\CommonBundle\Document\Widget;
 class WidgetChatController extends AbstractController
 {
     /**
-     * Получаем список чатов
+     * Получаем список существующих чатов
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Получаем список архивных чатов.",
+     *   description = "Получаем список существующих чатов.",
      *   statusCodes = {
      *     200 = "Возвращает при успешном выполнении"
      *   }
      * )
      *
      * @param string  $uid       Widget UID
+     * @param string  $agent_uid  Agent UID
      *
      * @return View
      *
      */
-    public function cgetExistedAction($uid)
+    public function cgetExistedAction($uid, $agent_uid)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
         }
 
+        $agent = $this->get('regidium.agent.handler')->one(['uid' => $agent_uid]);
+        if (!$agent instanceof Agent) {
+            return $this->sendError('Agent not found!');
+        }
+
+        $where = ['widget.id' => $widget->getId()];
+
+        if ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
+            /** @todo Добавлять день */
+            $where['ended_at'] = ['$gte' => $agent->getLastVisit()];
+        } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_WEEK) {
+            /** @todo Добавлять неделю */
+            $where['ended_at'] = ['$gte' => $agent->getLastVisit()];
+        } else {
+            $where['ended_at'] = ['$gte' => $agent->getLastVisit()];
+        }
+
         /** @var Chat[] $chats */
-        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId()]);
+        $chats = $this->get('regidium.chat.handler')->get($where);
         $return = [];
         foreach ($chats as $chat) {
             $return[] = $chat->toArray(['messages']);

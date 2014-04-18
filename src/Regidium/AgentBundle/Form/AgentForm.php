@@ -51,6 +51,11 @@ class AgentForm extends AbstractType
                     'description' => 'Agent status',
                     'data' => Agent::STATUS_DEFAULT
                 ])
+            ->add('render_visitors_period', 'integer', [
+                    'required' => false,
+                    'description' => 'Agent render visitors type',
+                    'data' => Agent::RENDER_VISITORS_SESSION
+                ])
             ->add('accept_chats', 'choice', [
                     'required' => false,
                     'choices'   => [true, false],

@@ -18,7 +18,8 @@ class AgentHandler extends AbstractHandler
     public function post(array $data)
     {
         $entity = $this->createEntity();
-
+        // Записываем последний визит агента
+        $entity->setLastVisit(time());
         return $this->processForm($entity, $data, 'POST');
     }
 
