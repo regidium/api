@@ -27,14 +27,14 @@ class TriggerForm extends AbstractType
             ->add('priority', 'integer', [
                 'required' => false
             ])
-            ->add('event', 'number', [
+            ->add('event', 'integer', [
                 'required' => false,
                 //'choices' => Trigger::getEvents()
             ])
             ->add('event_params', 'text', [
                 'required' => false
             ])
-            ->add('result', 'number', [
+            ->add('result', 'integer', [
                 'required' => false,
                 //'choices' => Trigger::getEvents()
             ])

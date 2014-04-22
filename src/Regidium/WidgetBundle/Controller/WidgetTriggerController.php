@@ -63,8 +63,7 @@ class WidgetTriggerController extends AbstractController
      *   resource = false,
      *   description = "Создаем или редактируем триггер.",
      *   statusCodes = {
-     *     200 = "Возвращает при успешном редактировании",
-     *     204 = "Возвращает при успешном создании"
+     *     200 = "Возвращает при успешном выолнении",
      *   }
      * )
      *
@@ -74,7 +73,7 @@ class WidgetTriggerController extends AbstractController
      *
      * @return View
      */
-    public function putAction(Request $request, $uid, $trigger_uid)
+    public function putAction(Request $request, $uid, $trigger_uid = null)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
@@ -90,8 +89,6 @@ class WidgetTriggerController extends AbstractController
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {
-            $data['uid'] = uniqid();
-
             $trigger = $this->get('regidium.trigger.handler')->post(
                 $data
             );
