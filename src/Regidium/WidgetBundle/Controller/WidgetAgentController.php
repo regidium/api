@@ -151,7 +151,7 @@ class WidgetAgentController extends AbstractController
         }
 
         $password = $request->request->get('password', null);
-        if ($agent->getPassword() != null && $password == null) {
+        if ($agent && $agent->getPassword() != null && $password == null) {
             $password = $agent->getPassword();
         }
 
@@ -192,7 +192,7 @@ class WidgetAgentController extends AbstractController
      * @return View
      *
      */
-    public function postAuthAction(Request $request, $uid, $agent_uid)
+    public function postAuthAction($uid, $agent_uid)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
@@ -204,6 +204,7 @@ class WidgetAgentController extends AbstractController
             return $this->sendError('Agent not found!');
         }
 
+        $agent->setLastVisit(time());
         $this->get('regidium.agent.handler')->edit($agent);
 
         return $this->sendSuccess();
@@ -270,7 +271,7 @@ class WidgetAgentController extends AbstractController
             'type' => intval($request->request->get('type', Agent::TYPE_OPERATOR)),
             'status' => intval($request->request->get('status', Agent::STATUS_DEFAULT)),
             'accept_chats' => boolval($request->request->get('accept_chats', true)),
-            'render_visitors_period' => boolval($request->request->get('render_visitors_period', Auth::RENDER_VISITORS_PERIOD_SESSION)),
+            'render_visitors_period' => intval($request->request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION)),
         ];
     }
 }
