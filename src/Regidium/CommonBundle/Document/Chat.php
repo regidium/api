@@ -133,11 +133,11 @@ class Chat
             'socket_id' => $this->socket_id,
             'old_status' => $this->old_status,
             'user' => $this->user,
-            'started_at' =>  intval($this->started_at)
+            'started_at' =>  $this->started_at
         ];
 
         if ($this->ended_at) {
-            $return['ended_at'] =  intval($this->ended_at);
+            $return['ended_at'] =  $this->ended_at;
         }
 
         $return['messages'] = [];

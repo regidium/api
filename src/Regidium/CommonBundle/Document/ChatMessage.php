@@ -94,7 +94,7 @@ class ChatMessage
     {
         $return = [
             'uid' => $this->uid,
-            'created_at' => intval($this->created_at),
+            'created_at' => $this->created_at,
             'readed' => $this->readed,
             'text' => $this->text,
             'sender_type' => $this->sender_type

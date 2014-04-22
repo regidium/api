@@ -182,7 +182,7 @@ class Agent
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
-            'last_visit' => intval($this->last_visit)
+            'last_visit' => $this->last_visit
         ];
 
         if (in_array('widget', $options)) {
