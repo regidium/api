@@ -32,7 +32,7 @@ class Chat
 
     /**
      * @MongoDB\Index
-     * @MongoDB\Date
+     * @MongoDB\Int
      */
     private $started_at;
 

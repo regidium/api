@@ -20,7 +20,7 @@ class ChatMessageForm extends AbstractType
     {
         $builder
             ->add('created_at', 'hidden', [
-                'required' => false,
+                'required' => false
             ])
             ->add('text', 'text', [
                 'required' => false,

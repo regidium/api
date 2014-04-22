@@ -30,7 +30,8 @@ class ChatMessage
     private $uid;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\Index
+     * @MongoDB\Int
      */
     private $created_at;
 

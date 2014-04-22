@@ -85,7 +85,7 @@ class Agent
 
     /**
      * @MongoDB\Index
-     * @MongoDB\Date
+     * @MongoDB\Int
      */
     private $last_visit;
 

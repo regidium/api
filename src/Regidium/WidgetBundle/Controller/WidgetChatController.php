@@ -64,12 +64,12 @@ class WidgetChatController extends AbstractController
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 day', $agent->getLastVisit()->sec))]],
+                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 day', $agent->getLastVisit()))]],
             ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_WEEK) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 weeks', $agent->getLastVisit()->sec))]],
+                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 weeks', $agent->getLastVisit()))]],
             ];
         }
 
