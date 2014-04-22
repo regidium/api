@@ -54,7 +54,7 @@ class AgentForm extends AbstractType
             ->add('render_visitors_period', 'integer', [
                     'required' => false,
                     'description' => 'Agent render visitors type',
-                    'data' => Agent::RENDER_VISITORS_SESSION
+                    'data' => Agent::RENDER_VISITORS_PERIOD_SESSION
                 ])
             ->add('accept_chats', 'choice', [
                     'required' => false,

@@ -19,8 +19,8 @@ class ChatMessageForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('created_at', 'integer', [
-                'required' => false
+            ->add('created_at', 'hidden', [
+                'required' => false,
             ])
             ->add('text', 'text', [
                 'required' => false,
@@ -28,9 +28,9 @@ class ChatMessageForm extends AbstractType
                     new Constraints\NotBlank(array('message' => 'Text is empty!'))
                 )
             ])
-            ->add('sender_type', 'choice', [
+            ->add('sender_type', 'integer', [
                 'required' => false,
-                'choices' => ChatMessage::getSenderTypes()
+                //'choices' => ChatMessage::getSenderTypes()
             ])
             ->add('chat_uid', 'hidden', [
                 'mapped' => false,

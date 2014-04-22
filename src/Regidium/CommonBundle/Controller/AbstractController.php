@@ -59,9 +59,9 @@ abstract class AbstractController extends FOSRestController
      *
      * @return View
      */
-    protected function sendSuccess($data = true, $status_code = null, array $headers = [])
+    protected function sendSuccess($data = 'success', $status_code = null, array $headers = [])
     {
-        return $this->send(['success'], $status_code, $headers);
+        return $this->send($data, $status_code, $headers);
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class AbstractController extends FOSRestController
      *
      * @return View
      */
-    protected function sendArray($data = true, $status_code = null, array $headers = [])
+    protected function sendArray($data, $status_code = null, array $headers = [])
     {
         if (!is_array($data)) {
             $return[] = $data;

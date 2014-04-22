@@ -30,7 +30,7 @@ class ChatMessage
     private $uid;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Date
      */
     private $created_at;
 
@@ -38,6 +38,11 @@ class ChatMessage
      * @MongoDB\String
      */
     private $text;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $readed;
 
     /**
      * @MongoDB\Boolean
@@ -57,22 +62,9 @@ class ChatMessage
 
     /* =============== Constants =============== */
 
-    const STATUS_NOT_READED = 1;
-    const STATUS_DEFAULT = 2;
-    const STATUS_ARCHIVED = 3;
-
     const SENDER_TYPE_USER = 1;
     const SENDER_TYPE_AGENT = 2;
-    const SENDER_TYPE_ROBOT = 2;
-
-    static public function getStatuses()
-    {
-        return [
-            self::STATUS_NOT_READED,
-            self::STATUS_DEFAULT,
-            self::STATUS_ARCHIVED
-        ];
-    }
+    const SENDER_TYPE_ROBOT = 3;
 
     static public function getSenderTypes()
     {
@@ -89,6 +81,7 @@ class ChatMessage
     {
         $this->setUid(uniqid());
         $this->setCreatedAt(time());
+        $this->setReaded(false);
         $this->setArchived(false);
     }
 
@@ -101,20 +94,13 @@ class ChatMessage
     {
         $return = [
             'uid' => $this->uid,
-            'created_at' => intval((string)$this->created_at),
+            'created_at' => intval($this->created_at),
+            'readed' => $this->readed,
             'text' => $this->text,
             'sender_type' => $this->sender_type
         ];
 
         return $return;
-    }
-
-    /* =============== Events =============== */
-
-    /** @MongoDB\PostLoad */
-    public function postLoad()
-    {
-        $this->created_at = intval(strval($this->created_at));
     }
 
     /* =============== Get/Set =============== */
@@ -166,7 +152,7 @@ class ChatMessage
     /**
      * Set createdAt
      *
-     * @param timestamp $createdAt
+     * @param date $createdAt
      * @return self
      */
     public function setCreatedAt($createdAt)
@@ -178,7 +164,7 @@ class ChatMessage
     /**
      * Get createdAt
      *
-     * @return timestamp $createdAt
+     * @return date $createdAt
      */
     public function getCreatedAt()
     {
@@ -254,7 +240,7 @@ class ChatMessage
     /**
      * Set chat
      *
-     * @param Regidium\CommonBundle\Document\Chat $chat
+     * @param \Regidium\CommonBundle\Document\Chat $chat
      * @return self
      */
     public function setChat(\Regidium\CommonBundle\Document\Chat $chat)
@@ -266,10 +252,32 @@ class ChatMessage
     /**
      * Get chat
      *
-     * @return Regidium\CommonBundle\Document\Chat $chat
+     * @return \Regidium\CommonBundle\Document\Chat $chat
      */
     public function getChat()
     {
         return $this->chat;
+    }
+
+    /**
+     * Set readed
+     *
+     * @param boolean $readed
+     * @return self
+     */
+    public function setReaded($readed)
+    {
+        $this->readed = $readed;
+        return $this;
+    }
+
+    /**
+     * Get readed
+     *
+     * @return boolean $readed
+     */
+    public function getReaded()
+    {
+        return $this->readed;
     }
 }

@@ -10,7 +10,20 @@ use Regidium\CommonBundle\Document\ChatMessage;
 class ChatMessageHandler extends AbstractHandler
 {
     /**
-     * Создание новой сущности
+     * Прочтение сообщения чата
+     *
+     * @param ChatMessage $chat_message
+     *
+     * @return ChatMessage
+     */
+    public function read(ChatMessage $chat_message)
+    {
+        $chat_message->setReaded(true);
+        return $this->save($chat_message);
+    }
+
+    /**
+     * Создание нового сообщения чата
      *
      * @param array $data
      *
@@ -49,8 +62,6 @@ class ChatMessageHandler extends AbstractHandler
 
             return $chat_message;
         }
-
-        var_dump($form->getErrors());die();
 
         return $this->getFormErrors($form);
     }

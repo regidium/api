@@ -42,6 +42,11 @@ class ChatMessage
     /**
      * @MongoDB\Boolean
      */
+    private $readed;
+
+    /**
+     * @MongoDB\Boolean
+     */
     private $archived;
 
     /**
@@ -57,22 +62,9 @@ class ChatMessage
 
     /* =============== Constants =============== */
 
-    const STATUS_NOT_READED = 1;
-    const STATUS_DEFAULT = 2;
-    const STATUS_ARCHIVED = 3;
-
     const SENDER_TYPE_USER = 1;
     const SENDER_TYPE_AGENT = 2;
-    const SENDER_TYPE_ROBOT = 2;
-
-    static public function getStatuses()
-    {
-        return [
-            self::STATUS_NOT_READED,
-            self::STATUS_DEFAULT,
-            self::STATUS_ARCHIVED
-        ];
-    }
+    const SENDER_TYPE_ROBOT = 3;
 
     static public function getSenderTypes()
     {
@@ -89,6 +81,7 @@ class ChatMessage
     {
         $this->setUid(uniqid());
         $this->setCreatedAt(time());
+        $this->setReaded(false);
         $this->setArchived(false);
     }
 
@@ -254,7 +247,7 @@ class ChatMessage
     /**
      * Set chat
      *
-     * @param Regidium\CommonBundle\Document\Chat $chat
+     * @param \Regidium\CommonBundle\Document\Chat $chat
      * @return self
      */
     public function setChat(\Regidium\CommonBundle\Document\Chat $chat)
@@ -266,7 +259,7 @@ class ChatMessage
     /**
      * Get chat
      *
-     * @return Regidium\CommonBundle\Document\Chat $chat
+     * @return \Regidium\CommonBundle\Document\Chat $chat
      */
     public function getChat()
     {

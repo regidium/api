@@ -24,29 +24,34 @@ class Chat
     private $id;
 
     /**
+     * @MongoDB\Index
      * @MongoDB\String
      * @MongoDB\UniqueIndex(safe="true")
      */
     private $uid;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Index
+     * @MongoDB\Date
      */
     private $started_at;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Index
+     * @MongoDB\Date
      */
     private $ended_at;
 
     /**
      * @Assert\NotBlank
+     * @MongoDB\Index
      * @MongoDB\Int
      */
     private $status;
 
     /**
      * @Assert\NotBlank
+     * @MongoDB\Index
      * @MongoDB\Int
      */
     private $old_status;
@@ -90,17 +95,13 @@ class Chat
     const STATUS_ONLINE   = 1;
     const STATUS_CHATTING = 2;
     const STATUS_OFFLINE  = 3;
-    const STATUS_ARCHIVED = 4;
-    const STATUS_DELETED  = 5;
 
     static public function getStatuses()
     {
         return [
             self::STATUS_ONLINE,
             self::STATUS_CHATTING,
-            self::STATUS_OFFLINE,
-            self::STATUS_ARCHIVED,
-            self::STATUS_DELETED
+            self::STATUS_OFFLINE
         ];
     }
 
@@ -131,10 +132,13 @@ class Chat
             'status' => $this->status,
             'socket_id' => $this->socket_id,
             'old_status' => $this->old_status,
-            'started_at' =>  intval((string)$this->started_at),
-            'ended_at' =>  intval((string)$this->ended_at),
-            'user' => $this->user
+            'user' => $this->user,
+            'started_at' =>  intval($this->started_at)
         ];
+
+        if ($this->ended_at) {
+            $return['ended_at'] =  intval($this->ended_at);
+        }
 
         $return['messages'] = [];
         foreach($this->messages as $message) {
@@ -208,7 +212,7 @@ class Chat
     /**
      * Set startedAt
      *
-     * @param timestamp $startedAt
+     * @param date $startedAt
      * @return self
      */
     public function setStartedAt($startedAt)
@@ -220,7 +224,7 @@ class Chat
     /**
      * Get startedAt
      *
-     * @return timestamp $startedAt
+     * @return date $startedAt
      */
     public function getStartedAt()
     {
@@ -230,7 +234,7 @@ class Chat
     /**
      * Set endedAt
      *
-     * @param timestamp $endedAt
+     * @param date $endedAt
      * @return self
      */
     public function setEndedAt($endedAt)
@@ -242,7 +246,7 @@ class Chat
     /**
      * Get endedAt
      *
-     * @return timestamp $endedAt
+     * @return date $endedAt
      */
     public function getEndedAt()
     {

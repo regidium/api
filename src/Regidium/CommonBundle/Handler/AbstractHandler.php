@@ -68,6 +68,21 @@ abstract class AbstractHandler
     }
 
     /**
+     * Сохранение документа.
+     *
+     * @param mixed $entity
+     *
+     * @return mixed
+     */
+    public function save($entity)
+    {
+        $this->dm->persist($entity);
+        $this->dm->flush($entity);
+
+        return $entity;
+    }
+
+    /**
      * * Получение списка всех документов.
      *
      * @param int $limit  количество результатов

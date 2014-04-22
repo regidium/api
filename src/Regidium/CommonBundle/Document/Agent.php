@@ -84,7 +84,8 @@ class Agent
     private $render_visitors_period;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Index
+     * @MongoDB\Date
      */
     private $last_visit;
 
@@ -180,7 +181,8 @@ class Agent
             'job_title' => $this->job_title,
             'status' => $this->status,
             'type' => $this->type,
-            'accept_chats' => $this->accept_chats
+            'accept_chats' => $this->accept_chats,
+            'last_visit' => $this->last_visit->getTimestamp()
         ];
 
         if (in_array('widget', $options)) {
@@ -533,7 +535,7 @@ class Agent
     /**
      * Set lastVisit
      *
-     * @param timestamp $lastVisit
+     * @param \DateTime $lastVisit
      * @return self
      */
     public function setLastVisit($lastVisit)
@@ -545,7 +547,7 @@ class Agent
     /**
      * Get lastVisit
      *
-     * @return timestamp $lastVisit
+     * @return \DateTime $lastVisit
      */
     public function getLastVisit()
     {

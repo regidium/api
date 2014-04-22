@@ -8,6 +8,7 @@ use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
+use Regidium\CommonBundle\Document\Chat;
 use Regidium\CommonBundle\Document\Widget;
 
 /**
@@ -48,6 +49,57 @@ class WidgetController extends AbstractController
         }
 
         return $this->send($widget->toArray(['plan', 'triggers']));
+    }
+
+    /**
+     * Получение списка новых сообщений.
+     *
+     * @ApiDoc(
+     *   resource = false,
+     *   description = "Получение списка новых сообщений.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param string $uid Widget UID
+     *
+     * @return array
+     *
+     */
+    public function getMessagesNewAction($uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget was not found.');
+        }
+
+        $messages = [];
+        /** @var Chat[] $chats */
+        $chats = $widget->getChats();
+        foreach($chats as $chat) {
+//              $chat_messages = $chat->getMessages()->filter(function($e) {
+//                  if($e->getReaded()) {
+//                      return false;
+//                  }
+//
+//                  return true;
+//              })->map(function($e) {
+//                  return [$e->getUid() => $e->toArray()];
+//              });
+
+            $chat_messages = $this->get('regidium.chat.message.repository')->createQueryBuilder()
+                ->field('chat.id')->equals($chat->getId())
+                ->field('readed')->equals(false)
+                ->getQuery()
+                ->execute()
+            ;
+            foreach($chat_messages as $message) {
+                $messages[$message->getUid()] = $message->toArray();
+            }
+        }
+
+        return $this->sendArray($messages);
     }
 
     /**

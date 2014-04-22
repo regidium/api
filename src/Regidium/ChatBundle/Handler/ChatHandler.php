@@ -9,6 +9,7 @@ use Regidium\ChatBundle\Form\UserForm;
 use Regidium\CommonBundle\Document\Agent;
 use Regidium\CommonBundle\Document\User;
 use Regidium\CommonBundle\Document\Chat;
+use Regidium\CommonBundle\Document\ChatMessage;
 use Regidium\CommonBundle\Document\Widget;
 
 class ChatHandler extends AbstractHandler
@@ -134,7 +135,17 @@ class ChatHandler extends AbstractHandler
     public function agentEnter(Chat $chat, Agent $agent) {
         $chat->setAgent($agent);
         $chat->setStatus(Chat::STATUS_CHATTING);
-        $this->edit($chat);
+
+        // Прочитываем все сообщения чата
+        /** @var ChatMessage[] $messages  */
+        $messages = $chat->getMessages();
+        foreach($messages as $message) {
+            $message->setReaded(true);
+            $this->dm->persist($message);
+        }
+
+        $this->dm->persist($chat);
+        $this->dm->flush();
 
         return $chat;
     }

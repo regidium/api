@@ -55,18 +55,27 @@ class WidgetChatController extends AbstractController
 
         $where = ['widget.id' => $widget->getId()];
 
-        if ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
+        if ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_SESSION) {
             /** @todo Добавлять день */
-            $where['ended_at'] = ['$gte' => $agent->getLastVisit()];
+            $where['$or'] = [
+                ['ended_at' => ['$exists' => false]],
+                ['ended_at' => ['$gte' => $agent->getLastVisit()]],
+            ];
+        } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
+            $where['$or'] = [
+                ['ended_at' => ['$exists' => false]],
+                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 day', $agent->getLastVisit()->sec))]],
+            ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_WEEK) {
-            /** @todo Добавлять неделю */
-            $where['ended_at'] = ['$gte' => $agent->getLastVisit()];
-        } else {
-            $where['ended_at'] = ['$gte' => $agent->getLastVisit()];
+            $where['$or'] = [
+                ['ended_at' => ['$exists' => false]],
+                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 weeks', $agent->getLastVisit()->sec))]],
+            ];
         }
 
         /** @var Chat[] $chats */
         $chats = $this->get('regidium.chat.handler')->get($where);
+
         $return = [];
         foreach ($chats as $chat) {
             $return[] = $chat->toArray(['messages']);
@@ -162,15 +171,6 @@ class WidgetChatController extends AbstractController
      */
     public function postAction(Request $request, $uid)
     {
-        /* @todo дополнительная проверка URL запроса
-        
-        if (!isset($_SERVER['HTTP_ORIGIN'])) {
-            return $this->sendError('Widget not found!');
-        }
-
-        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid, 'url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/", 'uid' => $uid)]);
-        */
-
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
@@ -398,15 +398,6 @@ class WidgetChatController extends AbstractController
      */
     public function postMessageAction(Request $request, $uid, $chat_uid)
     {
-        /* @todo дополнительная проверка URL запроса
-        
-        if (!isset($_SERVER['HTTP_ORIGIN'])) {
-            return $this->sendError('Widget not found!');
-        }
-
-        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid, 'url' => new \MongoRegex("/{$_SERVER['HTTP_ORIGIN']}$/", 'uid' => $uid)]);
-        */
-
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
@@ -421,30 +412,54 @@ class WidgetChatController extends AbstractController
         $data['chat_uid'] = $chat->getUid();
 
         $chat_message = $this->get('regidium.chat.message.handler')->post($data);
-        $this->get('regidium.chat.handler')->chatting($chat);
-
         if (!$chat_message instanceof ChatMessage) {
             return $this->sendError($chat_message);
         }
 
+        $this->get('regidium.chat.handler')->chatting($chat);
+
         return $this->send($chat_message->toArray());
     }
+    
 
-    private function prepareUserData(Request $request)
+    /**
+     * Прочтение сообщения чата.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Прочтение сообщения чата.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request           Request object
+     * @param string  $uid               Widget UID
+     * @param string  $chat_uid          Chat UID
+     * @param string  $chat_message_uid  Chat Message UID
+     *
+     * @return View
+     *
+     */
+    public function putMessageReadAction(Request $request, $uid, $chat_uid, $chat_message_uid)
     {
-        /** @todo Получать IP для proxy */
-        return [
-            'first_name' => $request->get('first_name', null),
-            'last_name' => $request->get('last_name', null),
-            'email' => $request->get('email', null),
-            'country' => $request->get('country', null),
-            'city' => $request->get('city', null),
-            'ip' => $request->get('ip', null),
-            'device' => $request->get('device', null),
-            'os' => $request->get('os', null),
-            'browser' => $request->get('browser', null),
-            'keyword' => $request->get('keyword', null),
-            'language' => $request->get('language', 'ru')
-        ];
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $chat_message_uid = $this->get('regidium.chat.message.handler')->one(['uid' => $chat_message_uid]);
+        if (!$chat_message_uid instanceof ChatMessage) {
+            return $this->sendError('Chat message not found!');
+        }
+
+        $this->get('regidium.chat.message.handler')->read($chat_message_uid);
+
+        return $this->sendSuccess();
     }
 }
