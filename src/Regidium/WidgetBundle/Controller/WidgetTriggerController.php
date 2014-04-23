@@ -81,11 +81,11 @@ class WidgetTriggerController extends AbstractController
         }
 
         $trigger = null;
-        if (!$trigger_uid === 'new') {
+        if (!$trigger_uid == 'new') {
             $trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
         }
 
-        $data = $request->request->all();
+        $data = $request->request->get('trigger');
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {

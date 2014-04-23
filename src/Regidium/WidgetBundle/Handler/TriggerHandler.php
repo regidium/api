@@ -113,7 +113,8 @@ class TriggerHandler extends AbstractHandler
         if ($form->isValid()) {
             $trigger = $form->getData();
 
-            $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
+            $widget_uid = $form->get('widget_uid')->getData();
+            $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $widget_uid]);
             $trigger->setWidget($widget);
 
             $this->dm->persist($trigger);

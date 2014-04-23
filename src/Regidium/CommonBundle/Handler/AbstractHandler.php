@@ -30,12 +30,12 @@ abstract class AbstractHandler
      */
     protected $repository;
 
-    public function __construct(FormFactoryInterface $formFactory, ManagerRegistry $mr, $entityClass)
+    public function __construct(FormFactoryInterface $form_factory, ManagerRegistry $mr, $entity_class)
     {
-        $this->formFactory = $formFactory;
+        $this->formFactory = $form_factory;
         $this->dm = $mr->getManager();
-        $this->entityClass = $entityClass;
-        $this->repository = $this->dm->getRepository($this->entityClass);
+        $this->entityClass = $entity_class;
+        $this->repository = $this->dm->getRepository($this->entity_class);
     }
 
     protected function createEntity()

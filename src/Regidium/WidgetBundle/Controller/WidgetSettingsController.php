@@ -22,7 +22,7 @@ use Regidium\CommonBundle\Document\Widget;
 class WidgetSettingsController extends AbstractController
 {
     /**
-     * Change widget settings.
+     * Изменены настройки виджета.
      *
      * @ApiDoc(
      *   resource = false,
@@ -45,7 +45,7 @@ class WidgetSettingsController extends AbstractController
         }
 
         $settings = $widget->getSettings();
-        $new_settings = $request->request->all();
+        $new_settings = $request->request->get('settings');
 
         foreach($new_settings as $key => $new_setting) {
             $settings[$key] = $new_setting;
@@ -58,6 +58,6 @@ class WidgetSettingsController extends AbstractController
             'settings' => $widget->getSettings()
         ];
 
-        return $this->view($return);
+        return $this->send($return);
     }
 }
