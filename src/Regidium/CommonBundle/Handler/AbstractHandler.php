@@ -35,7 +35,7 @@ abstract class AbstractHandler
         $this->formFactory = $form_factory;
         $this->dm = $mr->getManager();
         $this->entityClass = $entity_class;
-        $this->repository = $this->dm->getRepository($this->entity_class);
+        $this->repository = $this->dm->getRepository($entity_class);
     }
 
     protected function createEntity()

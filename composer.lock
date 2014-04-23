@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "2c717e80c4f3ba589592933218f66bb366eac057"
+                "reference": "510afadeb61247418c57da011701fa22f428a7a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/2c717e80c4f3ba589592933218f66bb366eac057",
-                "reference": "2c717e80c4f3ba589592933218f66bb366eac057",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/510afadeb61247418c57da011701fa22f428a7a0",
+                "reference": "510afadeb61247418c57da011701fa22f428a7a0",
                 "shasum": ""
             },
             "require": {
@@ -24,7 +24,8 @@
                 "php": ">=5.3.2"
             },
             "require-dev": {
-                "doctrine/cache": "1.*"
+                "doctrine/cache": "1.*",
+                "phpunit/phpunit": "4.*"
             },
             "type": "library",
             "extra": {
@@ -43,7 +44,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan H. Wage",
+                    "name": "Jonathan Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -62,7 +63,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -75,7 +76,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2014-04-21 04:41:33"
+            "time": "2014-04-22 11:44:09"
         },
         {
             "name": "doctrine/cache",
@@ -653,16 +654,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "a81c334f2764b09e2f13a55cfd8fe3233946f728"
+                "reference": "dc02e4f73eb0938c35ddd60fa37825a98195a33f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/a81c334f2764b09e2f13a55cfd8fe3233946f728",
-                "reference": "a81c334f2764b09e2f13a55cfd8fe3233946f728",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/dc02e4f73eb0938c35ddd60fa37825a98195a33f",
+                "reference": "dc02e4f73eb0938c35ddd60fa37825a98195a33f",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
             },
             "type": "library",
             "extra": {
@@ -700,7 +704,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -714,7 +718,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2013-12-21 19:19:50"
+            "time": "2014-04-22 02:37:36"
         },
         {
             "name": "doctrine/lexer",
@@ -779,12 +783,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb.git",
-                "reference": "f0574f77ecd72c22babd8359e496b43c9dee8bca"
+                "reference": "7afe59536d4bb31168a5bfeebcccea1a604c12dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb/zipball/f0574f77ecd72c22babd8359e496b43c9dee8bca",
-                "reference": "f0574f77ecd72c22babd8359e496b43c9dee8bca",
+                "url": "https://api.github.com/repos/doctrine/mongodb/zipball/7afe59536d4bb31168a5bfeebcccea1a604c12dc",
+                "reference": "7afe59536d4bb31168a5bfeebcccea1a604c12dc",
                 "shasum": ""
             },
             "require": {
@@ -843,7 +847,7 @@
                 "mongodb",
                 "persistence"
             ],
-            "time": "2014-04-18 17:54:30"
+            "time": "2014-04-22 14:59:35"
         },
         {
             "name": "doctrine/mongodb-odm",
@@ -2328,12 +2332,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "54ff6104fb211dbc5e9eaf82dbc8ee6dabdf6ed0"
+                "reference": "44fb02bda4425d0b3fcdac36e4a2223d414c8530"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/54ff6104fb211dbc5e9eaf82dbc8ee6dabdf6ed0",
-                "reference": "54ff6104fb211dbc5e9eaf82dbc8ee6dabdf6ed0",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/44fb02bda4425d0b3fcdac36e4a2223d414c8530",
+                "reference": "44fb02bda4425d0b3fcdac36e4a2223d414c8530",
                 "shasum": ""
             },
             "require": {
@@ -2394,7 +2398,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-04-21 06:38:30"
+            "time": "2014-04-23 06:00:49"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2545,29 +2549,26 @@
         },
         {
             "name": "sensio/distribution-bundle",
-            "version": "dev-master",
+            "version": "v2.3.4",
             "target-dir": "Sensio/Bundle/DistributionBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
-                "reference": "e50dfb32776bb0cd51dfb3989d5a9c77989b4bb2"
+                "reference": "66df91b4bd637a83299d8072aed3658bfd3b3021"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/e50dfb32776bb0cd51dfb3989d5a9c77989b4bb2",
-                "reference": "e50dfb32776bb0cd51dfb3989d5a9c77989b4bb2",
+                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/66df91b4bd637a83299d8072aed3658bfd3b3021",
+                "reference": "66df91b4bd637a83299d8072aed3658bfd3b3021",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
-                "symfony/class-loader": "~2.3",
-                "symfony/filesystem": "~2.3",
-                "symfony/framework-bundle": "~2.3"
+                "symfony/framework-bundle": "~2.2"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "2.3.x-dev"
                 }
             },
             "autoload": {
@@ -2592,7 +2593,7 @@
                 "configuration",
                 "distribution"
             ],
-            "time": "2014-04-21 12:21:39"
+            "time": "2013-08-22 05:04:53"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -2873,12 +2874,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "27e1a893a090bf58bce774660f6cb5cbdfd4d287"
+                "reference": "6658989fb81ac73294107d0d902491255fbc9f46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/27e1a893a090bf58bce774660f6cb5cbdfd4d287",
-                "reference": "27e1a893a090bf58bce774660f6cb5cbdfd4d287",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/6658989fb81ac73294107d0d902491255fbc9f46",
+                "reference": "6658989fb81ac73294107d0d902491255fbc9f46",
                 "shasum": ""
             },
             "require": {
@@ -2981,7 +2982,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-04-19 08:12:20"
+            "time": "2014-04-22 08:11:23"
         },
         {
             "name": "twig/extensions",
