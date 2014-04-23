@@ -151,6 +151,22 @@ class ChatHandler extends AbstractHandler
     }
 
     /**
+     * Агент отключился
+     *
+     * @param Chat $chat
+     *
+     * @return Chat
+     */
+    public function agentLeave(Chat $chat) {
+        $chat->setAgent(null);
+        //$chat->setStatus(Chat::STATUS_ONLINE);
+
+        $this->edit($chat);
+
+        return $chat;
+    }
+
+    /**
      * @todo убрать
      *
      * Save edited Chat

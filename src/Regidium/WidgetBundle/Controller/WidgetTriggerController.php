@@ -10,6 +10,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Regidium\CommonBundle\Controller\AbstractController;
 use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Trigger;
+use Regidium\WidgetBundle\Form\TriggerForm;
 
 /**
  * Widget Trigger controller
@@ -82,21 +83,25 @@ class WidgetTriggerController extends AbstractController
 
         $trigger = null;
         if (!$trigger_uid == 'new') {
-            $trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
+            $repository = $this->get('doctrine.odm.mongodb.document_manager')->getRepository('Regidium\CommonBundle\Document\Trigger');
+            //$trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
+            $trigger = $repository->findOneBy(['uid' => $trigger_uid]);
         }
 
         $data = $request->request->get('trigger');
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {
-            $trigger = $this->get('regidium.trigger.handler')->post(
-                $data
-            );
+//            $trigger = $this->get('regidium.trigger.handler')->post(
+//                $data
+//            );
+            $trigger = $this->processForm(new Trigger(), $data, 'POST');
         } else {
-            $trigger = $this->get('regidium.trigger.handler')->put(
-                $trigger,
-                $data
-            );
+//            $trigger = $this->get('regidium.trigger.handler')->put(
+//                $trigger,
+//                $data
+//            );
+            $trigger = $this->processForm(new Trigger(), $data, 'PUT');
         }
 
         if (!$trigger instanceof Trigger) {
@@ -124,6 +129,11 @@ class WidgetTriggerController extends AbstractController
      */
     public function deleteAction($uid, $trigger_uid)
     {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
         $result = $this->get('regidium.trigger.handler')->delete([ 'uid' => $trigger_uid ]);
 
         if ($result === 404) {
@@ -133,5 +143,36 @@ class WidgetTriggerController extends AbstractController
         }
 
         return $this->sendSuccess();
+    }
+
+
+    /**
+     * Обработка формы.
+     *
+     * @param Trigger $trigger Триггер для обработки
+     * @param array   $data    Данные для обработки
+     * @param string  $method  HTTP метод
+     *
+     * @return string|array|Widget
+     *
+     */
+    public function processForm(Trigger $trigger, array $data, $method = 'PUT')
+    {
+        $form = $this->get('form.factory')->create(new TriggerForm(), $trigger, ['method' => $method]);
+        $form->submit($data, 'PATCH' !== $method);
+        if ($form->isValid()) {
+            $trigger = $form->getData();
+
+            $widget_uid = $form->get('widget_uid')->getData();
+            $widget = $this->get('doctrine.odm.mongodb.document_manager')->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $widget_uid]);
+            $trigger->setWidget($widget);
+
+            $this->get('doctrine.odm.mongodb.document_manager')->persist($trigger);
+            $this->get('doctrine.odm.mongodb.document_manager')->flush($trigger);
+
+            return $trigger;
+        }
+
+        return $this->getFormErrors($form);
     }
 }

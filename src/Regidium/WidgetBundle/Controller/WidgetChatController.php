@@ -336,7 +336,6 @@ class WidgetChatController extends AbstractController
         return $this->sendSuccess();
     }
 
-
     /**
      * Агент подключился к чату
      *
@@ -376,6 +375,52 @@ class WidgetChatController extends AbstractController
         $chat = $this->get('regidium.chat.handler')->agentEnter($chat, $agent);
 
         return $this->send($chat->toArray(['agent', 'messages']));
+    }
+
+    /**
+     * Агент отключился от чата
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Агент отключился от чата.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     * @param string  $chat_uid  Chat UID
+     * @param string  $agent_uid Agent UID
+     *
+     * @return View
+     *
+     * @todo Логировать действия
+     *
+     */
+    public function deleteAgentAction(Request $request, $uid, $chat_uid, $agent_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $agent = $this->get('regidium.agent.handler')->one(['uid' => $agent_uid]);
+        if (!$agent instanceof Agent) {
+            return $this->sendError('Agent not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->agentLeave($chat);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Server error!');
+        }
+
+        return $this->sendSuccess();
     }
 
     /**

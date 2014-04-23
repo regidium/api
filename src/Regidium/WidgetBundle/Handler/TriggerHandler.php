@@ -103,7 +103,7 @@ class TriggerHandler extends AbstractHandler
      * @param array   $data    Данные для обработки
      * @param string  $method  HTTP метод
      *
-     * @return string|array|Widget
+     * @return string|array|Trigger
      *
      */
     public function processForm(Trigger $trigger, array $data, $method = 'PUT')
