@@ -81,14 +81,17 @@ class WidgetTriggerController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
+        $data = $request->request->get('trigger');
+
         $trigger = null;
         if (!$trigger_uid == 'new') {
             $repository = $this->get('doctrine.odm.mongodb.document_manager')->getRepository('Regidium\CommonBundle\Document\Trigger');
             //$trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
             $trigger = $repository->findOneBy(['uid' => $trigger_uid]);
+        } else {
+            unset($data['uid']);
         }
 
-        $data = $request->request->get('trigger');
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {
@@ -173,6 +176,12 @@ class WidgetTriggerController extends AbstractController
             return $trigger;
         }
 
-        return $this->getFormErrors($form);
+        $return = [];
+        $errors = $form->getErrors();
+        foreach ($errors as $error) {
+            $return[] = $error->getMessage();
+        }
+
+        return $return;
     }
 }
