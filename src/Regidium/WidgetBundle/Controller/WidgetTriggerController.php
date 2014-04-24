@@ -88,8 +88,6 @@ class WidgetTriggerController extends AbstractController
             $repository = $this->get('doctrine.odm.mongodb.document_manager')->getRepository('Regidium\CommonBundle\Document\Trigger');
             //$trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
             $trigger = $repository->findOneBy(['uid' => $trigger_uid]);
-        } else {
-            unset($data['uid']);
         }
 
         $data['widget_uid'] = $uid;
