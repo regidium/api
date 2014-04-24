@@ -81,8 +81,6 @@ class WidgetTriggerController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
-        $data = $request->request->get('trigger');
-
         $trigger = null;
         if (!$trigger_uid == 'new') {
             $repository = $this->get('doctrine.odm.mongodb.document_manager')->getRepository('Regidium\CommonBundle\Document\Trigger');
@@ -90,6 +88,7 @@ class WidgetTriggerController extends AbstractController
             $trigger = $repository->findOneBy(['uid' => $trigger_uid]);
         }
 
+        $data = $this->prepareTriggerData($request);
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {
@@ -181,5 +180,21 @@ class WidgetTriggerController extends AbstractController
         }
 
         return $return;
+    }
+
+    protected function prepareTriggerData(Request $request)
+    {
+        return [
+            'first_name' => strval($request->get('first_name', null)),
+            'last_name' => strval($request->get('last_name', null)),
+            'avatar' => strval($request->get('avatar', null)),
+            'email' => strval($request->get('email', null)),
+            'password' => $password,
+            'job_title' => strval($request->get('job_title', '')),
+            'accept_chats' => boolval($request->get('accept_chats', true)),
+            'type' => intval($request->get('type', Agent::TYPE_ADMINISTRATOR)),
+            'status' => intval($request->get('status', Agent::STATUS_DEFAULT)),
+            'render_visitors_period' => intval($request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION))
+        ];
     }
 }
