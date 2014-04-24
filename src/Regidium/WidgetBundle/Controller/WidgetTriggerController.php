@@ -185,16 +185,12 @@ class WidgetTriggerController extends AbstractController
     protected function prepareTriggerData(Request $request)
     {
         return [
-            'first_name' => strval($request->get('first_name', null)),
-            'last_name' => strval($request->get('last_name', null)),
-            'avatar' => strval($request->get('avatar', null)),
-            'email' => strval($request->get('email', null)),
-            'password' => $password,
-            'job_title' => strval($request->get('job_title', '')),
-            'accept_chats' => boolval($request->get('accept_chats', true)),
-            'type' => intval($request->get('type', Agent::TYPE_ADMINISTRATOR)),
-            'status' => intval($request->get('status', Agent::STATUS_DEFAULT)),
-            'render_visitors_period' => intval($request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION))
+            'name' => strval($request->get('name', 'Trigger')),
+            'priority' => intval($request->get('priority', 1)),
+            'event' => intval($request->get('event', null)),
+            'event_params' => strval($request->get('event_params', null)),
+            'result' => intval($request->get('result', null)),
+            'result_params' => strval($request->get('result_params', null))
         ];
     }
 }
