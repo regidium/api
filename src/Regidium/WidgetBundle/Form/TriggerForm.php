@@ -18,9 +18,6 @@ class TriggerForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            // ->add('uid', 'hidden', [
-            //     'required' => false
-            // ])
             ->add('name', 'text', [
                 'required' => false
             ])

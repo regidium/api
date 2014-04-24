@@ -104,7 +104,7 @@ class WidgetTriggerController extends AbstractController
 //                $trigger,
 //                $data
 //            );
-            $trigger = $this->processForm(new Trigger(), $data, 'PUT');
+            $trigger = $this->processForm($trigger, $data, 'PUT');
         }
 
         if (!$trigger instanceof Trigger) {
