@@ -83,25 +83,23 @@ class WidgetTriggerController extends AbstractController
 
         $trigger = null;
         if (!$trigger_uid == 'new') {
-            $repository = $this->get('doctrine.odm.mongodb.document_manager')->getRepository('Regidium\CommonBundle\Document\Trigger');
-            //$trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
-            $trigger = $repository->findOneBy(['uid' => $trigger_uid]);
+            $trigger = $this->get('regidium.trigger.handler')->one(['uid' => $trigger_uid]);
         }
 
         $data = $this->prepareTriggerData($request);
         $data['widget_uid'] = $uid;
 
         if (!$trigger) {
-//            $trigger = $this->get('regidium.trigger.handler')->post(
-//                $data
-//            );
-            $trigger = $this->processForm(new Trigger(), $data, 'POST');
+           $trigger = $this->get('regidium.trigger.handler')->post(
+               $data
+           );
+//            $trigger = $this->processForm(new Trigger(), $data, 'POST');
         } else {
-//            $trigger = $this->get('regidium.trigger.handler')->put(
-//                $trigger,
-//                $data
-//            );
-            $trigger = $this->processForm($trigger, $data, 'PUT');
+           $trigger = $this->get('regidium.trigger.handler')->put(
+               $trigger,
+               $data
+           );
+//            $trigger = $this->processForm($trigger, $data, 'PUT');
         }
 
         if (!$trigger instanceof Trigger) {
