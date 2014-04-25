@@ -38,7 +38,7 @@ class Chat
 
     /**
      * @MongoDB\Index
-     * @MongoDB\Date
+     * @MongoDB\Int
      */
     private $ended_at;
 
@@ -234,7 +234,7 @@ class Chat
     /**
      * Set endedAt
      *
-     * @param date $endedAt
+     * @param int $endedAt
      * @return self
      */
     public function setEndedAt($endedAt)
@@ -246,7 +246,7 @@ class Chat
     /**
      * Get endedAt
      *
-     * @return date $endedAt
+     * @return int $endedAt
      */
     public function getEndedAt()
     {

@@ -58,7 +58,7 @@ class WidgetChatController extends AbstractController
         if ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_SESSION) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => $agent->getLastVisit()]],
+                ['ended_at' => ['$gte' => new \MongoDate($agent->getLastVisit())]],
             ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
             $where['$or'] = [
