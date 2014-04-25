@@ -56,7 +56,6 @@ class WidgetChatController extends AbstractController
         $where = ['widget.id' => $widget->getId()];
 
         if ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_SESSION) {
-            /** @todo Добавлять день */
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
                 ['ended_at' => ['$gte' => $agent->getLastVisit()]],
@@ -64,12 +63,12 @@ class WidgetChatController extends AbstractController
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 day', $agent->getLastVisit()))]],
+                ['ended_at' => ['$gte' => strtotime('+1 day', $agent->getLastVisit())]],
             ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_WEEK) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => new \MongoDate(strtotime('+1 weeks', $agent->getLastVisit()))]],
+                ['ended_at' => ['$gte' => strtotime('+1 weeks', $agent->getLastVisit())]],
             ];
         }
 

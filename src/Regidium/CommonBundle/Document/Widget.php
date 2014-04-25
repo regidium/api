@@ -146,7 +146,10 @@ class Widget
         }
 
         if (in_array('triggers', $options) && $this->triggers) {
-            $return['triggers'] = $this->triggers->toArray();
+            $return['triggers'] = [];
+            foreach($this->triggers as $trigger) {
+                $return['triggers'][] = $trigger->toArray();
+            }
         }
 
         return $return;
