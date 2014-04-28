@@ -1,3 +1,6 @@
+imports:
+    - { resource: forms.yml }
+
 parameters:
     regidium.chat.handler.class: Regidium\ChatBundle\Handler\ChatHandler
     regidium.chat.message.handler.class: Regidium\ChatBundle\Handler\ChatMessageHandler

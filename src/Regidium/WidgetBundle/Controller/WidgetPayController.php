@@ -36,25 +36,26 @@ class WidgetPayController extends AbstractController
      *
      * @param Request $request
      * @param string  $uid Widget UID
-     * @param int     $payment_method
      *
      * @return View
      */
-    public function postAction(Request $request, $uid, $payment_method)
+    public function postAction(Request $request, $uid)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
         }
 
-        $payment_method = $this->get('regidium.billing.payment_method.handler')->one(['type' => (int)$payment_method]);
+        $payment_method_type = $request->request->get('payment_method', null);
+
+        $payment_method = $this->get('regidium.billing.payment_method.handler')->one(['type' => (int)$payment_method_type]);
         if (!$payment_method instanceof PaymentMethod) {
-            return $this->view(['errors' => ['Payment method not found!']]);
+            return $this->sendError('Payment method not found!');
         }
 
         $amount = $request->request->get('amount', 0);
         if ($amount <= 0) {
-            return $this->view(['errors' => ['Amount error!']]);
+            return $this->sendError('Amount error!');
         }
 
         $payment = $this->get('regidium.billing.payment.handler')->post(
@@ -64,13 +65,13 @@ class WidgetPayController extends AbstractController
         );
 
         if (!$payment instanceof Payment) {
-            return $this->view(['errors' => ['Payment save error!']]);
+            return $this->sendError('Payment save error!');
         }
 
         /** @todo Запись действий */
         $widget->setBalance($widget->getBalance() + $amount);
         $this->get('regidium.widget.handler')->edit($widget);
 
-        return $this->view($payment);
+        return $this->send($payment->toArray(['payment_method']));
     }
 }

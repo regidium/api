@@ -59,11 +59,6 @@ class User
     /**
      * @MongoDB\String
      */
-    private $keyword;
-
-    /**
-     * @MongoDB\String
-     */
     private $language;
 
     /* =============== Constants =============== */
@@ -86,7 +81,6 @@ class User
             'device' => $this->device,
             'os' => $this->os,
             'browser' => $this->browser,
-            'keyword' => $this->keyword,
             'language' => $this->language,
         ];
 
@@ -291,28 +285,6 @@ class User
     public function getBrowser()
     {
         return $this->browser;
-    }
-
-    /**
-     * Set keyword
-     *
-     * @param string $keyword
-     * @return self
-     */
-    public function setKeyword($keyword)
-    {
-        $this->keyword = $keyword;
-        return $this;
-    }
-
-    /**
-     * Get keyword
-     *
-     * @return string $keyword
-     */
-    public function getKeyword()
-    {
-        return $this->keyword;
     }
 
     /**

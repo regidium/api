@@ -15,6 +15,7 @@ use Regidium\CommonBundle\Document\Widget;
 class ChatHandler extends AbstractHandler
 {
     /**
+     * @todo
      * Создание новой сущности
      *
      * @param array $data
@@ -167,6 +168,20 @@ class ChatHandler extends AbstractHandler
     }
 
     /**
+     * Смена URL чата
+     *
+     * @param Chat   $chat
+     * @param string $current_url
+     *
+     * @return Chat
+     */
+    public function changeUrl(Chat $chat, $current_url ='') {
+        $chat->setCurrentUrl($current_url);
+        return $this->edit($chat);
+    }
+
+
+    /**
      * @todo убрать
      *
      * Save edited Chat
@@ -180,5 +195,52 @@ class ChatHandler extends AbstractHandler
         $this->dm->flush($chat);
 
         return $chat;
+    }
+
+    /**
+     * Редактирование чата
+     *
+     * @param Chat  $chat
+     * @param array $data
+     *
+     * @return Chat
+     */
+    public function patch(Chat $chat, array $data = []) {
+        $chat = $this->processForm($chat, $data, 'PATCH');
+
+        return $chat;
+    }
+
+    /**
+     * Обработка формы.
+     *
+     * @param Chat  $chat
+     * @param array  $data
+     * @param string $method
+     *
+     * @return string|array|Chat
+     *
+     */
+    public function processForm(Chat $chat, array $data, $method = 'PUT')
+    {
+        $form = $this->formFactory->create(new ChatForm(), $chat, ['method' => $method]);
+        $form->submit($data, 'PATCH' !== $method);
+        if ($form->isValid()) {
+            /** @var Chat $chat */
+            $chat = $form->getData();
+            if (!$chat instanceof Chat) {
+                return 'Server error';
+            }
+
+            $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
+            $chat->setWidget($widget);
+
+            $this->dm->persist($chat);
+            $this->dm->flush($chat);
+
+            return $chat;
+        }
+
+        return $this->getFormErrors($form);
     }
 }

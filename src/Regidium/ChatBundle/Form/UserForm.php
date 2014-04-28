@@ -45,9 +45,6 @@ class UserForm extends AbstractType
             ->add('browser', 'text', [
                     'required' => false
                 ])
-            ->add('keyword', 'text', [
-                    'required' => false
-                ])
             ->add('language', 'text', [
                     'required' => false
                 ])

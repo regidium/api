@@ -30,7 +30,10 @@ class ChatForm extends AbstractType
                 'choices' => Chat::getStatuses(),
                 'empty_data' => Chat::STATUS_ONLINE
             ])
-            ->add('socket_id', 'text', [
+            ->add('current_url', 'text', [
+                    'required' => false
+                ])
+            ->add('referrer', 'text', [
                 'required' => false
             ])
             ->add('old_status', 'choice', [
@@ -46,7 +49,7 @@ class ChatForm extends AbstractType
             ->add('widget_uid', 'hidden', [
                 'mapped' => false,
                 'constraints' => [
-                    new Constraints\NotBlank(['message' => 'Widget not found!']),
+                    new Constraints\NotBlank(['message' => 'Widget is empty!']),
                     new ExistDocument(['repository' => 'regidium.widget.repository', 'property' => 'uid'])
                 ]
             ])

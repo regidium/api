@@ -59,7 +59,12 @@ class Chat
     /**
      * @MongoDB\String
      */
-    private $socket_id;
+    private $referrer;
+
+    /**
+     * @MongoDB\String
+     */
+    private $current_url;
 
     /**
      * @MongoDB\Boolean
@@ -130,7 +135,8 @@ class Chat
             'uid' => $this->uid,
             'opened' => $this->opened,
             'status' => $this->status,
-            'socket_id' => $this->socket_id,
+            'referrer' => $this->referrer,
+            'current_url' => $this->current_url,
             'old_status' => $this->old_status,
             'user' => $this->user,
             'started_at' =>  $this->started_at
@@ -212,7 +218,7 @@ class Chat
     /**
      * Set startedAt
      *
-     * @param date $startedAt
+     * @param int $startedAt
      * @return self
      */
     public function setStartedAt($startedAt)
@@ -224,7 +230,7 @@ class Chat
     /**
      * Get startedAt
      *
-     * @return date $startedAt
+     * @return int $startedAt
      */
     public function getStartedAt()
     {
@@ -298,25 +304,48 @@ class Chat
     }
 
     /**
-     * Set socketId
+     * Set referrer
      *
-     * @param string $socketId
+     * @param string $referrer
      * @return self
      */
-    public function setSocketId($socketId)
+    public function setReferrer($referrer)
     {
-        $this->socket_id = $socketId;
+        $this->referrer = $referrer;
         return $this;
     }
 
     /**
-     * Get socketId
+     * Get referrer
      *
-     * @return string $socketId
+     * @return string $referrer
      */
-    public function getSocketId()
+    public function getReferrer()
     {
-        return $this->socket_id;
+        return $this->referrer;
+    }
+
+
+    /**
+     * Set current_url
+     *
+     * @param string $current_url
+     * @return self
+     */
+    public function setCurrentUrl($current_url)
+    {
+        $this->current_url = $current_url;
+        return $this;
+    }
+
+    /**
+     * Get current_url
+     *
+     * @return string $current_url
+     */
+    public function getCurrentUrl()
+    {
+        return $this->current_url;
     }
 
     /**

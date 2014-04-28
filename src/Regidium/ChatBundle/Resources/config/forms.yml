@@ -1,0 +1,8 @@
+parameters:
+    regidium.chat.user.form.type.class: Regidium\ChatBundle\Form\UserForm
+
+services:
+    regidium.chat.user.form.type:
+        class: %regidium.chat.user.form.type.class%
+        tags:
+            - { name: form.type, alias: "user" }

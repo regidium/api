@@ -58,7 +58,7 @@ class WidgetChatController extends AbstractController
         if ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_SESSION) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => new $agent->getLastVisit()]],
+                ['ended_at' => ['$gte' => $agent->getLastVisit()]],
             ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
             $where['$or'] = [
@@ -187,6 +187,87 @@ class WidgetChatController extends AbstractController
     }
 
     /**
+     * Редактирование существующего чата
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Редактирование существующего чата.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     * @param string  $chat_uid  Chat UID
+     *
+     * @return View
+     *
+     */
+    public function patchAction(Request $request, $uid, $chat_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $data = $request->request->get('chat', []);
+
+        if ($data) {
+            $chat = $this->get('regidium.chat.handler')->patch($chat, $data);
+        }
+
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Server error!');
+        }
+
+        return $this->sendSuccess();
+    }
+
+
+    /**
+     * Смена URL чата
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Смена URL чата.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     * @param string  $chat_uid  Chat UID
+     *
+     * @return View
+     *
+     */
+    public function patchUrlAction(Request $request, $uid, $chat_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $current_url = $request->request->get('current_url', '');
+
+        $this->get('regidium.chat.handler')->changeUrl($chat, $current_url);
+
+        return $this->sendSuccess();
+    }
+
+    /**
      * Подключение чата
      *
      * @ApiDoc(
@@ -215,8 +296,6 @@ class WidgetChatController extends AbstractController
         if (!$chat instanceof Chat) {
             return $this->sendError('Chat not found!');
         }
-
-        $chat->setSocketId($request->get('socket_id'));
 
         $this->get('regidium.chat.handler')->online($chat);
 
@@ -287,8 +366,6 @@ class WidgetChatController extends AbstractController
         if (!$chat instanceof Chat) {
             return $this->sendError('Chat not found!');
         }
-
-        $chat->setSocketId($request->get('socket_id'));
 
         $this->get('regidium.chat.handler')->chatting($chat);
 

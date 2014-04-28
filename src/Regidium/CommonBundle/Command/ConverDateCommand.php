@@ -21,11 +21,12 @@ class ConverDateCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $dm = $this->getContainer()->get('doctrine.odm.mongodb.document_manager');
-        $chats = $dm->getRepository('Regidium\CommonBundle\Document\Chat')->findAll();
+        $chats = $dm->getRepository('Regidium\CommonBundle\Document\Chat')->findBy(['status' => 3]);
         foreach($chats as $chat) {
-            $old = $chat->getEndedAt();
-            $chat->setEndedAt($old->getTimestamp());
-            $dm->persist($chat);
+            if (!$chat->getEndedAt()) {
+                $chat->setEndedAt($chat->getStartedAt());
+                $dm->persist($chat);
+            }
         }
         $dm->flush();
 
