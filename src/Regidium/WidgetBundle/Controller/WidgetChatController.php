@@ -109,11 +109,19 @@ class WidgetChatController extends AbstractController
         // @todo Временная мера
         /** @var Chat[] $chats */
         //$chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
-        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId()]);
+        $chats = $this->get('regidium.chat.repository')->createQueryBuilder()
+            ->field('widget.id')->equals($widget->getId())
+            //->field('messages')->exists(true)
+            //->field('messages')->size(false)
+            ->getQuery()
+            ->execute()
+        ;
 
         $return = [];
         foreach ($chats as $chat) {
-            $return[] = $chat->toArray(['messages']);
+            if ($chat->getMessages()->count()) {
+                $return[] = $chat->toArray(['messages']);
+            }
         }
 
         return  $this->sendArray($return);
