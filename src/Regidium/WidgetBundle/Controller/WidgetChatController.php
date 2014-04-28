@@ -106,8 +106,10 @@ class WidgetChatController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
+        // @todo Временная мера
         /** @var Chat[] $chats */
-        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
+        //$chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
+        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId()]);
 
         $return = [];
         foreach ($chats as $chat) {
