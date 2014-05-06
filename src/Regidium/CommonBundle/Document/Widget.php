@@ -120,7 +120,8 @@ class Widget
         $this->triggers = new ArrayCollection();
 
         $this->settings = [
-            'header_color' => '#ec1d23'
+            'header_color' => '#ec1d23',
+            'company_logo' => ''
         ];
     }
 

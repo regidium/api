@@ -18,6 +18,9 @@ class WidgetSettingsForm extends AbstractType
             ->add('header_color', 'text', [
                 'required' => false
             ])
+            ->add('company_logo', 'text', [
+                'required' => false
+            ])
         ;
     }
 
