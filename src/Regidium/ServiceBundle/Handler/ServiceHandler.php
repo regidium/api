@@ -29,8 +29,10 @@ class ServiceHandler
         $this->dm->createQueryBuilder('Regidium\CommonBundle\Document\Chat')
             ->update()
             ->multiple(true)
+            ->field('ended_at')->set(time())
             ->field('status')->set(Chat::STATUS_OFFLINE)
             ->field('uid')->notIn($chats_uids)
+            ->field('status')->notEqual(Chat::STATUS_OFFLINE)
             ->getQuery()
             ->execute()
         ;
