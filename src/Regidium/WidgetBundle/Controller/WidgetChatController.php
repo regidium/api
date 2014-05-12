@@ -111,6 +111,7 @@ class WidgetChatController extends AbstractController
         //$chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
         $chats = $this->get('regidium.chat.repository')->createQueryBuilder()
             ->field('widget.id')->equals($widget->getId())
+            ->field('opened')->equals(true)
             //->field('messages')->exists(true)
             //->field('messages')->size(false)
             ->getQuery()
@@ -378,6 +379,41 @@ class WidgetChatController extends AbstractController
         }
 
         $this->get('regidium.chat.handler')->chatting($chat);
+
+        return $this->sendSuccess();
+    }
+
+    /**
+     * Закрытие чата
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Отключение чата.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     * @param string  $chat_uid  Chat UID
+     *
+     * @return View
+     *
+     */
+    public function putClosedAction(Request $request, $uid, $chat_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $this->get('regidium.chat.handler')->closed($chat);
 
         return $this->sendSuccess();
     }

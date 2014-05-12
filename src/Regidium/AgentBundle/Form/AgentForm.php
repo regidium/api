@@ -49,7 +49,7 @@ class AgentForm extends AbstractType
             ->add('status', 'integer', [
                     'required' => false,
                     'description' => 'Agent status',
-                    'data' => Agent::STATUS_DEFAULT
+                    'data' => Agent::STATUS_OFFLINE
                 ])
             ->add('render_visitors_period', 'integer', [
                     'required' => false,

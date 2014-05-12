@@ -83,6 +83,7 @@ class ChatHandler extends AbstractHandler
     public function chatting(Chat $chat) {
         $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_CHATTING);
+        $chat->setOpened(true);
         $chat->setEndedAt(null);
         $this->edit($chat);
 
@@ -105,6 +106,21 @@ class ChatHandler extends AbstractHandler
         return $chat;
     }
 
+    /**
+     * Закрытие чата
+     *
+     * @param Chat $chat
+     *
+     * @return Chat
+     */
+    public function closed(Chat $chat) {
+        $chat->setOldStatus($chat->getStatus());
+        $chat->setStatus(Chat::STATUS_ONLINE);
+        $chat->setOpened(false);
+        $this->edit($chat);
+
+        return $chat;
+    }
 
     /**
      * Авторизационные данные пользователя

@@ -55,6 +55,38 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
+     * Подключение агента
+     *
+     * @param Agent $agent
+     *
+     * @return Agent
+     */
+    public function online(Agent $agent) {
+        $agent->setStatus(Agent::STATUS_ONLINE);
+        $agent->setLastVisit(time());
+
+        $this->edit($agent);
+
+        return $agent;
+    }
+
+    /**
+     * Отключение чата
+     *
+     * @param Agent $agent
+     *
+     * @return Agent
+     */
+    public function offline(Agent $agent) {
+        $agent->setStatus(Agent::STATUS_OFFLINE);
+
+        $this->edit($agent);
+
+        return $agent;
+    }
+
+
+    /**
      * Save edit Agent
      *
      * @todo Remove

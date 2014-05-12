@@ -55,6 +55,10 @@ class LoginController extends AbstractController
             return $this->sendError('Agent not found');
         }
 
+        if ($agent->getStatus() == Agent::STATUS_ONLINE) {
+            return $this->sendError('Agent is already authorized');
+        }
+
         // Записываем последний визит агента
         $agent->setLastVisit(time());
         $this->get('regidium.agent.handler')->edit($agent);

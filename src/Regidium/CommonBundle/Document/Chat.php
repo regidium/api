@@ -118,7 +118,6 @@ class Chat
         $this->started_at = time();
         $this->opened = false;
         $this->status = self::STATUS_ONLINE;
-//        $this->old_status = self::STATUS_ONLINE;
 
         $this->user = [];
         $this->messages = new ArrayCollection();

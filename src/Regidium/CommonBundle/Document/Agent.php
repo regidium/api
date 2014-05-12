@@ -122,16 +122,14 @@ class Agent
         ];
     }
 
-    const STATUS_DEFAULT = 1;
-    const STATUS_BLOCKED = 2;
-    const STATUS_DELETED = 3;
+    const STATUS_ONLINE   = 1;
+    const STATUS_OFFLINE  = 3;
 
     static public function getStatuses()
     {
         return [
-            self::STATUS_DEFAULT,
-            self::STATUS_BLOCKED,
-            self::STATUS_DELETED
+            self::STATUS_ONLINE,
+            self::STATUS_OFFLINE
         ];
     }
 
@@ -155,7 +153,7 @@ class Agent
         $this->uid = uniqid();
         $this->job_title = '';
         $this->type = self::TYPE_ADMINISTRATOR;
-        $this->status = self::STATUS_DEFAULT;
+        $this->status = self::STATUS_OFFLINE;
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
         $this->last_visit = time();
