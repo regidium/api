@@ -84,7 +84,8 @@ class Agent
     private $render_visitors_period;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Index
+     * @MongoDB\Int
      */
     private $last_visit;
 
@@ -92,6 +93,11 @@ class Agent
      * @MongoDB\Hash
      */
     private $external_service;
+
+    /**
+     * @MongoDB\EmbedOne(targetDocument="Regidium\CommonBundle\Document\AgentSession", strategy="set")
+     */
+    private $session;
 
     /**
      * @MongoDB\Index
@@ -121,16 +127,14 @@ class Agent
         ];
     }
 
-    const STATUS_DEFAULT = 1;
-    const STATUS_BLOCKED = 2;
-    const STATUS_DELETED = 3;
+    const STATUS_ONLINE   = 1;
+    const STATUS_OFFLINE  = 3;
 
     static public function getStatuses()
     {
         return [
-            self::STATUS_DEFAULT,
-            self::STATUS_BLOCKED,
-            self::STATUS_DELETED
+            self::STATUS_ONLINE,
+            self::STATUS_OFFLINE
         ];
     }
 
@@ -154,7 +158,7 @@ class Agent
         $this->uid = uniqid();
         $this->job_title = '';
         $this->type = self::TYPE_ADMINISTRATOR;
-        $this->status = self::STATUS_DEFAULT;
+        $this->status = self::STATUS_OFFLINE;
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
         $this->last_visit = time();
@@ -180,11 +184,16 @@ class Agent
             'job_title' => $this->job_title,
             'status' => $this->status,
             'type' => $this->type,
-            'accept_chats' => $this->accept_chats
+            'accept_chats' => $this->accept_chats,
+            'last_visit' => $this->last_visit
         ];
 
         if (in_array('widget', $options)) {
             $return['widget'] = $this->widget->toArray();
+        }
+
+        if (in_array('session', $options)) {
+            $return['session'] = $this->session->toArray();
         }
 
         return $return;
@@ -533,7 +542,7 @@ class Agent
     /**
      * Set lastVisit
      *
-     * @param timestamp $lastVisit
+     * @param \DateTime $lastVisit
      * @return self
      */
     public function setLastVisit($lastVisit)
@@ -545,7 +554,7 @@ class Agent
     /**
      * Get lastVisit
      *
-     * @return timestamp $lastVisit
+     * @return \DateTime $lastVisit
      */
     public function getLastVisit()
     {

@@ -2,158 +2,48 @@
 
 namespace Regidium\CommonBundle\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+
 
 /**
- * @MongoDB\EmbeddedDocument
+ * Regidium\CommonBundle\Document\AgentSesssion
  */
-class User
+class AgentSesssion
 {
-    /* =============== Attributes =============== */
+    /**
+     * @var string $country
+     */
+    protected $country;
 
     /**
-     * @MongoDB\String
+     * @var string $city
      */
-    private $first_name;
+    protected $city;
 
     /**
-     * @MongoDB\String
+     * @var string $ip
      */
-    private $last_name;
+    protected $ip;
 
     /**
-     * @MongoDB\String
+     * @var string $device
      */
-    private $email;
+    protected $device;
 
     /**
-     * @MongoDB\String
+     * @var string $os
      */
-    private $country;
+    protected $os;
 
     /**
-     * @MongoDB\String
+     * @var string $browser
      */
-    private $city;
+    protected $browser;
 
     /**
-     * @MongoDB\String
+     * @var string $language
      */
-    private $ip;
+    protected $language;
 
-    /**
-     * @MongoDB\String
-     */
-    private $device;
-
-    /**
-     * @MongoDB\String
-     */
-    private $os;
-
-    /**
-     * @MongoDB\String
-     */
-    private $browser;
-
-    /**
-     * @MongoDB\String
-     */
-    private $language;
-
-    /* =============== Constants =============== */
-
-    public function __construct()
-    {
-        $this->setFirstName('Client');
-        $this->setEmail('');
-    }
-
-    public function toArray()
-    {
-        $return = [
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'country' => $this->country,
-            'city' => $this->city,
-            'ip' => $this->ip,
-            'device' => $this->device,
-            'os' => $this->os,
-            'browser' => $this->browser,
-            'language' => $this->language,
-        ];
-
-        return $return;
-    }
-
-    /* =============== Get/Set=============== */
-
-    /**
-     * Set firstName
-     *
-     * @param string $firstName
-     * @return self
-     */
-    public function setFirstName($firstName)
-    {
-        $this->first_name = $firstName;
-        return $this;
-    }
-
-    /**
-     * Get firstName
-     *
-     * @return string $firstName
-     */
-    public function getFirstName()
-    {
-        return $this->first_name;
-    }
-
-    /**
-     * Set lastName
-     *
-     * @param string $lastName
-     * @return self
-     */
-    public function setLastName($lastName)
-    {
-        $this->last_name = $lastName;
-        return $this;
-    }
-
-    /**
-     * Get lastName
-     *
-     * @return string $lastName
-     */
-    public function getLastName()
-    {
-        return $this->last_name;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     * @return self
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string $email
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
 
     /**
      * Set country

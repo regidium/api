@@ -24,29 +24,34 @@ class Chat
     private $id;
 
     /**
+     * @MongoDB\Index
      * @MongoDB\String
      * @MongoDB\UniqueIndex(safe="true")
      */
     private $uid;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Index
+     * @MongoDB\Int
      */
     private $started_at;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Index
+     * @MongoDB\Int
      */
     private $ended_at;
 
     /**
      * @Assert\NotBlank
+     * @MongoDB\Index
      * @MongoDB\Int
      */
     private $status;
 
     /**
      * @Assert\NotBlank
+     * @MongoDB\Index
      * @MongoDB\Int
      */
     private $old_status;
@@ -54,7 +59,12 @@ class Chat
     /**
      * @MongoDB\String
      */
-    private $socket_id;
+    private $referrer;
+
+    /**
+     * @MongoDB\String
+     */
+    private $current_url;
 
     /**
      * @MongoDB\Boolean
@@ -90,17 +100,13 @@ class Chat
     const STATUS_ONLINE   = 1;
     const STATUS_CHATTING = 2;
     const STATUS_OFFLINE  = 3;
-    const STATUS_ARCHIVED = 4;
-    const STATUS_DELETED  = 5;
 
     static public function getStatuses()
     {
         return [
             self::STATUS_ONLINE,
             self::STATUS_CHATTING,
-            self::STATUS_OFFLINE,
-            self::STATUS_ARCHIVED,
-            self::STATUS_DELETED
+            self::STATUS_OFFLINE
         ];
     }
 
@@ -112,7 +118,6 @@ class Chat
         $this->started_at = time();
         $this->opened = false;
         $this->status = self::STATUS_ONLINE;
-//        $this->old_status = self::STATUS_ONLINE;
 
         $this->user = [];
         $this->messages = new ArrayCollection();
@@ -129,12 +134,16 @@ class Chat
             'uid' => $this->uid,
             'opened' => $this->opened,
             'status' => $this->status,
-            'socket_id' => $this->socket_id,
+            'referrer' => $this->referrer,
+            'current_url' => $this->current_url,
             'old_status' => $this->old_status,
-            'started_at' =>  intval((string)$this->started_at),
-            'ended_at' =>  intval((string)$this->ended_at),
-            'user' => $this->user
+            'user' => $this->user,
+            'started_at' =>  $this->started_at
         ];
+
+        if ($this->ended_at) {
+            $return['ended_at'] =  $this->ended_at;
+        }
 
         $return['messages'] = [];
         foreach($this->messages as $message) {
@@ -208,7 +217,7 @@ class Chat
     /**
      * Set startedAt
      *
-     * @param timestamp $startedAt
+     * @param int $startedAt
      * @return self
      */
     public function setStartedAt($startedAt)
@@ -220,7 +229,7 @@ class Chat
     /**
      * Get startedAt
      *
-     * @return timestamp $startedAt
+     * @return int $startedAt
      */
     public function getStartedAt()
     {
@@ -230,7 +239,7 @@ class Chat
     /**
      * Set endedAt
      *
-     * @param timestamp $endedAt
+     * @param int $endedAt
      * @return self
      */
     public function setEndedAt($endedAt)
@@ -242,7 +251,7 @@ class Chat
     /**
      * Get endedAt
      *
-     * @return timestamp $endedAt
+     * @return int $endedAt
      */
     public function getEndedAt()
     {
@@ -294,25 +303,48 @@ class Chat
     }
 
     /**
-     * Set socketId
+     * Set referrer
      *
-     * @param string $socketId
+     * @param string $referrer
      * @return self
      */
-    public function setSocketId($socketId)
+    public function setReferrer($referrer)
     {
-        $this->socket_id = $socketId;
+        $this->referrer = $referrer;
         return $this;
     }
 
     /**
-     * Get socketId
+     * Get referrer
      *
-     * @return string $socketId
+     * @return string $referrer
      */
-    public function getSocketId()
+    public function getReferrer()
     {
-        return $this->socket_id;
+        return $this->referrer;
+    }
+
+
+    /**
+     * Set current_url
+     *
+     * @param string $current_url
+     * @return self
+     */
+    public function setCurrentUrl($current_url)
+    {
+        $this->current_url = $current_url;
+        return $this;
+    }
+
+    /**
+     * Get current_url
+     *
+     * @return string $current_url
+     */
+    public function getCurrentUrl()
+    {
+        return $this->current_url;
     }
 
     /**

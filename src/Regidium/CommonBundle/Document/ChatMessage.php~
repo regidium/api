@@ -30,7 +30,8 @@ class ChatMessage
     private $uid;
 
     /**
-     * @MongoDB\Timestamp
+     * @MongoDB\Index
+     * @MongoDB\Int
      */
     private $created_at;
 
@@ -94,20 +95,13 @@ class ChatMessage
     {
         $return = [
             'uid' => $this->uid,
-            'created_at' => intval((string)$this->created_at),
+            'created_at' => $this->created_at,
+            'readed' => $this->readed,
             'text' => $this->text,
             'sender_type' => $this->sender_type
         ];
 
         return $return;
-    }
-
-    /* =============== Events =============== */
-
-    /** @MongoDB\PostLoad */
-    public function postLoad()
-    {
-        $this->created_at = intval(strval($this->created_at));
     }
 
     /* =============== Get/Set =============== */
@@ -159,7 +153,7 @@ class ChatMessage
     /**
      * Set createdAt
      *
-     * @param timestamp $createdAt
+     * @param date $createdAt
      * @return self
      */
     public function setCreatedAt($createdAt)
@@ -171,7 +165,7 @@ class ChatMessage
     /**
      * Get createdAt
      *
-     * @return timestamp $createdAt
+     * @return date $createdAt
      */
     public function getCreatedAt()
     {
@@ -264,5 +258,27 @@ class ChatMessage
     public function getChat()
     {
         return $this->chat;
+    }
+
+    /**
+     * Set readed
+     *
+     * @param boolean $readed
+     * @return self
+     */
+    public function setReaded($readed)
+    {
+        $this->readed = $readed;
+        return $this;
+    }
+
+    /**
+     * Get readed
+     *
+     * @return boolean $readed
+     */
+    public function getReaded()
+    {
+        return $this->readed;
     }
 }

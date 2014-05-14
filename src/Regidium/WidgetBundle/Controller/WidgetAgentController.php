@@ -226,7 +226,7 @@ class WidgetAgentController extends AbstractController
      * @return View
      *
      */
-    public function putOnlineAction($uid, $agent_uid)
+    public function putOnlineAction(Request $request, $uid, $agent_uid)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
@@ -238,7 +238,8 @@ class WidgetAgentController extends AbstractController
             return $this->sendError('Agent not found!');
         }
 
-        $this->get('regidium.agent.handler')->online($agent);
+        $data = $this->prepareAgentSessionData($request);
+        $this->get('regidium.agent.handler')->online($agent, $data);
 
         return $this->sendSuccess();
     }
@@ -305,6 +306,27 @@ class WidgetAgentController extends AbstractController
             'status' => intval($request->request->get('status', Agent::STATUS_OFFLINE)),
             'accept_chats' => boolval($request->request->get('accept_chats', true)),
             'render_visitors_period' => intval($request->request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION)),
+        ];
+    }
+
+    /**
+     * Подготовка данных об агенте из пришедших данных
+     *
+     * @param Request $request  Request объект
+     * @param string $password Пароль
+     *
+     * @return array
+     */
+    protected function prepareAgentSessionData(Request $request)
+    {
+        return [
+            'country' => strval($request->request->get('country', null)),
+            'city' => strval($request->request->get('city', null)),
+            'ip' => strval($request->request->get('ip', null)),
+            'device' => strval($request->request->get('device', null)),
+            'os' => strval($request->request->get('os', null)),
+            'browser' => strval($request->request->get('browser', null)),
+            'language' => strval($request->request->get('language', null))
         ];
     }
 }

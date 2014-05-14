@@ -95,6 +95,11 @@ class Agent
     private $external_service;
 
     /**
+     * @MongoDB\EmbedOne(targetDocument="Regidium\CommonBundle\Document\AgentSession", strategy="set")
+     */
+    private $session;
+
+    /**
      * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="agents")
      */
@@ -185,6 +190,10 @@ class Agent
 
         if (in_array('widget', $options)) {
             $return['widget'] = $this->widget->toArray();
+        }
+
+        if (in_array('session', $options)) {
+            $return['session'] = $this->session->toArray();
         }
 
         return $return;
@@ -550,5 +559,27 @@ class Agent
     public function getLastVisit()
     {
         return $this->last_visit;
+    }
+
+    /**
+     * Set session
+     *
+     * @param Regidium\CommonBundle\Document\AgentSession $session
+     * @return self
+     */
+    public function setSession(\Regidium\CommonBundle\Document\AgentSession $session)
+    {
+        $this->session = $session;
+        return $this;
+    }
+
+    /**
+     * Get session
+     *
+     * @return Regidium\CommonBundle\Document\AgentSession $session
+     */
+    public function getSession()
+    {
+        return $this->session;
     }
 }

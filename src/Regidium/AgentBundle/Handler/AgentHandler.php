@@ -4,7 +4,9 @@ namespace Regidium\AgentBundle\Handler;
 
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\AgentBundle\Form\AgentForm;
+use Regidium\AgentBundle\Form\AgentSessionForm;
 use Regidium\CommonBundle\Document\Agent;
+use Regidium\CommonBundle\Document\AgentSession;
 
 class AgentHandler extends AbstractHandler
 {
@@ -58,12 +60,19 @@ class AgentHandler extends AbstractHandler
      * Подключение агента
      *
      * @param Agent $agent
+     * @param array $data
      *
      * @return Agent
      */
     public function online(Agent $agent) {
         $agent->setStatus(Agent::STATUS_ONLINE);
         $agent->setLastVisit(time());
+
+        $agent_session = new AgentSession();
+        $agent_session_form = $this->formFactory->create(new AgentSessionForm(), $agent_session, ['method' => 'POST']);
+        $agent_session_form->submit($data, false);
+        $agent_session = $agent_session_form->getData();
+        $agent->setSession($agent_session);
 
         $this->edit($agent);
 
