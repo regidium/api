@@ -7,7 +7,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 /**
  * @MongoDB\EmbeddedDocument
  */
-class AgentSesssion
+class AgentSession
 {
     /* =============== Attributes =============== */
 
