@@ -1,6 +1,6 @@
 <?php
 
-namespace Regidium\ChatBundle\Form;
+namespace Regidium\AgentBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +20,11 @@ class AgentSessionForm extends AbstractType
         $builder
             ->add('country', 'text', [
                     'required' => false
+                ])
+            ->add('status', 'integer', [
+                    'required' => false,
+                    'description' => 'Agent session status',
+                    'data' => Agent::STATUS_ONLINE
                 ])
             ->add('city', 'text', [
                     'required' => false

@@ -1,0 +1,89 @@
+<?php
+
+namespace Regidium\CommonBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+
+/**
+ * @MongoDB\EmbeddedDocument
+ */
+class AgentSession
+{
+    /* =============== Attributes =============== */
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $started_at;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $ended_at;
+
+    /**
+     * @MongoDB\String
+     */
+    private $country;
+
+    /**
+     * @MongoDB\String
+     */
+    private $city;
+
+    /**
+     * @MongoDB\String
+     */
+    private $ip;
+
+    /**
+     * @MongoDB\String
+     */
+    private $device;
+
+    /**
+     * @MongoDB\String
+     */
+    private $os;
+
+    /**
+     * @MongoDB\String
+     */
+    private $browser;
+
+    /**
+     * @MongoDB\String
+     */
+    private $language;
+
+    /* =============== Constants =============== */
+
+
+    public function __construct()
+    {
+
+        $this->started_at = time();
+    }
+
+    public function toArray()
+    {
+        $return = [
+            'started_at' => $this->started_at,
+            'ended_at' => $this->ended_at,
+            'country' => $this->country,
+            'city' => $this->city,
+            'ip' => $this->ip,
+            'device' => $this->device,
+            'os' => $this->os,
+            'browser' => $this->browser,
+            'language' => $this->language
+        ];
+
+        return $return;
+    }
+
+    /* =============== Get/Set=============== */
+
+}

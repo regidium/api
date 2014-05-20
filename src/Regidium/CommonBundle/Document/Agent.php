@@ -84,12 +84,6 @@ class Agent
     private $render_visitors_period;
 
     /**
-     * @MongoDB\Index
-     * @MongoDB\Int
-     */
-    private $last_visit;
-
-    /**
      * @MongoDB\Hash
      */
     private $external_service;
@@ -161,7 +155,6 @@ class Agent
         $this->status = self::STATUS_OFFLINE;
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
-        $this->last_visit = time();
         $this->external_service = [];
 
         $this->chats = new ArrayCollection();
@@ -185,15 +178,11 @@ class Agent
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
-            'last_visit' => $this->last_visit
+            'session' => $this->session->toArray()
         ];
 
         if (in_array('widget', $options)) {
             $return['widget'] = $this->widget->toArray();
-        }
-
-        if (in_array('session', $options)) {
-            $return['session'] = $this->session->toArray();
         }
 
         return $return;
@@ -540,28 +529,6 @@ class Agent
     }
 
     /**
-     * Set lastVisit
-     *
-     * @param \DateTime $lastVisit
-     * @return self
-     */
-    public function setLastVisit($lastVisit)
-    {
-        $this->last_visit = $lastVisit;
-        return $this;
-    }
-
-    /**
-     * Get lastVisit
-     *
-     * @return \DateTime $lastVisit
-     */
-    public function getLastVisit()
-    {
-        return $this->last_visit;
-    }
-
-    /**
      * Set session
      *
      * @param Regidium\CommonBundle\Document\AgentSession $session
@@ -576,7 +543,7 @@ class Agent
     /**
      * Get session
      *
-     * @return Regidium\CommonBundle\Document\AgentSession $session
+     * @return \Regidium\CommonBundle\Document\AgentSession $session
      */
     public function getSession()
     {

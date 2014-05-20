@@ -560,4 +560,26 @@ class Agent
     {
         return $this->last_visit;
     }
+
+    /**
+     * Set session
+     *
+     * @param Regidium\CommonBundle\Document\AgentSession $session
+     * @return self
+     */
+    public function setSession(\Regidium\CommonBundle\Document\AgentSession $session)
+    {
+        $this->session = $session;
+        return $this;
+    }
+
+    /**
+     * Get session
+     *
+     * @return Regidium\CommonBundle\Document\AgentSession $session
+     */
+    public function getSession()
+    {
+        return $this->session;
+    }
 }

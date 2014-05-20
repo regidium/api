@@ -64,15 +64,19 @@ class AgentHandler extends AbstractHandler
      *
      * @return Agent
      */
-    public function online(Agent $agent) {
+    public function online(Agent $agent, $data = []) {
         $agent->setStatus(Agent::STATUS_ONLINE);
         $agent->setLastVisit(time());
+        $agent_session = $agent->getSession();
 
-        $agent_session = new AgentSession();
-        $agent_session_form = $this->formFactory->create(new AgentSessionForm(), $agent_session, ['method' => 'POST']);
-        $agent_session_form->submit($data, false);
-        $agent_session = $agent_session_form->getData();
-        $agent->setSession($agent_session);
+        if (!$agent_session) {
+            $agent_session = new AgentSession();
+            $agent_session_form = $this->formFactory->create(new AgentSessionForm(), $agent_session, ['method' => 'POST']);
+            $agent_session_form->submit($data, false);
+            $agent_session = $agent_session_form->getData();
+            $agent->setSession($agent_session);
+        }
+        $agent_session->setEndedAt(null);
 
         $this->edit($agent);
 
@@ -88,6 +92,7 @@ class AgentHandler extends AbstractHandler
      */
     public function offline(Agent $agent) {
         $agent->setStatus(Agent::STATUS_OFFLINE);
+        $agent->getSession()->setEndedAt(time());
 
         $this->edit($agent);
 

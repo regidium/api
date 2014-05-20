@@ -60,8 +60,9 @@ class LoginController extends AbstractController
         // }
 
         // Записываем последний визит агента
-        $agent->setLastVisit(time());
-        $this->get('regidium.agent.handler')->edit($agent);
+        //$agent->setLastVisit(time());
+        $data = $this->prepareAgentSessionData($request);
+        $this->get('regidium.agent.handler')->online($agent, $data);
 
         $return = [
             'agent' => $agent->toArray(['widget'])
@@ -71,11 +72,11 @@ class LoginController extends AbstractController
     }
 
     /**
-     * Получение информации о персоне.
+     * Получение информации об агенте.
      *
      * @ApiDoc(
      *   resource = true,
-     *   description = "Получение информации о персоне.",
+     *   description = "Получение информации об агенте.",
      *   statusCodes = {
      *     200 = "Возвращает при успешном выполнении"
      *   }
@@ -99,5 +100,25 @@ class LoginController extends AbstractController
         ];
 
         return $this->send($return);
+    }
+
+    /**
+     * Подготовка данных об агенте из пришедших данных
+     *
+     * @param Request $request  Request объект
+     *
+     * @return array
+     */
+    protected function prepareAgentSessionData(Request $request)
+    {
+        return [
+            'country' => strval($request->request->get('country', null)),
+            'city' => strval($request->request->get('city', null)),
+            'ip' => strval($request->request->get('ip', null)),
+            'device' => strval($request->request->get('device', null)),
+            'os' => strval($request->request->get('os', null)),
+            'browser' => strval($request->request->get('browser', null)),
+            'language' => strval($request->request->get('language', null))
+        ];
     }
 }
