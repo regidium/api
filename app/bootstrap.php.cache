@@ -2223,6 +2223,7 @@ use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\ClassLoader\ClassCollectionLoader;
+use Symfony\Component\Filesystem\Filesystem;
 abstract class Kernel implements KernelInterface, TerminableInterface
 {
 protected $bundles = array();
@@ -2581,7 +2582,29 @@ $content = $dumper->dump(array('class'=> $class,'base_class'=> $baseClass));
 if (!$this->debug) {
 $content = static::stripComments($content);
 }
+$content = $this->removeAbsolutePathsFromContainer($content);
 $cache->write($content, $container->getResources());
+}
+private function removeAbsolutePathsFromContainer($content)
+{
+if (!class_exists('Symfony\Component\Filesystem\Filesystem')) {
+return $content;
+}
+$rootDir = $this->getRootDir();
+$previous = $rootDir;
+while (!file_exists($rootDir.'/composer.json')) {
+if ($previous === $rootDir = realpath($rootDir.'/..')) {
+return $content;
+}
+$previous = $rootDir;
+}
+$rootDir = rtrim($rootDir,'/');
+$cacheDir = $this->getCacheDir();
+$filesystem = new Filesystem();
+return preg_replace_callback("{'([^']*)(".preg_quote($rootDir)."[^']*)'}", function ($match) use ($filesystem, $cacheDir) {
+$prefix = isset($match[1]) && $match[1] ? "'$match[1]'.__DIR__.'/" :"__DIR__.'/";
+return $prefix.rtrim($filesystem->makePathRelative($match[2], $cacheDir),'/')."'";
+}, $content);
 }
 protected function getContainerLoader(ContainerInterface $container)
 {
@@ -2892,7 +2915,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Debug\Exception\HandledErrorException;
 use Symfony\Component\Debug\Exception\FatalErrorException;
 class HttpKernel implements HttpKernelInterface, TerminableInterface
 {
@@ -2914,9 +2936,6 @@ if (false === $catch) {
 $this->finishRequest($request, $type);
 throw $e;
 }
-if ($e instanceof HandledErrorException) {
-$e->cleanOutput();
-}
 return $this->handleException($e, $request, $type);
 }
 }
@@ -2931,7 +2950,6 @@ $response = $this->handleException($exception, $request, self::MASTER_REQUEST);
 $response->sendHeaders();
 $response->sendContent();
 $this->terminate($request, $response);
-$exception->cleanOutput();
 }
 private function handleRaw(Request $request, $type = self::MASTER_REQUEST)
 {

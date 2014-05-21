@@ -89,6 +89,12 @@ class Agent
     private $external_service;
 
     /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $last_visit;
+
+    /**
      * @MongoDB\EmbedOne(targetDocument="Regidium\CommonBundle\Document\AgentSession", strategy="set")
      */
     private $session;
@@ -153,6 +159,7 @@ class Agent
         $this->job_title = '';
         $this->type = self::TYPE_ADMINISTRATOR;
         $this->status = self::STATUS_OFFLINE;
+        $this->last_visit = time();
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
         $this->external_service = [];
@@ -178,8 +185,12 @@ class Agent
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
-            'session' => $this->session->toArray()
+            'last_visit' => $this->last_visit
         ];
+
+        if ($this->session) {
+            $return['session'] = $this->session->toArray();
+        }
 
         if (in_array('widget', $options)) {
             $return['widget'] = $this->widget->toArray();
@@ -548,5 +559,28 @@ class Agent
     public function getSession()
     {
         return $this->session;
+    }
+
+
+    /**
+     * Set lastVisit
+     *
+     * @param \DateTime $lastVisit
+     * @return self
+     */
+    public function setLastVisit($lastVisit)
+    {
+        $this->last_visit = $lastVisit;
+        return $this;
+    }
+
+    /**
+     * Get lastVisit
+     *
+     * @return \DateTime $lastVisit
+     */
+    public function getLastVisit()
+    {
+        return $this->last_visit;
     }
 }

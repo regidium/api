@@ -3,6 +3,7 @@
 namespace Regidium\CommonBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\EmbeddedDocument
@@ -22,12 +23,6 @@ class AgentSession
      * @MongoDB\Int
      */
     private $ended_at;
-
-    /**
-     * @MongoDB\Index
-     * @MongoDB\Int
-     */
-    private $last_visit;
 
     /**
      * @Assert\NotBlank
@@ -89,7 +84,6 @@ class AgentSession
     public function __construct()
     {
         $this->started_at = time();
-        $this->last_visit = time();
         $this->status = self::STATUS_ONLINE;
     }
 
@@ -98,7 +92,6 @@ class AgentSession
         $return = [
             'started_at' => $this->started_at,
             'ended_at' => $this->ended_at,
-            'last_name' => $this->last_name,
             'status' => $this->status,
             'country' => $this->country,
             'city' => $this->city,
@@ -334,27 +327,4 @@ class AgentSession
     {
         return $this->status;
     }
-
-    /**
-     * Set lastVisit
-     *
-     * @param \DateTime $lastVisit
-     * @return self
-     */
-    public function setLastVisit($lastVisit)
-    {
-        $this->last_visit = $lastVisit;
-        return $this;
-    }
-
-    /**
-     * Get lastVisit
-     *
-     * @return \DateTime $lastVisit
-     */
-    public function getLastVisit()
-    {
-        return $this->last_visit;
-    }
-
 }
