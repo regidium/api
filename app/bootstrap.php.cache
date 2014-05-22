@@ -2602,8 +2602,11 @@ $rootDir = rtrim($rootDir,'/');
 $cacheDir = $this->getCacheDir();
 $filesystem = new Filesystem();
 return preg_replace_callback("{'([^']*)(".preg_quote($rootDir)."[^']*)'}", function ($match) use ($filesystem, $cacheDir) {
-$prefix = isset($match[1]) && $match[1] ? "'$match[1]'.__DIR__.'/" :"__DIR__.'/";
-return $prefix.rtrim($filesystem->makePathRelative($match[2], $cacheDir),'/')."'";
+$prefix = isset($match[1]) && $match[1] ? "'$match[1]'.__DIR__" :"__DIR__";
+if ('.'=== $relativePath = rtrim($filesystem->makePathRelative($match[2], $cacheDir),'/')) {
+return $prefix;
+}
+return $prefix.".'/".$relativePath."'";
 }, $content);
 }
 protected function getContainerLoader(ContainerInterface $container)
@@ -2915,7 +2918,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Debug\Exception\FatalErrorException;
 class HttpKernel implements HttpKernelInterface, TerminableInterface
 {
 protected $dispatcher;
@@ -2943,9 +2945,11 @@ public function terminate(Request $request, Response $response)
 {
 $this->dispatcher->dispatch(KernelEvents::TERMINATE, new PostResponseEvent($this, $request, $response));
 }
-public function handleFatalErrorException(FatalErrorException $exception)
+public function terminateWithException(\Exception $exception)
 {
-$request = $this->requestStack->getMasterRequest();
+if (!$request = $this->requestStack->getMasterRequest()) {
+throw new \LogicException('Request stack is empty', 0, $exception);
+}
 $response = $this->handleException($exception, $request, self::MASTER_REQUEST);
 $response->sendHeaders();
 $response->sendContent();
