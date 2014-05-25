@@ -1,10 +1,24 @@
 .DS_Store
 .idea
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+*.log
+*.sqlite
+ehthumbs.db
+Icon?
+Thumbs.db
 
-vendor/*
+vendor/
 
 app/cache/*
 app/logs/*
+
+app/bootstrap*
 
 app/config/security.yml
 app/config/parameters.yml
@@ -15,3 +29,10 @@ app/config/redis/redis.yml
 app/config/deploy/deploy.rb
 
 web/bundles/*
+
+composer.phar
+codecept.phar
+
+codeception.yml
+tests/*.yml
+tests/_log/*
