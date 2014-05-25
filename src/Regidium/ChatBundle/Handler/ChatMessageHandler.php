@@ -33,7 +33,7 @@ class ChatMessageHandler extends AbstractHandler
     {
         $entity = $this->createEntity();
 
-        $form = $this->formFactory->create(new ChatMessageForm(), $entity, ['method' => 'POST']);
+        $form = $this->form_factory->create(new ChatMessageForm(), $entity, ['method' => 'POST']);
         $form->submit($data, false);
         if ($form->isValid()) {
             /** @var ChatMessage $chat_message */

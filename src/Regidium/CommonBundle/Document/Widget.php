@@ -40,7 +40,7 @@ class Widget
     /**
      * @MongoDB\String
      */
-    protected $css;
+    private $css;
 
     /**
      * @MongoDB\Float
@@ -120,8 +120,7 @@ class Widget
         $this->triggers = new ArrayCollection();
 
         $this->settings = [
-            'header_color' => '#ec1d23',
-            'company_logo' => ''
+            'header_color' => '#ec1d23'
         ];
     }
 

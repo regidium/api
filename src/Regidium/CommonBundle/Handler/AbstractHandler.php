@@ -13,7 +13,7 @@ abstract class AbstractHandler
     /**
      * @var FormFactoryInterface
      */
-    protected $formFactory;
+    protected $form_factory;
 
     /**
      * @var DocumentManager
@@ -23,7 +23,7 @@ abstract class AbstractHandler
     /**
      * @var string
      */
-    protected $entityClass;
+    protected $entity_class;
 
     /**
      * @var DocumentRepository
@@ -32,15 +32,15 @@ abstract class AbstractHandler
 
     public function __construct(FormFactoryInterface $form_factory, ManagerRegistry $mr, $entity_class)
     {
-        $this->formFactory = $form_factory;
+        $this->form_factory = $form_factory;
         $this->dm = $mr->getManager();
-        $this->entityClass = $entity_class;
+        $this->entity_class = $entity_class;
         $this->repository = $this->dm->getRepository($entity_class);
     }
 
     protected function createEntity()
     {
-        return new $this->entityClass();
+        return new $this->entity_class();
     }
 
     /**

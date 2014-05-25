@@ -41,3 +41,9 @@ services:
     type: rest
     prefix: /api
     resource: "@RegidiumServiceBundle/Resources/config/routing.yml"
+
+# RegidiumMailBundle
+mails:
+    type: rest
+    prefix: /api
+    resource: "@RegidiumMailBundle/Resources/config/routing.yml"

@@ -6,7 +6,8 @@ use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\AgentBundle\Form\AgentForm;
 use Regidium\AgentBundle\Form\AgentSessionForm;
 use Regidium\CommonBundle\Document\Agent;
-use Regidium\CommonBundle\Document\AgentSession;
+use Regidium\CommonBundle\Document\Session;
+use Regidium\CommonBundle\Document\Mail;
 
 class AgentHandler extends AbstractHandler
 {
@@ -19,10 +20,7 @@ class AgentHandler extends AbstractHandler
      */
     public function post(array $data)
     {
-        $entity = $this->createEntity();
-        // Записываем последний визит агента
-        $entity->setLastVisit(time());
-        return $this->processForm($entity, $data, 'POST');
+        return $this->processForm($this->createEntity(), $data, 'POST');
     }
 
     /**
@@ -66,18 +64,42 @@ class AgentHandler extends AbstractHandler
      */
     public function online(Agent $agent, $data = []) {
         $agent->setStatus(Agent::STATUS_ONLINE);
-        $agent->setLastVisit(time());
-        $agent_session = $agent->getSession();
 
-        if (!$agent_session) {
-            $agent_session = new AgentSession();
-            $agent_session_form = $this->formFactory->create(new AgentSessionForm(), $agent_session, ['method' => 'POST']);
+        $current_session = $agent->getCurrentSession();
+        if (!$current_session) {
+            $agent_session_form = $this->form_factory->create(new AgentSessionForm(), new Session(), ['method' => 'POST']);
             $agent_session_form->submit($data, false);
-            $agent_session = $agent_session_form->getData();
-            $agent->setSession($agent_session);
-        }
-        $agent_session->setEndedAt(null);
+            $current_session = $agent_session_form->getData();
+            $current_session->setAgent($agent);
+            $this->dm->persist($current_session);
+            $this->dm->flush($current_session);
 
+            $agent->setCurrentSession($current_session);
+        }
+
+        $current_session->setStatus(Session::STATUS_ONLINE);
+        $current_session->setLastVisit(time());
+        $current_session->setEndedAt(null);
+        $this->dm->persist($current_session);
+
+        $this->dm->flush();
+
+        return $agent;
+    }
+
+    /**
+     * Агент общеется в чате
+     *
+     * @param Agent $agent
+     *
+     * @return Agent
+     */
+    public function chatting(Agent $agent) {
+        $agent->setStatus(Agent::STATUS_CHATTING);
+
+        $current_session = $agent->getCurrentSession();
+        $current_session->setEndedAt(time());
+        $current_session->setStatus(Session::STATUS_OFFLINE);
         $this->edit($agent);
 
         return $agent;
@@ -92,7 +114,9 @@ class AgentHandler extends AbstractHandler
      */
     public function offline(Agent $agent) {
         $agent->setStatus(Agent::STATUS_OFFLINE);
-        $agent->getSession()->setEndedAt(time());
+        $current_session = $agent->getCurrentSession();
+        $current_session->setEndedAt(time());
+        $current_session->setStatus(Session::STATUS_OFFLINE);
 
         $this->edit($agent);
 
@@ -131,6 +155,32 @@ class AgentHandler extends AbstractHandler
     }
 
     /**
+     * Создание нового письма для отправки агенту
+     *
+     * @param Agent $agent
+     * @param array $data
+     *
+     * @return Mail
+     */
+    public function addMail(Agent $agent, array $data)
+    {
+        /** @var Mail $mail */
+        $mail = $this->createEntity();
+        $mail->setTitle(isset($data['title']) ? $data['title'] : '');
+        $mail->setBody(isset($data['body']) ? $data['body'] : '');
+
+        $data = [];
+        $data['agent_uid'] = $agent->getUid();
+        $data['widget_uid'] = $agent->getWidget()->getUid();
+        $mail->setData($data);
+
+        $this->dm->persist($mail);
+        $this->dm->flush($mail);
+
+        return $mail;
+    }
+
+    /**
      * Обработка формы.
      *
      * @param Agent  $agent
@@ -142,7 +192,7 @@ class AgentHandler extends AbstractHandler
      */
     public function processForm(Agent $agent, array $data, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new AgentForm(), $agent, ['method' => $method]);
+        $form = $this->form_factory->create(new AgentForm(), $agent, ['method' => $method]);
         $form->submit($data, 'PATCH' !== $method);
         if ($form->isValid()) {
             /** @var Agent $agent */

@@ -145,7 +145,7 @@ class WidgetHandler extends AbstractHandler
      */
     public function processForm(Widget $widget, array $data, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new WidgetForm(), $widget, ['method' => $method]);
+        $form = $this->form_factory->create(new WidgetForm(), $widget, ['method' => $method]);
         $form->submit($data, 'PATCH' !== $method);
         if ($form->isValid()) {
             $widget = $form->getData();
@@ -170,7 +170,7 @@ class WidgetHandler extends AbstractHandler
      */
     public function processSettingsForm(Widget $widget, array $parameters)
     {
-        $form = $this->formFactory->create(new WidgetSettingsForm());
+        $form = $this->form_factory->create(new WidgetSettingsForm());
         $form->submit($parameters);
         if ($form->isValid()) {
             $settings = $form->getData();

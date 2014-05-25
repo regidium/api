@@ -86,7 +86,7 @@ class Chat
      * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="chats")
      */
-    protected $widget;
+    private $widget;
 
     /* =============== Embedded =============== */
 

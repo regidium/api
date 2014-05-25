@@ -18,13 +18,13 @@ class AgentSessionForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('status', 'integer', [
+                'required' => false,
+                'description' => 'Agent session status',
+                'data' => Agent::STATUS_ONLINE
+            ])
             ->add('country', 'text', [
                     'required' => false
-                ])
-            ->add('status', 'integer', [
-                    'required' => false,
-                    'description' => 'Agent session status',
-                    'data' => Agent::STATUS_ONLINE
                 ])
             ->add('city', 'text', [
                     'required' => false
@@ -53,7 +53,7 @@ class AgentSessionForm extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Regidium\CommonBundle\Document\AgentSession'
+            'data_class' => 'Regidium\CommonBundle\Document\Session'
         ]);
     }
 

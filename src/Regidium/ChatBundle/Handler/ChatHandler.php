@@ -27,7 +27,7 @@ class ChatHandler extends AbstractHandler
         $entity = $this->createEntity();
 
         $user = new User();
-        $user_form = $this->formFactory->create(new UserForm(), $user, ['method' => 'POST']);
+        $user_form = $this->form_factory->create(new UserForm(), $user, ['method' => 'POST']);
         $user_form->submit($data['user'], false);
         $user = $user_form->getData();
         $data['user'] = $user;
@@ -35,7 +35,7 @@ class ChatHandler extends AbstractHandler
         /** @todo не присылать */
         unset($data['messages']);
 
-        $form = $this->formFactory->create(new ChatForm(), $entity, ['method' => 'POST']);
+        $form = $this->form_factory->create(new ChatForm(), $entity, ['method' => 'POST']);
         $form->submit($data, false);
 
         if ($form->isValid()) {
@@ -239,7 +239,7 @@ class ChatHandler extends AbstractHandler
      */
     public function processForm(Chat $chat, array $data, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new ChatForm(), $chat, ['method' => $method]);
+        $form = $this->form_factory->create(new ChatForm(), $chat, ['method' => $method]);
         $form->submit($data, 'PATCH' !== $method);
         if ($form->isValid()) {
             /** @var Chat $chat */

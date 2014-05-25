@@ -60,7 +60,6 @@ class LoginController extends AbstractController
         // }
 
         // Записываем последний визит агента
-        //$agent->setLastVisit(time());
         $data = $this->prepareAgentSessionData($request);
         $this->get('regidium.agent.handler')->online($agent, $data);
 

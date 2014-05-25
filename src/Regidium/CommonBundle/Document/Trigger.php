@@ -61,7 +61,7 @@ class Trigger
      * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="triggers")
      */
-    protected $widget;
+    private $widget;
 
     /* =============== Constants =============== */
 

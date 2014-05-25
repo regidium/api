@@ -108,7 +108,7 @@ class TriggerHandler extends AbstractHandler
      */
     public function processForm(Trigger $trigger, array $data, $method = 'PUT')
     {
-        $form = $this->formFactory->create(new TriggerForm(), $trigger, ['method' => $method]);
+        $form = $this->form_factory->create(new TriggerForm(), $trigger, ['method' => $method]);
         $form->submit($data, 'PATCH' !== $method);
         if ($form->isValid()) {
             $trigger = $form->getData();

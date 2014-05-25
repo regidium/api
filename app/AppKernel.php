@@ -12,6 +12,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\MonologBundle\MonologBundle(),
+            new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
@@ -31,7 +32,8 @@ class AppKernel extends Kernel
             new Regidium\ChatBundle\RegidiumChatBundle(),
             new Regidium\WidgetBundle\RegidiumWidgetBundle(),
             new Regidium\BillingBundle\RegidiumBillingBundle(),
-            new Regidium\ServiceBundle\RegidiumServiceBundle()
+            new Regidium\ServiceBundle\RegidiumServiceBundle(),
+            new Regidium\MailBundle\RegidiumMailBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

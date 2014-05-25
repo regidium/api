@@ -6,11 +6,26 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @MongoDB\EmbeddedDocument
+ * @MongoDB\Document(
+ *      repositoryClass="Regidium\CommonBundle\Repository\SessionRepository",
+ *      collection="sessions",
+ *      requireIndexes=false
+ *  )
  */
-class AgentSession
+class Session
 {
     /* =============== Attributes =============== */
+
+    /**
+     * @MongoDB\Id
+     */
+    private $id;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $uid;
 
     /**
      * @MongoDB\Index
@@ -23,6 +38,12 @@ class AgentSession
      * @MongoDB\Int
      */
     private $ended_at;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $last_visit;
 
     /**
      * @Assert\NotBlank
@@ -65,16 +86,26 @@ class AgentSession
      */
     private $language;
 
+    /* =============== References =============== */
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Agent", cascade={"persist", "merge", "detach"}, inversedBy="session")
+     */
+    private $agent;
+
     /* =============== Constants =============== */
 
 
     const STATUS_ONLINE   = 1;
+    const STATUS_CHATTING = 2;
     const STATUS_OFFLINE  = 3;
 
     static public function getStatuses()
     {
         return [
             self::STATUS_ONLINE,
+            self::STATUS_CHATTING,
             self::STATUS_OFFLINE
         ];
     }
@@ -83,23 +114,27 @@ class AgentSession
 
     public function __construct()
     {
-        $this->started_at = time();
-        $this->status = self::STATUS_ONLINE;
+        $this->setUid(uniqid());
+        $this->setLastVisit(time());
+        $this->setStartedAt(time());
+        $this->setStatus(self::STATUS_ONLINE);
     }
 
     public function toArray()
     {
         $return = [
-            'started_at' => $this->started_at,
-            'ended_at' => $this->ended_at,
-            'status' => $this->status,
-            'country' => $this->country,
-            'city' => $this->city,
-            'ip' => $this->ip,
-            'device' => $this->device,
-            'os' => $this->os,
-            'browser' => $this->browser,
-            'language' => $this->language
+            'uid' => $this->getUid(),
+            'started_at' => $this->getStartedAt(),
+            'ended_at' => $this->getEndedAt(),
+            'last_visit' => $this->getLastVisit(),
+            'status' => $this->getStatus(),
+            'country' => $this->getCountry(),
+            'city' => $this->getCity(),
+            'ip' => $this->getIp(),
+            'device' => $this->getDevice(),
+            'os' => $this->getOs(),
+            'browser' => $this->getBrowser(),
+            'language' => $this->getLanguage()
         ];
 
         return $return;
@@ -107,6 +142,49 @@ class AgentSession
 
     /* =============== Get/Set=============== */
 
+    /**
+     * Set id
+     *
+     * @param string $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set uid
+     *
+     * @param string $uid
+     * @return self
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+    /**
+     * Get uid
+     *
+     * @return string $uid
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
 
     /**
      * Set startedAt
@@ -150,6 +228,28 @@ class AgentSession
     public function getEndedAt()
     {
         return $this->ended_at;
+    }
+
+    /**
+     * Set lastVisit
+     *
+     * @param int $lastVisit
+     * @return self
+     */
+    public function setLastVisit($lastVisit)
+    {
+        $this->last_visit = $lastVisit;
+        return $this;
+    }
+
+    /**
+     * Get lastVisit
+     *
+     * @return int $lastVisit
+     */
+    public function getLastVisit()
+    {
+        return $this->last_visit;
     }
 
     /**
@@ -326,5 +426,27 @@ class AgentSession
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set agent
+     *
+     * @param Regidium\CommonBundle\Document\Agent $agent
+     * @return self
+     */
+    public function setAgent(\Regidium\CommonBundle\Document\Agent $agent)
+    {
+        $this->agent = $agent;
+        return $this;
+    }
+
+    /**
+     * Get agent
+     *
+     * @return Regidium\CommonBundle\Document\Agent $agent
+     */
+    public function getAgent()
+    {
+        return $this->agent;
     }
 }

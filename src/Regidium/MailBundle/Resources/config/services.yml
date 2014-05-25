@@ -1,0 +1,9 @@
+parameters:
+    regidium.mail.handler.class: Regidium\MailBundle\Handler\MailHandler
+
+    regidium.mail.document.class: Regidium\CommonBundle\Document\Mail
+
+services:
+    regidium.mail.handler:
+        class: %regidium.mail.handler.class%
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.mail.document.class% ]

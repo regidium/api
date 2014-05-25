@@ -1,9 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "fff57fc5521140eb935cdeea1ff6d99b",
+    "hash": "412341a4bad61ad18f7746c9bd67a4b0",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1856,12 +1857,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "3030d3da4d3abb18d3c1e3479259af0d88a92488"
+                "reference": "93f8f3271fc20f2e09e79c80ffdc371114ad4f29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/3030d3da4d3abb18d3c1e3479259af0d88a92488",
-                "reference": "3030d3da4d3abb18d3c1e3479259af0d88a92488",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/93f8f3271fc20f2e09e79c80ffdc371114ad4f29",
+                "reference": "93f8f3271fc20f2e09e79c80ffdc371114ad4f29",
                 "shasum": ""
             },
             "require": {
@@ -1916,7 +1917,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2014-05-19 16:18:53"
+            "time": "2014-05-24 17:56:29"
         },
         {
             "name": "nelmio/api-doc-bundle",
@@ -2768,6 +2769,60 @@
             "time": "2014-05-20 09:20:22"
         },
         {
+            "name": "swiftmailer/swiftmailer",
+            "version": "v5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swiftmailer/swiftmailer.git",
+                "reference": "043e336b871f17a117f76ef8e190eddfc04c8d48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/043e336b871f17a117f76ef8e190eddfc04c8d48",
+                "reference": "043e336b871f17a117f76ef8e190eddfc04c8d48",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.2-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "lib/swift_required.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Chris Corbyn"
+                }
+            ],
+            "description": "Swiftmailer, free feature-rich PHP mailer",
+            "homepage": "http://swiftmailer.org",
+            "keywords": [
+                "mail",
+                "mailer"
+            ],
+            "time": "2014-05-08 08:11:19"
+        },
+        {
             "name": "symfony/icu",
             "version": "1.2.x-dev",
             "target-dir": "Symfony/Component/Icu",
@@ -2878,17 +2933,74 @@
             "time": "2014-04-29 08:13:14"
         },
         {
+            "name": "symfony/swiftmailer-bundle",
+            "version": "v2.3.7",
+            "target-dir": "Symfony/Bundle/SwiftmailerBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/SwiftmailerBundle.git",
+                "reference": "e98defd402f72e8b54a029ba4d3ac4cb51dc3577"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/SwiftmailerBundle/zipball/e98defd402f72e8b54a029ba4d3ac4cb51dc3577",
+                "reference": "e98defd402f72e8b54a029ba4d3ac4cb51dc3577",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "swiftmailer/swiftmailer": ">=4.2.0,~5.0",
+                "symfony/swiftmailer-bridge": "~2.1"
+            },
+            "require-dev": {
+                "symfony/config": "~2.1",
+                "symfony/dependency-injection": "~2.1",
+                "symfony/http-kernel": "~2.1",
+                "symfony/yaml": "~2.1"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Bundle\\SwiftmailerBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony SwiftmailerBundle",
+            "homepage": "http://symfony.com",
+            "time": "2014-04-05 17:15:52"
+        },
+        {
             "name": "symfony/symfony",
             "version": "2.4.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "54ab31a7fca9b2323cb735c7c7d2347fed8fd79d"
+                "reference": "e705499f3477f5fde4952f467db581f33499b269"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/54ab31a7fca9b2323cb735c7c7d2347fed8fd79d",
-                "reference": "54ab31a7fca9b2323cb735c7c7d2347fed8fd79d",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/e705499f3477f5fde4952f467db581f33499b269",
+                "reference": "e705499f3477f5fde4952f467db581f33499b269",
                 "shasum": ""
             },
             "require": {
@@ -2990,7 +3102,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-05-21 15:50:42"
+            "time": "2014-05-23 14:00:26"
         },
         {
             "name": "twig/extensions",
@@ -3360,15 +3472,14 @@
             "time": "2014-01-05 03:58:50"
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "symfony/swiftmailer-bundle": 0,
+        "doctrine/mongodb-odm": 20,
         "doctrine/mongodb-odm-bundle": 20,
+        "swiftmailer/swiftmailer": 0,
         "friendsofsymfony/rest-bundle": 20,
         "jms/serializer-bundle": 20,
         "willdurand/rest-extra-bundle": 20,
@@ -3382,7 +3493,5 @@
     "platform": {
         "php": ">=5.3.3"
     },
-    "platform-dev": [
-
-    ]
+    "platform-dev": []
 }

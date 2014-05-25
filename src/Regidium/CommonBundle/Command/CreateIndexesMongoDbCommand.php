@@ -22,7 +22,7 @@ class CreateIndexesMongoDbCommand extends ContainerAwareCommand
     {
         $this->getContainer()->get('doctrine.odm.mongodb.document_manager')->getSchemaManager()->ensureIndexes();
 
-        $this->writeMessage('Indexes created');
+        $output->writeln('Indexes created');
 
         return;
     }

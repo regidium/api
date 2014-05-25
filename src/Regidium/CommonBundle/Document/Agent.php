@@ -60,6 +60,8 @@ class Agent
     private $job_title;
 
     /**
+     * depricated Заменен на current_session
+     *
      * @Assert\NotBlank
      * @MongoDB\Int
      */
@@ -88,16 +90,7 @@ class Agent
      */
     private $external_service;
 
-    /**
-     * @MongoDB\Index
-     * @MongoDB\Int
-     */
-    private $last_visit;
-
-    /**
-     * @MongoDB\EmbedOne(targetDocument="Regidium\CommonBundle\Document\AgentSession", strategy="set")
-     */
-    private $session;
+    /* =============== References =============== */
 
     /**
      * @MongoDB\Index
@@ -105,7 +98,22 @@ class Agent
      */
     private $widget;
 
-    /* =============== References =============== */
+    /* =============== Embedded References =============== */
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Session", mappedBy="agent")
+     */
+    private $sessions;
+
+    /**
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Regidium\CommonBundle\Document\Session",
+     *      mappedBy="agent",
+     *      criteria={"status" : Regidium\CommonBundle\Document\Session::STATUS_ONLINE},
+     *      sort={"created_at"="desc"}
+     * )
+     */
+    private $current_session;
 
     /**
      * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Chat", mappedBy="agent")
@@ -128,12 +136,14 @@ class Agent
     }
 
     const STATUS_ONLINE   = 1;
+    const STATUS_CHATTING   = 1;
     const STATUS_OFFLINE  = 3;
 
     static public function getStatuses()
     {
         return [
             self::STATUS_ONLINE,
+            self::STATUS_CHATTING,
             self::STATUS_OFFLINE
         ];
     }
@@ -159,7 +169,6 @@ class Agent
         $this->job_title = '';
         $this->type = self::TYPE_ADMINISTRATOR;
         $this->status = self::STATUS_OFFLINE;
-        $this->last_visit = time();
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
         $this->external_service = [];
@@ -169,7 +178,7 @@ class Agent
 
     public function __toString()
     {
-        return $this->uid;
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function toArray(array $options = [])
@@ -185,11 +194,11 @@ class Agent
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
-            'last_visit' => $this->last_visit
+            'current_session' => $this->current_session->toArray()
         ];
 
-        if ($this->session) {
-            $return['session'] = $this->session->toArray();
+        if (in_array('sessions', $options) && $this->sessions) {
+            $return['sessions'] = $this->sessions->toArray();
         }
 
         if (in_array('widget', $options)) {
@@ -378,6 +387,7 @@ class Agent
     }
 
     /**
+     * depricated Заменен на current_session
      * Set status
      *
      * @param int $status
@@ -390,6 +400,7 @@ class Agent
     }
 
     /**
+     * depricated Заменен на current_session
      * Get status
      *
      * @return int $status
@@ -444,80 +455,6 @@ class Agent
     }
 
     /**
-     * Set externalService
-     *
-     * @param hash $externalService
-     * @return self
-     */
-    public function setExternalService($externalService)
-    {
-        $this->external_service = $externalService;
-        return $this;
-    }
-
-    /**
-     * Get externalService
-     *
-     * @return hash $externalService
-     */
-    public function getExternalService()
-    {
-        return $this->external_service;
-    }
-
-    /**
-     * Set widget
-     *
-     * @param Regidium\CommonBundle\Document\Widget $widget
-     * @return self
-     */
-    public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
-    {
-        $this->widget = $widget;
-        return $this;
-    }
-
-    /**
-     * Get widget
-     *
-     * @return Regidium\CommonBundle\Document\Widget $widget
-     */
-    public function getWidget()
-    {
-        return $this->widget;
-    }
-
-    /**
-     * Add chat
-     *
-     * @param Regidium\CommonBundle\Document\Chat $chat
-     */
-    public function addChat(\Regidium\CommonBundle\Document\Chat $chat)
-    {
-        $this->chats[] = $chat;
-    }
-
-    /**
-     * Remove chat
-     *
-     * @param Regidium\CommonBundle\Document\Chat $chat
-     */
-    public function removeChat(\Regidium\CommonBundle\Document\Chat $chat)
-    {
-        $this->chats->removeElement($chat);
-    }
-
-    /**
-     * Get chats
-     *
-     * @return Doctrine\Common\Collections\Collection $chats
-     */
-    public function getChats()
-    {
-        return $this->chats;
-    }
-
-    /**
      * Set renderVisitorsPeriod
      *
      * @param int $renderVisitorsPeriod
@@ -540,47 +477,128 @@ class Agent
     }
 
     /**
-     * Set session
+     * Set externalService
      *
-     * @param Regidium\CommonBundle\Document\AgentSession $session
+     * @param hash $externalService
      * @return self
      */
-    public function setSession(\Regidium\CommonBundle\Document\AgentSession $session)
+    public function setExternalService($externalService)
     {
-        $this->session = $session;
+        $this->external_service = $externalService;
         return $this;
     }
 
     /**
-     * Get session
+     * Get externalService
      *
-     * @return \Regidium\CommonBundle\Document\AgentSession $session
+     * @return hash $externalService
      */
-    public function getSession()
+    public function getExternalService()
     {
-        return $this->session;
+        return $this->external_service;
     }
 
-
     /**
-     * Set lastVisit
+     * Set currentSession
      *
-     * @param \DateTime $lastVisit
+     * @param \Regidium\CommonBundle\Document\Session $currentSession
      * @return self
      */
-    public function setLastVisit($lastVisit)
+    public function setCurrentSession(\Regidium\CommonBundle\Document\Session $currentSession)
     {
-        $this->last_visit = $lastVisit;
+        $this->current_session = $currentSession;
         return $this;
     }
 
     /**
-     * Get lastVisit
+     * Get currentSession
      *
-     * @return \DateTime $lastVisit
+     * @return \Regidium\CommonBundle\Document\Session $currentSession
      */
-    public function getLastVisit()
+    public function getCurrentSession()
     {
-        return $this->last_visit;
+        return $this->current_session;
+    }
+
+    /**
+     * Set widget
+     *
+     * @param \Regidium\CommonBundle\Document\Widget $widget
+     * @return self
+     */
+    public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
+    {
+        $this->widget = $widget;
+        return $this;
+    }
+
+    /**
+     * Get widget
+     *
+     * @return \Regidium\CommonBundle\Document\Widget $widget
+     */
+    public function getWidget()
+    {
+        return $this->widget;
+    }
+
+    /**
+     * Add session
+     *
+     * @param \Regidium\CommonBundle\Document\Session $session
+     */
+    public function addSession(\Regidium\CommonBundle\Document\Session $session)
+    {
+        $this->sessions[] = $session;
+    }
+
+    /**
+     * Remove session
+     *
+     * @param \Regidium\CommonBundle\Document\Session $session
+     */
+    public function removeSession(\Regidium\CommonBundle\Document\Session $session)
+    {
+        $this->sessions->removeElement($session);
+    }
+
+    /**
+     * Get sessions
+     *
+     * @return \Doctrine\Common\Collections\Collection $sessions
+     */
+    public function getSessions()
+    {
+        return $this->sessions;
+    }
+
+    /**
+     * Add chat
+     *
+     * @param \Regidium\CommonBundle\Document\Chat $chat
+     */
+    public function addChat(\Regidium\CommonBundle\Document\Chat $chat)
+    {
+        $this->chats[] = $chat;
+    }
+
+    /**
+     * Remove chat
+     *
+     * @param \Regidium\CommonBundle\Document\Chat $chat
+     */
+    public function removeChat(\Regidium\CommonBundle\Document\Chat $chat)
+    {
+        $this->chats->removeElement($chat);
+    }
+
+    /**
+     * Get chats
+     *
+     * @return \Doctrine\Common\Collections\Collection $chats
+     */
+    public function getChats()
+    {
+        return $this->chats;
     }
 }
