@@ -56,7 +56,7 @@ class MailHandler extends AbstractHandler
         /** @var Mail $mail */
         $mail = $this->createEntity();
 
-        $mail->setSenderEmail('mail@regidium.com');
+        $mail->setSenderEmail('robot@regidium.com');
         $mail->setReceiverEmails($data['receivers']);
         $mail->setTitle($data['title']);
         $mail->setTemplate($data['template']);
