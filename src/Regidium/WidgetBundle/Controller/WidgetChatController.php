@@ -58,17 +58,17 @@ class WidgetChatController extends AbstractController
         if ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_SESSION) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => $agent->getLastVisit()]],
+                ['ended_at' => ['$gte' => $agent->getCurrentSession()->getLastVisit()]],
             ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => strtotime('+1 day', $agent->getLastVisit())]],
+                ['ended_at' => ['$gte' => strtotime('+1 day', $agent->getCurrentSession()->getLastVisit())]],
             ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_WEEK) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => strtotime('+1 weeks', $agent->getLastVisit())]],
+                ['ended_at' => ['$gte' => strtotime('+1 weeks', $agent->getCurrentSession()->getLastVisit())]],
             ];
         }
 
