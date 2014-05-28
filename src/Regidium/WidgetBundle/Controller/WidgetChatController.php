@@ -585,6 +585,21 @@ class WidgetChatController extends AbstractController
 
         $this->get('regidium.chat.handler')->chatting($chat);
 
+        if ($chat_message->getSenderType() == ChatMessage::SENDER_TYPE_USER) {
+            $data = [];
+            $data['message'] = $chat_message->getText();
+
+            $agents = $this->get('regidium.agent.handler')->one(['notifications.new_message' => 'true']);
+            foreach($agents as $agent) {
+                $this->get('regidium.mail.handler')->post([
+                    'receivers' => [$agent->getEmail()],
+                    'title' => 'New Message',
+                    'template' => 'RegidiumMailBundle:Agent/Notification:new_message.html.twig',
+                    'data' => $data
+                ]);
+            }
+        }
+
         return $this->send($chat_message->toArray());
     }
     

@@ -90,6 +90,11 @@ class Agent
      */
     private $external_service;
 
+    /**
+     * @MongoDB\Hash
+     */
+    private $notifications;
+
     /* =============== References =============== */
 
     /**
@@ -172,6 +177,7 @@ class Agent
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
         $this->accept_chats = true;
         $this->external_service = [];
+        $this->notifications = [];
 
         $this->chats = new ArrayCollection();
     }
@@ -194,7 +200,8 @@ class Agent
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
-            'current_session' => $this->current_session->toArray()
+            'current_session' => $this->current_session->toArray(),
+            'notifications' => $this->notifications
         ];
 
         if (in_array('sessions', $options) && $this->sessions) {
@@ -496,6 +503,29 @@ class Agent
     public function getExternalService()
     {
         return $this->external_service;
+    }
+
+
+    /**
+     * Set notifications
+     *
+     * @param hash $notifications
+     * @return self
+     */
+    public function setNotifications($notifications)
+    {
+        $this->notifications = $notifications;
+        return $this;
+    }
+
+    /**
+     * Get notifications
+     *
+     * @return hash $externalService
+     */
+    public function getNotifications()
+    {
+        return $this->notifications;
     }
 
     /**

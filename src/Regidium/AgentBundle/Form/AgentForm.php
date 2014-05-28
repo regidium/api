@@ -56,6 +56,10 @@ class AgentForm extends AbstractType
                     'description' => 'Agent render visitors type',
                     'data' => Agent::RENDER_VISITORS_PERIOD_SESSION
                 ])
+            ->add('notifications', 'hidden', [
+                    'required' => false,
+                    'description' => 'Agent Email Notifications'
+                ])
             ->add('accept_chats', 'choice', [
                     'required' => false,
                     'choices'   => [true, false],

@@ -156,6 +156,7 @@ class WidgetAgentController extends AbstractController
         }
 
         $data = $this->prepareAgentData($request, $password);
+
         $data['widget_uid'] = $uid;
         if (!$agent) {
             $agent = $this->get('regidium.agent.handler')->post(
@@ -306,6 +307,7 @@ class WidgetAgentController extends AbstractController
             'status' => intval($request->request->get('status', Agent::STATUS_OFFLINE)),
             'accept_chats' => boolval($request->request->get('accept_chats', true)),
             'render_visitors_period' => intval($request->request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION)),
+            'notifications' => $request->get('notifications', [])
         ];
     }
 

@@ -100,7 +100,8 @@ class AgentController extends AbstractController
             'accept_chats' => boolval($request->get('accept_chats', true)),
             'type' => intval($request->get('type', Agent::TYPE_ADMINISTRATOR)),
             'status' => intval($request->get('status', Agent::STATUS_OFFLINE)),
-            'render_visitors_period' => intval($request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION))
+            'render_visitors_period' => intval($request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION)),
+            'notifications' => $request->get('notifications', [])
         ];
     }
 }
