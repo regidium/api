@@ -1,0 +1,415 @@
+<?php
+
+namespace Regidium\CommonBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * @MongoDB\Document(
+ *      repositoryClass="Regidium\CommonBundle\Repository\TransactionRepository",
+ *      collection="transactions",
+ *      requireIndexes=false
+ *  )
+ */
+class Transaction
+{
+    /* =============== Attributes =============== */
+
+    /**
+     * @MongoDB\Id
+     */
+    private $id;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $uid;
+
+    /**
+     * @MongoDB\String
+     * @MongoDB\UniqueIndex(safe="true")
+     */
+    private $operation_id;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $number;
+
+    /**
+     * @MongoDB\Float
+     */
+    private $sum;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $payment_method;
+
+    /**
+     * @MongoDB\String
+     */
+    private $receiver;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $status;
+
+    /**
+     * @MongoDB\String
+     */
+    private $sender;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $codepro;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $created_at;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $payment_at;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="payments")
+     */
+    private $widget;
+
+    /* =============== Constants =============== */
+
+    const PAYMENT_METHOD_YANDEX_MONEY = 1;
+    const PAYMENT_METHOD_CREDIT_CARD  = 2;
+
+    const STATUS_NOT_PAYMENT = 1;
+    const STATUS_PAYMENT     = 2;
+    const STATUS_ERROR       = 3;
+
+    /* ============= General ============= */
+
+    public function __construct()
+    {
+        $this->setUid(uniqid());
+        $this->setNumber(time());
+        $this->setCreatedAt(time());
+        $this->setStatus(self::STATUS_NOT_PAYMENT);
+    }
+
+    public function toArray(array $options = [])
+    {
+        $return = [
+            'uid' => $this->getUid(),
+            'number' => $this->getNumber(),
+            'payment_method' => $this->getPaymentMethod(),
+            'sum' => $this->getSum(),
+            'receiver' => $this->getReceiver(),
+            'created_at' => $this->getCreatedAt(),
+            'sender' => $this->getSender(),
+            'operation_id' => $this->getOperationId(),
+            'codepro' => $this->getCodepro(),
+            'payment_at' => $this->getPaymentAt(),
+            'status' => $this->getStatus(),
+        ];
+
+        return $return;
+    }
+
+    /* =============== Get/Set=============== */
+
+    /**
+     * Set id
+     *
+     * @param string $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return string $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set uid
+     *
+     * @param string $uid
+     * @return self
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+    /**
+     * Get uid
+     *
+     * @return string $uid
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * Set number
+     *
+     * @param string $number
+     * @return self
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+        return $this;
+    }
+
+    /**
+     * Get number
+     *
+     * @return string $number
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
+     * Set sum
+     *
+     * @param float $sum
+     * @return self
+     */
+    public function setSum($sum)
+    {
+        $this->sum = $sum;
+        return $this;
+    }
+
+    /**
+     * Get sum
+     *
+     * @return float $sum
+     */
+    public function getSum()
+    {
+        return $this->sum;
+    }
+
+    /**
+     * Set widget
+     *
+     * @param \Regidium\CommonBundle\Document\Widget $widget
+     * @return self
+     */
+    public function setWidget(\Regidium\CommonBundle\Document\Widget $widget)
+    {
+        $this->widget = $widget;
+        return $this;
+    }
+
+    /**
+     * Get widget
+     *
+     * @return \Regidium\CommonBundle\Document\Widget $widget
+     */
+    public function getWidget()
+    {
+        return $this->widget;
+    }
+
+    /**
+     * Set paymentMethod
+     *
+     * @param int $paymentMethod
+     * @return self
+     */
+    public function setPaymentMethod($paymentMethod)
+    {
+        $this->payment_method = $paymentMethod;
+        return $this;
+    }
+
+    /**
+     * Get paymentMethod
+     *
+     * @return int $paymentMethod
+     */
+    public function getPaymentMethod()
+    {
+        return $this->payment_method;
+    }
+
+    /**
+     * Set receiver
+     *
+     * @param string $receiver
+     * @return self
+     */
+    public function setReceiver($receiver)
+    {
+        $this->receiver = $receiver;
+        return $this;
+    }
+
+    /**
+     * Get receiver
+     *
+     * @return string $receiver
+     */
+    public function getReceiver()
+    {
+        return $this->receiver;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string $status
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set sender
+     *
+     * @param string $sender
+     * @return self
+     */
+    public function setSender($sender)
+    {
+        $this->sender = $sender;
+        return $this;
+    }
+
+    /**
+     * Get sender
+     *
+     * @return string $sender
+     */
+    public function getSender()
+    {
+        return $this->sender;
+    }
+
+    /**
+     * Set codepro
+     *
+     * @param boolean $codepro
+     * @return self
+     */
+    public function setCodepro($codepro)
+    {
+        $this->codepro = $codepro;
+        return $this;
+    }
+
+    /**
+     * Get codepro
+     *
+     * @return boolean $codepro
+     */
+    public function getCodepro()
+    {
+        return $this->codepro;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param int $createdAt
+     * @return self
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return int $createdAt
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set paymentAt
+     *
+     * @param int $paymentAt
+     * @return self
+     */
+    public function setPaymentAt($paymentAt)
+    {
+        $this->payment_at = $paymentAt;
+        return $this;
+    }
+
+    /**
+     * Get paymentAt
+     *
+     * @return int $paymentAt
+     */
+    public function getPaymentAt()
+    {
+        return $this->payment_at;
+    }
+
+    /**
+     * Set operationId
+     *
+     * @param string $operationId
+     * @return self
+     */
+    public function setOperationId($operationId)
+    {
+        $this->operation_id = $operationId;
+        return $this;
+    }
+
+    /**
+     * Get operationId
+     *
+     * @return string $operationId
+     */
+    public function getOperationId()
+    {
+        return $this->operation_id;
+    }
+}

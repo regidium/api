@@ -35,6 +35,12 @@ class Mail
     private $created_at;
 
     /**
+     * @MongoDB\Index
+     * @MongoDB\Int
+     */
+    private $sended_at;
+
+    /**
      * @Assert\NotBlank
      * @MongoDB\Index
      * @MongoDB\Int
@@ -51,7 +57,7 @@ class Mail
      * @Assert\NotBlank
      * @MongoDB\String
      */
-    private $body;
+    private $template;
 
     /**
      * @Assert\NotBlank
@@ -99,8 +105,9 @@ class Mail
             'uid' => $this->getUid(),
             'status' => $this->getStatus(),
             'created_at' => $this->getCratedAt(),
+            'sended_at' => $this->getCratedAt(),
             'title' => $this->getTitle(),
-            'body' => $this->getBody(),
+            'template' => $this->getTemplate(),
             'sender_email' => $this->getSenderEmail(),
             'receiver_emails' => $this->getReceiverEmails(),
             'data' => $this->getData(),
@@ -178,6 +185,28 @@ class Mail
     }
 
     /**
+     * Set sendedAt
+     *
+     * @param int $sendedAt
+     * @return self
+     */
+    public function setSendedAt($sendedAt)
+    {
+        $this->sended_at = $sendedAt;
+        return $this;
+    }
+
+    /**
+     * Get sendedAt
+     *
+     * @return int $sendedAt
+     */
+    public function getSendedAt()
+    {
+        return $this->sended_at;
+    }
+
+    /**
      * Set status
      *
      * @param int $status
@@ -222,25 +251,25 @@ class Mail
     }
 
     /**
-     * Set body
+     * Set template
      *
-     * @param string $body
+     * @param string $template
      * @return self
      */
-    public function setBody($body)
+    public function setTemplate($template)
     {
-        $this->body = $body;
+        $this->template = $template;
         return $this;
     }
 
     /**
-     * Get body
+     * Get template
      *
-     * @return string $body
+     * @return string $template
      */
-    public function getBody()
+    public function getTemplate()
     {
-        return $this->body;
+        return $this->template;
     }
 
     /**
@@ -285,5 +314,27 @@ class Mail
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * Set receiverEmails
+     *
+     * @param array $receiverEmails
+     * @return self
+     */
+    public function setReceiverEmails($receiverEmails)
+    {
+        $this->receiver_emails = $receiverEmails;
+        return $this;
+    }
+
+    /**
+     * Get receiverEmails
+     *
+     * @return array $receiverEmails
+     */
+    public function getReceiverEmails()
+    {
+        return $this->receiver_emails;
     }
 }

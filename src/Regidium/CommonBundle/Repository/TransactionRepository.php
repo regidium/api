@@ -2,6 +2,6 @@
 
 namespace Regidium\CommonBundle\Repository;
 
-class PaymentMethodRepository extends AbstractRepository
+class TransactionRepository extends AbstractRepository
 {
 }

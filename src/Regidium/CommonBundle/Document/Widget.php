@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Regidium\CommonBundle\Document\Plan;
-use Regidium\CommonBundle\Document\PaymentMethod;
 
 /**
  * @MongoDB\Document(
@@ -90,6 +89,11 @@ class Widget
      */
     private $triggers;
 
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Transaction", mappedBy="widget")
+     */
+    private $transactions;
+
     /* =============== Constants =============== */
 
     const STATUS_DEFAULT = 1;
@@ -118,6 +122,7 @@ class Widget
         $this->agents = new ArrayCollection();
         $this->chats = new ArrayCollection();
         $this->triggers = new ArrayCollection();
+        $this->Transaction = new ArrayCollection();
 
         $this->settings = [
             'header_color' => '#ec1d23'
@@ -336,7 +341,7 @@ class Widget
     /**
      * Set plan
      *
-     * @param Regidium\CommonBundle\Document\Plan $plan
+     * @param \Regidium\CommonBundle\Document\Plan $plan
      * @return self
      */
     public function setPlan(\Regidium\CommonBundle\Document\Plan $plan)
@@ -465,5 +470,35 @@ class Widget
     public function getTriggers()
     {
         return $this->triggers;
+    }
+
+    /**
+     * Add transaction
+     *
+     * @param Regidium\CommonBundle\Document\Transaction $transaction
+     */
+    public function addTransaction(\Regidium\CommonBundle\Document\Transaction $transaction)
+    {
+        $this->transactions[] = $transaction;
+    }
+
+    /**
+     * Remove transaction
+     *
+     * @param Regidium\CommonBundle\Document\Transaction $transaction
+     */
+    public function removeTransaction(\Regidium\CommonBundle\Document\Transaction $transaction)
+    {
+        $this->transactions->removeElement($transaction);
+    }
+
+    /**
+     * Get transactions
+     *
+     * @return Doctrine\Common\Collections\Collection $transactions
+     */
+    public function getTransactions()
+    {
+        return $this->transactions;
     }
 }

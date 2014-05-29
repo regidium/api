@@ -194,6 +194,18 @@ class WidgetChatController extends AbstractController
             return $this->sendError($chat);
         }
 
+        $data = [];
+
+        $agents = $this->get('regidium.agent.handler')->one(['notifications.new_chat' => 'true']);
+        foreach($agents as $agent) {
+            $this->get('regidium.mail.handler')->post([
+                'receivers' => [$agent->getEmail()],
+                'title' => 'New Chat',
+                'template' => 'RegidiumMailBundle:Agent/Notification:new_chat.html.twig',
+                'data' => $data
+            ]);
+        }
+
         return  $this->send($chat->toArray(['messages']));
     }
 

@@ -4,11 +4,6 @@ widgets:
     resource: Regidium\WidgetBundle\Controller\WidgetController
     name_prefix:  api_1_
 
-widget_pay:
-    type:     rest
-    parent:   widgets
-    resource: Regidium\WidgetBundle\Controller\WidgetPayController
-
 widget_plan:
     type:     rest
     parent:   widgets
@@ -33,3 +28,8 @@ widget_trigger:
     type:     rest
     parent:   widgets
     resource: Regidium\WidgetBundle\Controller\WidgetTriggerController
+
+widget_transaction:
+    type:     rest
+    parent:   widgets
+    resource: Regidium\WidgetBundle\Controller\WidgetTransactionController

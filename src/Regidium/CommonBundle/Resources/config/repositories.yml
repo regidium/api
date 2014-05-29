@@ -2,8 +2,7 @@ parameters:
     # Documents
     regidium.agent.document.class: Regidium\CommonBundle\Document\Agent
     regidium.billing.plan.document.class: Regidium\CommonBundle\Document\Plan
-    regidium.billing.payment.document.class: Regidium\CommonBundle\Document\Payment
-    regidium.billing.payment_method.document.class: Regidium\CommonBundle\Document\PaymentMethod
+    regidium.billing.transaction.document.class: Regidium\CommonBundle\Document\Transaction
     regidium.chat.document.class: Regidium\CommonBundle\Document\Chat
     regidium.chat.message.document.class: Regidium\CommonBundle\Document\ChatMessage
     regidium.widget.document.class: Regidium\CommonBundle\Document\Widget
@@ -11,8 +10,7 @@ parameters:
     # Repositories
     regidium.agent.repository.class: Regidium\CommonBundle\Repository\AgentRepository
     regidium.billing.plan.repository.class: Regidium\CommonBundle\Repository\PlanRepository
-    regidium.billing.payment.repository.class: Regidium\CommonBundle\Repository\PaymentRepository
-    regidium.billing.payment_method.repository.class: Regidium\CommonBundle\Repository\PaymentMethodRepository
+    regidium.billing.transaction.repository.class: Regidium\CommonBundle\Repository\TransactionRepository
     regidium.chat.repository.class: Regidium\CommonBundle\Repository\ChatRepository
     regidium.chat.message.repository.class: Regidium\CommonBundle\Repository\ChatMessageRepository
     regidium.widget.repository.class: Regidium\CommonBundle\Repository\WidgetRepository
@@ -32,19 +30,12 @@ services:
         public: true
         arguments: [ %regidium.billing.plan.document.class% ]
 
-    regidium.billing.payment.repository:
-        class: %regidium.billing.payment.repository.class%
+    regidium.billing.transaction.repository:
+        class: %regidium.billing.transaction.repository.class%
         factory_service: doctrine_mongodb.odm.default_document_manager
         factory_method: getRepository
         public: true
-        arguments: [ %regidium.billing.payment.document.class% ]
-
-    regidium.billing.payment_method.repository:
-        class: %regidium.billing.payment_method.repository.class%
-        factory_service: doctrine_mongodb.odm.default_document_manager
-        factory_method: getRepository
-        public: true
-        arguments: [ %regidium.billing.payment_method.document.class% ]
+        arguments: [ %regidium.billing.transaction.document.class% ]
 
     regidium.chat.repository:
         class: %regidium.chat.repository.class%

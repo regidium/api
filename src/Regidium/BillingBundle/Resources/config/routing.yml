@@ -4,8 +4,8 @@ plans:
     resource: Regidium\BillingBundle\Controller\PlanController
     name_prefix:  api_1_
 
-paymentmethods:
+payments:
     type: rest
     prefix: /v1
-    resource: Regidium\BillingBundle\Controller\PaymentMethodController
+    resource: Regidium\BillingBundle\Controller\PaymentController
     name_prefix:  api_1_

@@ -505,7 +505,6 @@ class Agent
         return $this->external_service;
     }
 
-
     /**
      * Set notifications
      *
