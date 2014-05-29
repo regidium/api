@@ -196,7 +196,7 @@ class WidgetChatController extends AbstractController
 
         $data = [];
 
-        $agents = $this->get('regidium.agent.handler')->one(['notifications.new_chat' => 'true']);
+        $agents = $this->get('regidium.agent.handler')->get(['notifications.new_chat' => 'true']);
         foreach($agents as $agent) {
             $this->get('regidium.mail.handler')->post([
                 'receivers' => [$agent->getEmail()],
@@ -601,7 +601,7 @@ class WidgetChatController extends AbstractController
             $data = [];
             $data['message'] = $chat_message->getText();
 
-            $agents = $this->get('regidium.agent.handler')->one(['notifications.new_message' => 'true']);
+            $agents = $this->get('regidium.agent.handler')->get(['notifications.new_message' => 'true']);
             foreach($agents as $agent) {
                 $this->get('regidium.mail.handler')->post([
                     'receivers' => [$agent->getEmail()],
