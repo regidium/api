@@ -38,6 +38,10 @@ class AgentForm extends AbstractType
                     'required' => false,
                     'description' => 'Agent job title'
                 ])
+            ->add('language', 'text', [
+                'required' => false,
+                'description' => 'Agent panel language'
+            ])
             ->add('accept_chats', 'radio', [
                     'required' => false
                 ])

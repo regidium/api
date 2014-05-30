@@ -307,7 +307,8 @@ class WidgetAgentController extends AbstractController
             'status' => intval($request->request->get('status', Agent::STATUS_OFFLINE)),
             'accept_chats' => boolval($request->request->get('accept_chats', true)),
             'render_visitors_period' => intval($request->request->get('render_visitors_period', Agent::RENDER_VISITORS_PERIOD_SESSION)),
-            'notifications' => $request->get('notifications', [])
+            'notifications' => $request->get('notifications', []),
+            'language' => $request->get('language', 'auto')
         ];
     }
 
@@ -315,7 +316,6 @@ class WidgetAgentController extends AbstractController
      * Подготовка данных об агенте из пришедших данных
      *
      * @param Request $request  Request объект
-     * @param string $password Пароль
      *
      * @return array
      */

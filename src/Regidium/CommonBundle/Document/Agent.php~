@@ -86,6 +86,12 @@ class Agent
     private $render_visitors_period;
 
     /**
+     * @Assert\NotBlank
+     * @MongoDB\String
+     */
+    private $language;
+
+    /**
      * @MongoDB\Hash
      */
     private $external_service;
@@ -172,6 +178,7 @@ class Agent
     {
         $this->uid = uniqid();
         $this->job_title = '';
+        $this->language = 'auto';
         $this->type = self::TYPE_ADMINISTRATOR;
         $this->status = self::STATUS_OFFLINE;
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
@@ -201,7 +208,8 @@ class Agent
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
             'current_session' => $this->current_session->toArray(),
-            'notifications' => $this->notifications
+            'notifications' => $this->notifications,
+            'language' => $this->language
         ];
 
         if (in_array('sessions', $options) && $this->sessions) {

@@ -35,7 +35,6 @@ class Transaction
 
     /**
      * @MongoDB\Int
-     * @MongoDB\UniqueIndex(safe="true")
      */
     private $number;
 
@@ -103,6 +102,7 @@ class Transaction
     {
         $this->setUid(uniqid());
         $this->setNumber(time());
+        $this->setCreatedAt(time());
         $this->setStatus(self::STATUS_NOT_PAYMENT);
     }
 
@@ -114,8 +114,12 @@ class Transaction
             'payment_method' => $this->getPaymentMethod(),
             'sum' => $this->getSum(),
             'receiver' => $this->getReceiver(),
-            'status' => $this->getStatus(),
+            'created_at' => $this->getCreatedAt(),
             'sender' => $this->getSender(),
+            'operation_id' => $this->getOperationId(),
+            'codepro' => $this->getCodepro(),
+            'payment_at' => $this->getPaymentAt(),
+            'status' => $this->getStatus(),
         ];
 
         return $return;
@@ -385,5 +389,27 @@ class Transaction
     public function getPaymentAt()
     {
         return $this->payment_at;
+    }
+
+    /**
+     * Set operationId
+     *
+     * @param string $operationId
+     * @return self
+     */
+    public function setOperationId($operationId)
+    {
+        $this->operation_id = $operationId;
+        return $this;
+    }
+
+    /**
+     * Get operationId
+     *
+     * @return string $operationId
+     */
+    public function getOperationId()
+    {
+        return $this->operation_id;
     }
 }

@@ -122,10 +122,14 @@ class Widget
         $this->agents = new ArrayCollection();
         $this->chats = new ArrayCollection();
         $this->triggers = new ArrayCollection();
-        $this->Transaction = new ArrayCollection();
+        $this->transaction = new ArrayCollection();
 
+        // @todo Вынести в Embedded
         $this->settings = [
-            'header_color' => '#ec1d23'
+            'language' => 'auto',
+            'header_color' => '#ec1d23',
+            'title_online' => 'Operators Online',
+            'title_offline' => 'Leave your message'
         ];
     }
 

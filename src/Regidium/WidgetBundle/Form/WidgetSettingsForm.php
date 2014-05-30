@@ -15,10 +15,19 @@ class WidgetSettingsForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('language', 'text', [
+                'required' => false
+            ])
             ->add('header_color', 'text', [
                 'required' => false
             ])
             ->add('company_logo', 'text', [
+                'required' => false
+            ])
+            ->add('title_online', 'text', [
+                'required' => false
+            ])
+            ->add('title_offline', 'text', [
                 'required' => false
             ])
         ;

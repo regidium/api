@@ -86,6 +86,11 @@ class Agent
     private $render_visitors_period;
 
     /**
+     * @MongoDB\String
+     */
+    private $language;
+
+    /**
      * @MongoDB\Hash
      */
     private $external_service;
@@ -172,6 +177,7 @@ class Agent
     {
         $this->uid = uniqid();
         $this->job_title = '';
+        $this->language = 'auto';
         $this->type = self::TYPE_ADMINISTRATOR;
         $this->status = self::STATUS_OFFLINE;
         $this->render_visitors_period = self::RENDER_VISITORS_PERIOD_SESSION;
@@ -197,6 +203,7 @@ class Agent
             'avatar' => $this->avatar,
             'email' => $this->email,
             'job_title' => $this->job_title,
+            'language' => $this->language,
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
@@ -629,5 +636,27 @@ class Agent
     public function getChats()
     {
         return $this->chats;
+    }
+
+    /**
+     * Set language
+     *
+     * @param string $language
+     * @return self
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+        return $this;
+    }
+
+    /**
+     * Get language
+     *
+     * @return string $language
+     */
+    public function getLanguage()
+    {
+        return $this->language;
     }
 }

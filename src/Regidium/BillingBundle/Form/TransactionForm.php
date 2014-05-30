@@ -52,7 +52,6 @@ class TransactionForm extends AbstractType
                 'description' => 'Transaction Operation ID'
             ])
             ->add('status', 'integer', [
-                'data' => Transaction::STATUS_NOT_PAYMENT,
                 'description' => 'Transaction Status'
             ])
             ->add('widget_uid', 'hidden', [
