@@ -38,6 +38,26 @@ class WidgetTransactionController extends AbstractController
      */
     public function postAction(Request $request, $uid)
     {
+        // Яндекс.Деньги
+//        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+//        if (!$widget instanceof Widget) {
+//            return $this->sendError('Widget not found!');
+//        }
+//
+//        $data = $request->request->get('payment', []);
+//        $data['widget_uid'] = $widget->getUid();
+//
+//        $payment_params = $this->container->getParameter('payment');
+//        $data['receiver'] = $payment_params['yd_client_id'];
+//
+//        $transaction = $this->get('regidium.billing.transaction.handler')->post($data);
+//
+//        if (!$transaction instanceof Transaction) {
+//            return $this->sendError('Transaction save error!');
+//        }
+//
+//        return $this->send($transaction->toArray());
+        // ROBOKASSA
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
@@ -47,7 +67,7 @@ class WidgetTransactionController extends AbstractController
         $data['widget_uid'] = $widget->getUid();
 
         $payment_params = $this->container->getParameter('payment');
-        $data['receiver'] = $payment_params['client_id'];
+        $data['receiver'] = $payment_params['rc_login'];
 
         $transaction = $this->get('regidium.billing.transaction.handler')->post($data);
 
@@ -55,6 +75,10 @@ class WidgetTransactionController extends AbstractController
             return $this->sendError('Transaction save error!');
         }
 
-        return $this->send($transaction->toArray());
+        $crc  = md5($payment_params['rc_login'].':'.$transaction->getSum().':'.$transaction->getNumber().':'.$payment_params['rc_pass1']);
+
+        $url = $payment_params['rc_url'].'?MrchLogin='.$payment_params['rc_login'].'&OutSum='.$transaction->getSum().'&InvId='.$transaction->getNumber().'&Desc='.$transaction->getNumber().'&SignatureValue='.$crc;
+
+        return $this->send(['transaction' => $transaction->toArray(), 'url' => $url]);
     }
 }
