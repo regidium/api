@@ -115,7 +115,7 @@ class TransactionHandler extends AbstractHandler
                 return 'Server error';
             }
 
-            $agent = $this->dm->getRepository('Regidium\CommonBundle\Document\Agent')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
+            $agent = $this->dm->getRepository('Regidium\CommonBundle\Document\Agent')->findOneBy(['uid' => $form->get('agent_uid')->getData()]);
             $transaction->setAgent($agent);
 
             $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
