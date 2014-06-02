@@ -72,7 +72,7 @@ class PaymentController extends AbstractController
 //        return $this->send($transaction->toArray());
         // ROBOKASSA
         $transaction_number = $request->request->get('InvId', null);
-        $transaction = $this->get('regidium.billing.transaction.handler')->one(['number' => $transaction_number]);
+        $transaction = $this->get('regidium.billing.transaction.handler')->one(['number' => intval($transaction_number)]);
         if (!$transaction instanceof Transaction) {
             return $this->sendError('Transaction not found!', 400);
         }
