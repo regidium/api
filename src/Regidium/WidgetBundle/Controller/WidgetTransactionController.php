@@ -85,8 +85,9 @@ class WidgetTransactionController extends AbstractController
 
         $crc = md5($payment_params['rc_login'].':'.$transaction->getSum().':'.$transaction->getNumber().':'.$payment_params['rc_pass1']);
 
-        $url = $payment_params['rc_url'].'?MrchLogin='.$payment_params['rc_login'].'&OutSum='.$transaction->getSum().'&InvId='.$transaction->getNumber().'&Desc='.$transaction->getNumber().'&SignatureValue='.$crc;
+        $url = $payment_params['rc_url'].'?MrchLogin='.$payment_params['rc_login'].'&OutSum='.floatval($transaction->getSum()).'&InvId='.$transaction->getNumber().'&Desc='.$transaction->getNumber().'&SignatureValue='.$crc;
 
         return $this->send(['transaction' => $transaction->toArray(), 'url' => $url]);
+
     }
 }
