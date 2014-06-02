@@ -83,8 +83,7 @@ class TransactionHandler extends AbstractHandler
     public function pay(Transaction $transaction, array $data)
     {
         try {
-            $payment_at = new \DateTime($data['datetime']);
-            $transaction->setPaymentAt($payment_at->getTimestamp());
+            $transaction->setPaymentAt(time());
             $transaction->setStatus(Transaction::STATUS_PAYMENT);
 
             $this->dm->persist($transaction);
