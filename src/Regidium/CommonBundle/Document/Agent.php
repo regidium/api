@@ -212,9 +212,12 @@ class Agent
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
-            'current_session' => $this->current_session->toArray(),
             'notifications' => $this->notifications
         ];
+
+        if ($this->current_session) {
+            $return['current_session'] = $this->current_session->toArray();
+        }
 
         if (in_array('sessions', $options) && $this->sessions) {
             $return['sessions'] = $this->sessions->toArray();
