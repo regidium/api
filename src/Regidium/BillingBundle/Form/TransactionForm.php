@@ -31,10 +31,6 @@ class TransactionForm extends AbstractType
             ->add('receiver', 'text', [
                     'description' => 'Transaction Receiver'
                 ])
-            ->add('sender', 'text', [
-                'required' => false,
-                'description' => 'Transaction sender'
-            ])
             ->add('created_at', 'integer', [
                 'required' => false,
                 'description' => 'Transaction Create date'
@@ -43,16 +39,18 @@ class TransactionForm extends AbstractType
                 'required' => false,
                 'description' => 'Transaction Payment date'
             ])
-            ->add('codepro', 'text', [
-                'required' => false,
-                'description' => 'Transaction codepro'
-            ])
-            ->add('operation_id', 'text', [
-                'required' => false,
-                'description' => 'Transaction Operation ID'
-            ])
             ->add('status', 'integer', [
                 'description' => 'Transaction Status'
+            ])
+            ->add('agent_uid', 'hidden', [
+                'required' => true,
+                'mapped' => false,
+                'constraints' => [
+                    new ExistDocument([
+                        'repository' => 'regidium.agent.repository',
+                        'property' => 'uid'
+                    ])
+                ]
             ])
             ->add('widget_uid', 'hidden', [
                 'required' => true,

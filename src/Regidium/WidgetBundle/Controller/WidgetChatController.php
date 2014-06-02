@@ -63,12 +63,12 @@ class WidgetChatController extends AbstractController
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_DAY) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => strtotime('+1 day', $agent->getCurrentSession()->getLastVisit())]],
+                ['ended_at' => ['$gte' => strtotime('-1 day', time())]],
             ];
         } elseif ($agent->getRenderVisitorsPeriod() == Agent::RENDER_VISITORS_PERIOD_WEEK) {
             $where['$or'] = [
                 ['ended_at' => ['$exists' => false]],
-                ['ended_at' => ['$gte' => strtotime('+1 weeks', $agent->getCurrentSession()->getLastVisit())]],
+                ['ended_at' => ['$gte' => strtotime('-1 weeks', time())]],
             ];
         }
 
@@ -252,7 +252,6 @@ class WidgetChatController extends AbstractController
         return $this->sendSuccess();
     }
 
-
     /**
      * Смена URL чата
      *
@@ -288,6 +287,47 @@ class WidgetChatController extends AbstractController
         $this->get('regidium.chat.handler')->changeUrl($chat, $current_url);
 
         return $this->sendSuccess();
+    }
+
+    /**
+     * Смена Referrer сайта
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Смена Referrer сайта.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request   Request object
+     * @param string  $uid       Widget UID
+     * @param string  $chat_uid  Chat UID
+     *
+     * @return View
+     *
+     */
+    public function patchReferrerAction(Request $request, $uid, $chat_uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $chat = $this->get('regidium.chat.handler')->one(['uid' => $chat_uid]);
+        if (!$chat instanceof Chat) {
+            return $this->sendError('Chat not found!');
+        }
+
+        $referrer = $request->request->get('referrer', '');
+
+        $chat = $this->get('regidium.chat.handler')->changeReferrer($chat, $referrer);
+
+        $data = [];
+        $data['referrer'] = $chat->getReferrer();
+        $data['keywords'] = $chat->getKeywords();
+
+        return $this->send($data);
     }
 
     /**

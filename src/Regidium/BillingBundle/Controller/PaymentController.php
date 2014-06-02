@@ -69,11 +69,34 @@ class PaymentController extends AbstractController
 //        }
 //
 //
-//        /** @todo вынести в HTTP Notification от ЯД */
-////        $widget->setBalance($widget->getBalance() + $sum);
-////        $this->get('regidium.widget.handler')->edit($widget);
-//
 //        return $this->send($transaction->toArray());
         // ROBOKASSA
+        $transaction_number = $request->request->get('InvId', null);
+        $transaction = $this->get('regidium.billing.transaction.handler')->one(['number' => $transaction_number]);
+        if (!$transaction instanceof Transaction) {
+            return $this->sendError('Transaction not found!', 400);
+        }
+
+        $payment_params = $this->container->getParameter('payment');
+        $data['receiver'] = $payment_params['rc_login'];
+        $crc = strtoupper($request->request->get('SignatureValue', ''));
+        $my_crc = strtoupper(md5($request->request->get('OutSum', '').':'.$request->request->get('InvId', '').':'.$payment_params['rc_pass2']));
+        if (strtoupper($my_crc) != strtoupper($crc)) {
+            return $this->sendError('Bad request parameters!', 400);
+        }
+
+        $transaction = $this->get('regidium.billing.transaction.handler')->pay($transaction, $request->request->all());
+        if (!$transaction instanceof Transaction) {
+            return $this->sendError('Transaction not found!');
+        }
+
+        $widget = $transaction->getWidget();
+
+        // @todo отправлять event
+
+        $widget->setBalance($widget->getBalance() + $request->request->get('OutSum', 0));
+        $this->get('regidium.widget.handler')->edit($widget);
+
+        return $this->send($transaction->toArray());
     }
 }

@@ -103,6 +103,11 @@ class Agent
     /* =============== References =============== */
 
     /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Transaction", mappedBy="agent")
+     */
+    private $transactions;
+
+    /**
      * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="agents")
      */
@@ -658,5 +663,35 @@ class Agent
     public function getLanguage()
     {
         return $this->language;
+    }
+
+    /**
+     * Add transaction
+     *
+     * @param Regidium\CommonBundle\Document\Transaction $transaction
+     */
+    public function addTransaction(\Regidium\CommonBundle\Document\Transaction $transaction)
+    {
+        $this->transactions[] = $transaction;
+    }
+
+    /**
+     * Remove transaction
+     *
+     * @param Regidium\CommonBundle\Document\Transaction $transaction
+     */
+    public function removeTransaction(\Regidium\CommonBundle\Document\Transaction $transaction)
+    {
+        $this->transactions->removeElement($transaction);
+    }
+
+    /**
+     * Get transactions
+     *
+     * @return Doctrine\Common\Collections\Collection $transactions
+     */
+    public function getTransactions()
+    {
+        return $this->transactions;
     }
 }

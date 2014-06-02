@@ -151,7 +151,9 @@ class ChatHandler extends AbstractHandler
      */
     public function agentEnter(Chat $chat, Agent $agent) {
         $chat->setAgent($agent);
-        $chat->setStatus(Chat::STATUS_CHATTING);
+        if ($chat->getStatus() != Chat::STATUS_OFFLINE) {
+            $chat->setStatus(Chat::STATUS_CHATTING);
+        }
 
         // Прочитываем все сообщения чата
         /** @var ChatMessage[] $messages  */
@@ -196,6 +198,51 @@ class ChatHandler extends AbstractHandler
         return $this->edit($chat);
     }
 
+    /**
+     * Смена Referrer сайта
+     *
+     * @param Chat   $chat
+     * @param string $referrer
+     *
+     * @return Chat
+     */
+    public function changeReferrer(Chat $chat, $referrer = '') {
+        $parsed_url = parse_url(urldecode($referrer));
+        if (!isset($parsed_url['query'])) {
+            $parsed_url['query'] = '';
+        }
+        parse_str($parsed_url['query'], $parsed_query);
+
+        if ($parsed_url) {
+            if (strpos($parsed_url['host'],'test.') !== false ||
+                strpos($parsed_url['host'],'google.') !== false ||
+                strpos($parsed_url['host'],'bing.') !== false ||
+                strpos($parsed_url['host'],'mail.') !== false) {
+                $chat->setReferrer(urlencode($parsed_url['scheme'].'://'.$parsed_url['host']));
+
+                if (isset($parsed_query['q'])) {
+                    $chat->setKeywords($parsed_query['q']);
+                }
+            } elseif (strpos($parsed_url['host'],'yandex.') !== false) {
+                $chat->setReferrer(urlencode($parsed_url['scheme'].'://'.$parsed_url['host']));
+
+                if (isset($parsed_query['text'])) {
+                    $chat->setKeywords($parsed_query['text']);
+                }
+            } elseif (strpos($parsed_url['host'],'rambler.') !== false) {
+                $chat->setReferrer(urlencode($parsed_url['scheme'].'://'.$parsed_url['host']));
+
+                if (isset($parsed_query['query'])) {
+                    $chat->setKeywords($parsed_query['query']);
+                }
+            } else {
+                $chat->setReferrer($referrer);
+            }
+            $this->edit($chat);
+        }
+
+        return $chat;
+    }
 
     /**
      * @todo убрать

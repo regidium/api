@@ -86,9 +86,6 @@ class TransactionHandler extends AbstractHandler
             $payment_at = new \DateTime($data['datetime']);
             $transaction->setPaymentAt($payment_at->getTimestamp());
             $transaction->setStatus(Transaction::STATUS_PAYMENT);
-            $transaction->setCodepro($data['codepro']);
-            $transaction->setOperationId($data['operation_id']);
-            $transaction->setSender($data['sender']);
 
             $this->dm->persist($transaction);
             $this->dm->flush($transaction);
@@ -117,6 +114,9 @@ class TransactionHandler extends AbstractHandler
             if (!$transaction instanceof Transaction) {
                 return 'Server error';
             }
+
+            $agent = $this->dm->getRepository('Regidium\CommonBundle\Document\Agent')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
+            $transaction->setAgent($agent);
 
             $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
             $transaction->setWidget($widget);

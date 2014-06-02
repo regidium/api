@@ -10,6 +10,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Regidium\CommonBundle\Controller\AbstractController;
 use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Document\Transaction;
+use Regidium\CommonBundle\Document\Agent;
 
 /**
  * Widget transaction controller
@@ -32,11 +33,12 @@ class WidgetTransactionController extends AbstractController
      * )
      *
      * @param Request $request
-     * @param string  $uid Widget UID
+     * @param string  $uid       Widget UID
+     * @param string  $agent_uid Agent UID
      *
      * @return View
      */
-    public function postAction(Request $request, $uid)
+    public function postAction(Request $request, $uid, $agent_uid)
     {
         // Яндекс.Деньги
 //        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
@@ -63,8 +65,14 @@ class WidgetTransactionController extends AbstractController
             return $this->sendError('Widget not found!');
         }
 
+        $agent = $this->get('regidium.agent.handler')->one(['uid' => $agent_uid]);
+        if (!$agent instanceof Agent) {
+            return $this->sendError('Agent not found!');
+        }
+
         $data = $request->request->get('payment', []);
         $data['widget_uid'] = $widget->getUid();
+        $data['agent_uid'] = $agent->getUid();
 
         $payment_params = $this->container->getParameter('payment');
         $data['receiver'] = $payment_params['rc_login'];
@@ -75,7 +83,7 @@ class WidgetTransactionController extends AbstractController
             return $this->sendError('Transaction save error!');
         }
 
-        $crc  = md5($payment_params['rc_login'].':'.$transaction->getSum().':'.$transaction->getNumber().':'.$payment_params['rc_pass1']);
+        $crc = md5($payment_params['rc_login'].':'.$transaction->getSum().':'.$transaction->getNumber().':'.$payment_params['rc_pass1']);
 
         $url = $payment_params['rc_url'].'?MrchLogin='.$payment_params['rc_login'].'&OutSum='.$transaction->getSum().'&InvId='.$transaction->getNumber().'&Desc='.$transaction->getNumber().'&SignatureValue='.$crc;
 

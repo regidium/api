@@ -64,6 +64,11 @@ class Chat
     /**
      * @MongoDB\String
      */
+    private $keywords;
+
+    /**
+     * @MongoDB\String
+     */
     private $current_url;
 
     /**
@@ -135,6 +140,7 @@ class Chat
             'opened' => $this->opened,
             'status' => $this->status,
             'referrer' => $this->referrer,
+            'keywords' => $this->keywords,
             'current_url' => $this->current_url,
             'old_status' => $this->old_status,
             'user' => $this->user,
@@ -324,6 +330,27 @@ class Chat
         return $this->referrer;
     }
 
+    /**
+     * Set keywords
+     *
+     * @param string $keywords
+     * @return self
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+        return $this;
+    }
+
+    /**
+     * Get keywords
+     *
+     * @return string $keywords
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
+    }
 
     /**
      * Set current_url

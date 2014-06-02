@@ -60,16 +60,6 @@ class Transaction
     private $status;
 
     /**
-     * @MongoDB\String
-     */
-    private $sender;
-
-    /**
-     * @MongoDB\Boolean
-     */
-    private $codepro;
-
-    /**
      * @MongoDB\Index
      * @MongoDB\Int
      */
@@ -83,7 +73,13 @@ class Transaction
 
     /**
      * @MongoDB\Index
-     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="payments")
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Agent", cascade={"persist", "merge", "detach"}, inversedBy="transactions")
+     */
+    private $agent;
+
+    /**
+     * @MongoDB\Index
+     * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Widget", cascade={"persist", "merge", "detach"}, inversedBy="transactions")
      */
     private $widget;
 
@@ -115,12 +111,18 @@ class Transaction
             'sum' => $this->getSum(),
             'receiver' => $this->getReceiver(),
             'created_at' => $this->getCreatedAt(),
-            'sender' => $this->getSender(),
             'operation_id' => $this->getOperationId(),
-            'codepro' => $this->getCodepro(),
             'payment_at' => $this->getPaymentAt(),
             'status' => $this->getStatus(),
         ];
+
+        if (isset($options['agent'])) {
+            $return['agent'] = $this->agent->toArray();
+        }
+
+        if (isset($options['widget'])) {
+            $return['widget'] = $this->widget->toArray();
+        }
 
         return $return;
     }
@@ -213,6 +215,28 @@ class Transaction
     public function getSum()
     {
         return $this->sum;
+    }
+
+    /**
+     * Set agent
+     *
+     * @param \Regidium\CommonBundle\Document\Agent $agent
+     * @return self
+     */
+    public function setAgent(\Regidium\CommonBundle\Document\Agent $agent)
+    {
+        $this->agent = $agent;
+        return $this;
+    }
+
+    /**
+     * Get agent
+     *
+     * @return \Regidium\CommonBundle\Document\Agent $agent
+     */
+    public function getAgent()
+    {
+        return $this->agent;
     }
 
     /**
@@ -323,28 +347,6 @@ class Transaction
     public function getSender()
     {
         return $this->sender;
-    }
-
-    /**
-     * Set codepro
-     *
-     * @param boolean $codepro
-     * @return self
-     */
-    public function setCodepro($codepro)
-    {
-        $this->codepro = $codepro;
-        return $this;
-    }
-
-    /**
-     * Get codepro
-     *
-     * @return boolean $codepro
-     */
-    public function getCodepro()
-    {
-        return $this->codepro;
     }
 
     /**

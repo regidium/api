@@ -86,7 +86,6 @@ class Agent
     private $render_visitors_period;
 
     /**
-     * @Assert\NotBlank
      * @MongoDB\String
      */
     private $language;
@@ -102,6 +101,11 @@ class Agent
     private $notifications;
 
     /* =============== References =============== */
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Regidium\CommonBundle\Document\Transaction", mappedBy="agent")
+     */
+    private $transactions;
 
     /**
      * @MongoDB\Index
@@ -204,12 +208,12 @@ class Agent
             'avatar' => $this->avatar,
             'email' => $this->email,
             'job_title' => $this->job_title,
+            'language' => $this->language,
             'status' => $this->status,
             'type' => $this->type,
             'accept_chats' => $this->accept_chats,
             'current_session' => $this->current_session->toArray(),
-            'notifications' => $this->notifications,
-            'language' => $this->language
+            'notifications' => $this->notifications
         ];
 
         if (in_array('sessions', $options) && $this->sessions) {
@@ -637,5 +641,27 @@ class Agent
     public function getChats()
     {
         return $this->chats;
+    }
+
+    /**
+     * Set language
+     *
+     * @param string $language
+     * @return self
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+        return $this;
+    }
+
+    /**
+     * Get language
+     *
+     * @return string $language
+     */
+    public function getLanguage()
+    {
+        return $this->language;
     }
 }
