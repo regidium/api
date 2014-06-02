@@ -108,7 +108,7 @@ class Transaction
             'uid' => $this->getUid(),
             'number' => $this->getNumber(),
             'payment_method' => $this->getPaymentMethod(),
-            'sum' => $this->getSum(),
+            'sum' => floatval($this->getSum()),
             'receiver' => $this->getReceiver(),
             'created_at' => $this->getCreatedAt(),
             'operation_id' => $this->getOperationId(),

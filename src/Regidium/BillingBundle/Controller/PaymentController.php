@@ -81,6 +81,7 @@ class PaymentController extends AbstractController
         $data['receiver'] = $payment_params['rc_login'];
         $crc = strtoupper($request->request->get('SignatureValue', ''));
         $my_crc = strtoupper(md5($request->request->get('OutSum', '').':'.$request->request->get('InvId', '').':'.$payment_params['rc_pass2']));
+
         if (strtoupper($my_crc) != strtoupper($crc)) {
             return $this->sendError('Bad request parameters!', 400);
         }
