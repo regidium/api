@@ -211,7 +211,14 @@ class ChatHandler extends AbstractHandler
         if (!isset($parsed_url['query'])) {
             $parsed_url['query'] = '';
         }
+        if (!isset($parsed_url['fragment'])) {
+            $parsed_url['fragment'] = '';
+        }
         parse_str($parsed_url['query'], $parsed_query);
+
+        if (!$parsed_query['q']) {
+            parse_str($parsed_url['fragment'], $parsed_query);
+        }
 
         if ($parsed_url) {
             if (strpos($parsed_url['host'],'test.') !== false ||
