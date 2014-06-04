@@ -129,7 +129,8 @@ class Widget
             'language' => 'auto',
             'header_color' => '#ec1d23',
             'title_online' => 'Operators Online',
-            'title_offline' => 'Leave your message'
+            'title_offline' => 'Leave your message',
+            'explanatory_message' => 'Write your message and Enter'
         ];
     }
 

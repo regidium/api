@@ -74,7 +74,7 @@ class PaymentController extends AbstractController
         $transaction_number = $request->request->get('InvId', null);
         $transaction = $this->get('regidium.billing.transaction.handler')->one([
             'number' => intval($transaction_number),
-            '$ne' => ['status' => Transaction::STATUS_PAYMENT]
+            'status' => ['$ne' => Transaction::STATUS_PAYMENT]
         ]);
 
         if (!$transaction instanceof Transaction) {

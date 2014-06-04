@@ -40,7 +40,8 @@ class TransactionForm extends AbstractType
                 'description' => 'Transaction Payment date'
             ])
             ->add('status', 'integer', [
-                'description' => 'Transaction Status'
+                'description' => 'Transaction Status',
+                'data' => Transaction::STATUS_NOT_PAYMENT
             ])
             ->add('agent_uid', 'hidden', [
                 'required' => true,
