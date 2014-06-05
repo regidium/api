@@ -16,7 +16,7 @@ class LoadWidgetData extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $widget = new Widget();
-        $widget->setUid('5301e0397eaad');
+        $widget->setUid('5301e0397eaae');
         $widget->setUrl('http://my.regidium.com');
         $widget->setBalance(0);
         $widget->setAvailableAgents(0);
