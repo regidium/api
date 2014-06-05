@@ -28,6 +28,10 @@ class ChatMessageForm extends AbstractType
                     new Constraints\NotBlank(array('message' => 'Text is empty!'))
                 )
             ])
+            ->add('readed', 'checkbox', [
+                'required' => false,
+                //'choices' => ChatMessage::getSenderTypes()
+            ])
             ->add('sender_type', 'integer', [
                 'required' => false,
                 //'choices' => ChatMessage::getSenderTypes()

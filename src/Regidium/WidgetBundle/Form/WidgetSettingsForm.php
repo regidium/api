@@ -30,6 +30,9 @@ class WidgetSettingsForm extends AbstractType
             ->add('title_offline', 'text', [
                 'required' => false
             ])
+            ->add('explanatory_message', 'text', [
+                'required' => false
+            ])
         ;
     }
 

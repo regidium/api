@@ -176,6 +176,39 @@ class Chat
 
     /* =============== Get/Set=============== */
 
+
+    /**
+     * Set closed
+     *
+     * @return self
+     */
+    public function setClosed()
+    {
+        $this->opened = false;
+        return $this;
+    }
+
+    /**
+     * Get closed
+     *
+     * @return boolean !$opened
+     */
+    public function getClosed()
+    {
+        return !$this->opened;
+    }
+
+    /**
+     * Clear agent
+     *
+     * @return self
+     */
+    public function clearAgent()
+    {
+        $this->agent = null;
+        return $this;
+    }
+
     /**
      * Set id
      *

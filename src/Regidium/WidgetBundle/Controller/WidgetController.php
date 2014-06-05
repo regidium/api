@@ -2,6 +2,7 @@
 
 namespace Regidium\WidgetBundle\Controller;
 
+use Regidium\CommonBundle\Document\ChatMessage;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Util\Codes;
@@ -91,6 +92,7 @@ class WidgetController extends AbstractController
             $chat_messages = $this->get('regidium.chat.message.repository')->createQueryBuilder()
                 ->field('chat.id')->equals($chat->getId())
                 ->field('readed')->equals(false)
+                ->field('type')->notIn([ChatMessage::SENDER_TYPE_ROBOT_TO_AGENT, ChatMessage::SENDER_TYPE_ROBOT_TO_USER])
                 ->getQuery()
                 ->execute()
             ;

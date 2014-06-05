@@ -116,8 +116,10 @@ class ChatHandler extends AbstractHandler
     public function closed(Chat $chat) {
         $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_ONLINE);
-        $chat->setOpened(false);
-        $this->edit($chat);
+        $chat->setClosed();
+        //$this->edit($chat);
+        $this->dm->persist($chat);
+        $this->dm->flush($chat);
 
         return $chat;
     }
@@ -177,7 +179,7 @@ class ChatHandler extends AbstractHandler
      * @return Chat
      */
     public function agentLeave(Chat $chat) {
-        $chat->setAgent(null);
+        $chat->clearAgent();
         //$chat->setStatus(Chat::STATUS_ONLINE);
 
         $this->edit($chat);

@@ -1,8 +1,0 @@
-parameters:
-    regidium.user.form.type.class: Regidium\UserBundle\Form\UserForm
-
-services:
-    regidium.user.form.type:
-        class: %regidium.user.form.type.class%
-        tags:
-            - { name: form.type, alias: "user" }

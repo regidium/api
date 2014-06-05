@@ -635,7 +635,12 @@ class WidgetChatController extends AbstractController
             return $this->sendError($chat_message);
         }
 
-        $this->get('regidium.chat.handler')->chatting($chat);
+        if (
+            $chat_message->getSenderType() != ChatMessage::SENDER_TYPE_ROBOT_TO_AGENT &&
+            $chat_message->getSenderType() != ChatMessage::SENDER_TYPE_ROBOT_TO_USER
+        ) {
+            $this->get('regidium.chat.handler')->chatting($chat);
+        }
 
         if ($chat_message->getSenderType() == ChatMessage::SENDER_TYPE_USER) {
             $data = [];

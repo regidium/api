@@ -65,14 +65,16 @@ class ChatMessage
 
     const SENDER_TYPE_USER = 1;
     const SENDER_TYPE_AGENT = 2;
-    const SENDER_TYPE_ROBOT = 3;
+    const SENDER_TYPE_ROBOT_TO_USER = 3;
+    const SENDER_TYPE_ROBOT_TO_AGENT = 4;
 
     static public function getSenderTypes()
     {
         return [
             self::SENDER_TYPE_USER,
             self::SENDER_TYPE_AGENT,
-            self::SENDER_TYPE_ROBOT
+            self::SENDER_TYPE_ROBOT_TO_USER,
+            self::SENDER_TYPE_ROBOT_TO_AGENT
         ];
     }
 
@@ -94,11 +96,11 @@ class ChatMessage
     public function toArray()
     {
         $return = [
-            'uid' => $this->uid,
-            'created_at' => $this->created_at,
-            'readed' => $this->readed,
-            'text' => $this->text,
-            'sender_type' => $this->sender_type
+            'uid' => $this->getUid(),
+            'created_at' => $this->getCreatedAt(),
+            'readed' => $this->getReaded(),
+            'text' => $this->getText(),
+            'sender_type' => $this->getSenderType()
         ];
 
         return $return;
