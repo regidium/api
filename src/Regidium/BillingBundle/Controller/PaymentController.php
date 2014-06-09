@@ -98,6 +98,8 @@ class PaymentController extends AbstractController
         $widget = $transaction->getWidget();
 
         // @todo отправлять event
+//        $redis = $this->get('snc_redis.default');
+//        $redis->pubSubLoop('');
 
         $widget->setBalance($widget->getBalance() + $request->request->get('OutSum', 0));
         $this->get('regidium.widget.handler')->edit($widget);
