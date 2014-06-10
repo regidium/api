@@ -67,6 +67,11 @@ class Widget
     private $settings;
 
     /**
+     * @MongoDB\Hash
+     */
+    private $notifications;
+
+    /**
      * @MongoDB\Index
      * @MongoDB\ReferenceOne(targetDocument="Regidium\CommonBundle\Document\Plan", cascade={"persist", "merge", "detach"}, inversedBy="widgets")
      */
@@ -132,6 +137,13 @@ class Widget
             'title_offline' => 'Leave your message',
             'explanatory_message' => 'Write your message and Enter'
         ];
+
+        // @todo Вынести в Embedded
+        $this->notifications = [
+            'install_code' => ['key' => 'install_code', 'show' => true, 'text' => 'Install widget code'],
+            'pay_system' => ['key' => 'pay_system', 'show' => true, 'text' => 'Pay system'],
+            'pay_agents' => ['key' => 'pay_agents', 'show' => true, 'text' => 'Pay agents']
+        ];
     }
 
     public function __toString()
@@ -149,7 +161,12 @@ class Widget
             'url' => $this->url,
             'available_agents' => $this->available_agents,
             'settings' => $this->settings,
+            'notifications' => $this->notifications,
         ];
+
+//        if (in_array('notifications', $options) && $this->notifications) {
+//            $return['notifications'] = $this->notifications;
+//        }
 
         if (in_array('plan', $options) && $this->plan) {
             $return['plan'] = $this->plan->toArray();
@@ -445,6 +462,28 @@ class Widget
     public function getSettings()
     {
         return $this->settings;
+    }
+
+    /**
+     * Set notifications
+     *
+     * @param array $notifications
+     * @return self
+     */
+    public function setNotifications($notifications)
+    {
+        $this->notifications = $notifications;
+        return $this;
+    }
+
+    /**
+     * Get notifications
+     *
+     * @return array $notifications
+     */
+    public function getNotifications()
+    {
+        return $this->notifications;
     }
 
     /**

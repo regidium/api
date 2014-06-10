@@ -42,7 +42,7 @@ class WidgetController extends AbstractController
      * @return array
      *
      */
-    public function getAction($uid)
+    public function getAction(Request $request, $uid)
     {
         $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
 
@@ -50,7 +50,12 @@ class WidgetController extends AbstractController
             return $this->sendError('Widget resource was not found.');
         }
 
-        return $this->send($widget->toArray(['plan', 'triggers']));
+        $to = $request->request->getInt('to', 1);
+        if ($to == 2) {
+            return $this->send($widget->toArray(['triggers']));
+        } else {
+            return $this->send($widget->toArray(['plan', 'triggers']));
+        }
     }
 
     /**

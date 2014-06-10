@@ -46,6 +46,13 @@ class ChatHandler extends AbstractHandler
             }
 
             $widget = $this->dm->getRepository('Regidium\CommonBundle\Document\Widget')->findOneBy(['uid' => $form->get('widget_uid')->getData()]);
+            $notifications = $widget->getNotifications();
+            if (!$notifications['install_code']['show']) {
+                $notifications['install_code']['show'] = true;
+                $widget->setNotifications($notifications);
+                $this->dm->persist($widget);
+                $this->dm->flush($widget);
+            }
             $chat->setWidget($widget);
 
             $this->dm->persist($chat);
