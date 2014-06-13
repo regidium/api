@@ -84,85 +84,6 @@ class WidgetChatController extends AbstractController
     }
 
     /**
-     * Получаем список чатов с состоянием В чате
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Получаем список чатов с состоянием В чате.",
-     *   statusCodes = {
-     *     200 = "Возвращает при успешном выполнении"
-     *   }
-     * )
-     *
-     * @param string  $uid       Widget UID
-     *
-     * @return View
-     *
-     */
-    public function cgetOnlineAction($uid)
-    {
-        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
-        if (!$widget instanceof Widget) {
-            return $this->sendError('Widget not found!');
-        }
-
-        // @todo Временная мера
-        /** @var Chat[] $chats */
-        //$chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
-        $chats = $this->get('regidium.chat.repository')->createQueryBuilder()
-            ->field('widget.id')->equals($widget->getId())
-            ->field('opened')->equals(true)
-            //->field('messages')->exists(true)
-            //->field('messages')->size(false)
-            ->getQuery()
-            ->execute()
-        ;
-
-        $return = [];
-        foreach ($chats as $chat) {
-            if ($chat->getMessages()->count()) {
-                $return[] = $chat->toArray(['messages']);
-            }
-        }
-
-        return  $this->sendArray($return);
-    }
-
-    /**
-     * Получаем список архивных чатов
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Получаем список архивных чатов.",
-     *   statusCodes = {
-     *     200 = "Возвращает при успешном выполнении"
-     *   }
-     * )
-     *
-     * @param string  $uid       Widget UID
-     *
-     * @return View
-     *
-     */
-    public function cgetArchiveAction($uid)
-    {
-        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
-        if (!$widget instanceof Widget) {
-            return $this->sendError('Widget not found!');
-        }
-
-        /** @var Chat[] $chats */
-        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'messages.archived' => true]);
-
-        $return = [];
-        foreach ($chats as $chat) {
-            $return[] = $chat->toArray(['messages']);
-        }
-
-        return  $this->sendArray($return);
-    }
-
-    /**
      * Создаем новый чат для виджета
      *
      * @ApiDoc(
@@ -250,6 +171,85 @@ class WidgetChatController extends AbstractController
         }
 
         return $this->sendSuccess();
+    }
+
+    /**
+     * Получаем список чатов с состоянием В чате
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Получаем список чатов с состоянием В чате.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param string  $uid       Widget UID
+     *
+     * @return View
+     *
+     */
+    public function cgetOnlineAction($uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        // @todo Временная мера
+        /** @var Chat[] $chats */
+        //$chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'status' => Chat::STATUS_CHATTING]);
+        $chats = $this->get('regidium.chat.repository')->createQueryBuilder()
+            ->field('widget.id')->equals($widget->getId())
+            ->field('opened')->equals(true)
+            //->field('messages')->exists(true)
+            //->field('messages')->size(false)
+            ->getQuery()
+            ->execute()
+        ;
+
+        $return = [];
+        foreach ($chats as $chat) {
+            if ($chat->getMessages()->count()) {
+                $return[] = $chat->toArray(['messages']);
+            }
+        }
+
+        return  $this->sendArray($return);
+    }
+
+    /**
+     * Получаем список архивных чатов
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Получаем список архивных чатов.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param string  $uid       Widget UID
+     *
+     * @return View
+     *
+     */
+    public function cgetArchiveAction($uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        /** @var Chat[] $chats */
+        $chats = $this->get('regidium.chat.handler')->get(['widget.id' => $widget->getId(), 'messages.archived' => true]);
+
+        $return = [];
+        foreach ($chats as $chat) {
+            $return[] = $chat->toArray(['messages']);
+        }
+
+        return  $this->sendArray($return);
     }
 
     /**
