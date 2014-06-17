@@ -85,6 +85,13 @@ class AgentController extends AbstractController
             return $this->sendError($agent);
         }
 
+        $this->get('regidium.mail.handler')->post([
+            'receivers' => [$agent->getEmail()],
+            'title' => 'Registered Agent',
+            'template' => 'RegidiumMailBundle:Agent/Notification:registered_agent.html.twig',
+            'data' => ['agent' => $agent]
+        ]);
+
         return $this->send($agent->toArray());
     }
 
