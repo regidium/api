@@ -122,7 +122,11 @@ class ChatHandler extends AbstractHandler
      */
     public function closed(Chat $chat) {
         $chat->setOldStatus($chat->getStatus());
-        $chat->setStatus(Chat::STATUS_ONLINE);
+
+        if ($chat->getOldStatus() !== Chat::STATUS_OFFLINE){
+            $chat->setStatus(Chat::STATUS_ONLINE);
+        }
+
         $chat->setClosed();
         //$this->edit($chat);
         $this->dm->persist($chat);
