@@ -1,0 +1,20 @@
+parameters:
+
+    # UID generator
+    uid_machine_id: ChangeItUID
+
+    session:
+        max_age: 3600000 # 1 hour
+
+    secret:            ThisTokenIsNotSoSecretChangeIt
+
+    payment:
+        yd_client_id: 111122223333444
+        yd_client_secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        yd_app_id: "YYYYYYYYYYYYYYYYYYY"
+        yd_notification_secret: "ZzZzZzZzZz"
+
+        rc_url: "https://auth.robokassa.ru/Merchant/Index.aspx"
+        rc_login: "regidium"
+        rc_pass1: "11111111"
+        rc_pass2: "22222222"

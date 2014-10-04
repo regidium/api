@@ -21,7 +21,6 @@ app/logs/*
 app/bootstrap*
 
 app/config/security.yml
-app/config/parameters.yml
 
 app/config/db/db.yml
 app/config/redis/redis.yml
