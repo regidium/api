@@ -115,6 +115,17 @@ class WidgetChatController extends AbstractController
             return $this->sendError($chat);
         }
 
+        /**
+         * Выбираем агента для чата
+         */
+        if (!$chat->getAgent() instanceof Agent){
+            $agent = $this->get('regidium.agent.handler')->oneByBusyness($widget);
+            $chat->setAgent($agent);
+            $this->get('regidium.chat.handler')->edit($chat);
+            $agent->increaseBusyness(Agent::BUSYNESS_FULL);
+            $this->get('regidium.agent.handler')->edit($agent);
+        }
+
         $data = [];
 
         $agents = $this->get('regidium.agent.handler')->get(['notifications.new_chat' => 'true']);
@@ -195,6 +206,7 @@ class WidgetChatController extends AbstractController
         if (!$widget instanceof Widget) {
             return $this->sendError('Widget not found!');
         }
+
 
         // @todo Временная мера
         /** @var Chat[] $chats */

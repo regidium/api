@@ -100,6 +100,11 @@ class Agent
      */
     private $notifications;
 
+    /**
+     * @MongoDB\Float
+     */
+    private $busyness = 0;
+
     /* =============== References =============== */
 
     /**
@@ -140,6 +145,9 @@ class Agent
     const TYPE_OWNER         = 1;
     const TYPE_ADMINISTRATOR = 2;
     const TYPE_OPERATOR      = 3;
+
+    const BUSYNESS_HALF = 0.5;
+    const BUSYNESS_FULL = 1;
 
     static public function getTypes()
     {
@@ -696,5 +704,31 @@ class Agent
     public function getTransactions()
     {
         return $this->transactions;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBusyness()
+    {
+        return $this->busyness;
+    }
+
+    /**
+     * @param float $busyness
+     */
+    public function setBusyness($busyness)
+    {
+        $this->busyness = $busyness;
+    }
+
+    public function increaseBusyness($amount)
+    {
+        $this->busyness += $amount;
+    }
+
+    public function decreaseBusyness($amount)
+    {
+        $this->busyness -= $amount;
     }
 }

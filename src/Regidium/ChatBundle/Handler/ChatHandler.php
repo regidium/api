@@ -108,6 +108,7 @@ class ChatHandler extends AbstractHandler
         $chat->setOldStatus($chat->getStatus());
         $chat->setStatus(Chat::STATUS_OFFLINE);
         $chat->setEndedAt(time());
+        $chat->getAgent()->decreaseBusyness(Agent::BUSYNESS_FULL);
         $this->edit($chat);
 
         return $chat;

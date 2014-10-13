@@ -2,6 +2,7 @@
 
 namespace Regidium\AgentBundle\Handler;
 
+use Regidium\CommonBundle\Document\Widget;
 use Regidium\CommonBundle\Handler\AbstractHandler;
 use Regidium\AgentBundle\Form\AgentForm;
 use Regidium\AgentBundle\Form\AgentSessionForm;
@@ -134,6 +135,7 @@ class AgentHandler extends AbstractHandler
      * @return Agent
      */
     public function edit(Agent $agent) {
+        $this->dm->persist($agent);
         $this->dm->flush($agent);
         return $agent;
     }
@@ -152,6 +154,17 @@ class AgentHandler extends AbstractHandler
             ->getQuery()
             ->getSingleResult()
         ;
+    }
+
+    /**
+     * Поиск свободного агента
+     *
+     * @param $widget
+     * @return \Doctrine\ODM\MongoDB\DocumentRepository
+     */
+    public function oneByBusyness(Widget $widget)
+    {
+        return $this->repository->findOneByBusyness($widget);
     }
 
     /**

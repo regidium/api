@@ -59,6 +59,40 @@ class WidgetAgentController extends AbstractController
         return $this->sendArray($return);
     }
 
+    /**
+     * Получаем менее загруженного агента.
+     *
+     * @ApiDoc(
+     *   resource = false,
+     *   description = "Получаем менее загруженного агента",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $uid UID виджета
+     *
+     * @return View
+     */
+    public function getFreeAction($uid)
+    {
+        $widget = $this->get('regidium.widget.handler')->one(['uid' => $uid]);
+        if (!$widget instanceof Widget) {
+            return $this->sendError('Widget not found!');
+        }
+
+        $agent = $this->get('regidium.agent.handler')->oneByBusyness($widget);
+
+        var_dump('Count: ' . $agent->getChats()->count());
+        foreach ($agent->getChats() as $chat){
+            var_dump($chat->getStatus());
+        }
+        var_dump('Busyness: ' . $agent->getBusyness());
+        exit;
+
+        return $this->sendArray($agent);
+    }
+
 
     /**
      * Создание нового агента для виджета.
