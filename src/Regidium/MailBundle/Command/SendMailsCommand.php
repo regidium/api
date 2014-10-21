@@ -39,7 +39,9 @@ class SendMailsCommand extends ContainerAwareCommand
                     $templating->render(
                         $mail->getTemplate(),
                         $mail->getData()
-                    )
+
+                    ),
+                    'text/html'
                 )
             ;
 

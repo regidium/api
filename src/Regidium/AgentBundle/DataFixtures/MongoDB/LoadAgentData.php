@@ -22,6 +22,7 @@ class LoadAgentData extends AbstractFixture implements OrderedFixtureInterface
         $dummyAgent->setPassword(sha1('123456'));
         $dummyAgent->setJobTitle('Support Operator');
         $dummyAgent->setStatus(Agent::STATUS_OFFLINE);
+        $dummyAgent->setActive(0);
         $dummyAgent->setAcceptChats(true);
         $dummyAgent->setType(Agent::TYPE_OWNER);
         $dummyAgent->setWidget($this->getReference('widget_regidium_my'));

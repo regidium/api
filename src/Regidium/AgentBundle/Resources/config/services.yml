@@ -4,8 +4,25 @@ imports:
 parameters:
     regidium.agent.handler.class: Regidium\AgentBundle\Handler\AgentHandler
     regidium.agent.document.class: Regidium\CommonBundle\Document\Agent
+    regidium.confirmation.handler.class: Regidium\AgentBundle\Handler\ConfirmationHandler
+    regidium.confirmation.document.class: Regidium\CommonBundle\Document\Confirmation
+    regidium.reset_password.handler.class: Regidium\AgentBundle\Handler\ResetPasswordHandler
+    regidium.reset_password.document.class: Regidium\CommonBundle\Document\ResetPasswordRequest
+    regidium.agent.provider.class: Regidium\AgentBundle\Provider\AgentProvider
 
 services:
     regidium.agent.handler:
         class: %regidium.agent.handler.class%
         arguments: [ @form.factory, @doctrine_mongodb, %regidium.agent.document.class% ]
+
+    regidium.confirmation.handler:
+        class: %regidium.confirmation.handler.class%
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.confirmation.document.class% ]
+
+    regidium.reset_password.handler:
+        class: %regidium.reset_password.handler.class%
+        arguments: [ @form.factory, @doctrine_mongodb, %regidium.reset_password.document.class% ]
+
+    regidium.agent.provider:
+        class: %regidium.agent.provider.class%
+        arguments: [ @regidium.agent.handler ]

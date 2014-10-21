@@ -274,6 +274,7 @@ class WidgetAgentController extends AbstractController
         }
 
         $data = $this->prepareAgentSessionData($request);
+
         $this->get('regidium.agent.handler')->online($agent, $data);
 
         return $this->sendSuccess();

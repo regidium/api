@@ -64,6 +64,11 @@ class AgentForm extends AbstractType
                     'required' => false,
                     'description' => 'Agent Email Notifications'
                 ])
+            ->add('active','integer',[
+                    'required' => false,
+                    'description' => 'Is Agent active',
+                    'data' => Agent::STATUS_NOT_ACTIVATED
+                ])
             ->add('accept_chats', 'choice', [
                     'required' => false,
                     'choices'   => [true, false],

@@ -3,3 +3,15 @@ agents:
     prefix: /v1
     resource: Regidium\AgentBundle\Controller\AgentController
     name_prefix:  api_1_
+
+confirmations:
+    type: rest
+    prefix: /v1
+    resource: Regidium\AgentBundle\Controller\ConfirmationController
+    name_prefix:  api_1_
+
+password_reset:
+    type: rest
+    prefix: /v1
+    resource: Regidium\AgentBundle\Controller\PasswordResetController
+    name_prefix:  api_1_

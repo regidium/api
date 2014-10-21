@@ -51,7 +51,7 @@ class MailController extends AbstractController
         $data['agent_email'] = $agent->getEmail();
 
         $mail = $this->get('regidium.mail.handler')->post([
-           'receivers' => ['dev@regidium.com'],
+           'receivers' => ['dev@regidium.com, russell.kvashnin@gmail.com'],
            'title' => 'New Issue',
            'template' => 'RegidiumMailBundle:Agent/System:new_issue.html.twig',
            'data' => $data

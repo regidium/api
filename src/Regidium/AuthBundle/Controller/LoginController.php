@@ -9,6 +9,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Regidium\CommonBundle\Controller\AbstractController;
 use Regidium\CommonBundle\Document\Agent;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Login controller
@@ -52,15 +53,23 @@ class LoginController extends AbstractController
         ]);
 
         if (!$agent instanceof Agent) {
-            return $this->sendError('Agent not found');
+            return $this->sendArray(['error' => 'Agent not found']);
         }
 
-        // if ($agent->getStatus() == Agent::STATUS_ONLINE) {
-        //     return $this->sendError('Agent is already authorized');
-        // }
+        if ($agent->getActive() === Agent::STATUS_NOT_ACTIVATED) {
+            return $this->sendArray(['error' => 'Agent not activated']);
+        }
 
-        // Записываем последний визит агента
+        if ($agent->getStatus() === Agent::STATUS_ONLINE){
+            return $this->sendArray([
+                'status' => 'online',
+                'agent' => $agent->toArray()
+            ]);
+        }
+
+//         Записываем последний визит агента
         $data = $this->prepareAgentSessionData($request);
+
         $this->get('regidium.agent.handler')->online($agent, $data);
 
         $return = [
@@ -68,6 +77,51 @@ class LoginController extends AbstractController
         ];
 
         return $this->send($return);
+    }
+
+    /**
+     * Напоминание пароля агента.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Напоминание пароля агента.",
+     *   statusCodes = {
+     *     200 = "Возвращает при успешном выполнении"
+     *   }
+     * )
+     *
+     * @param Request $request Request объект
+     *
+     * @return View
+     */
+    public function postForgotAction(Request $request)
+    {
+        $email = $request->request->get('email', null);
+        if (!$email) {
+            return  $this->sendError('Login not valid');
+        }
+
+        $agent = $this->get('regidium.agent.handler')->one([
+            'email' => $email
+        ]);
+
+        if (!$agent instanceof Agent) {
+            return $this->sendArray(['error' => 'Agent not found']);
+        }
+
+        $resetPasswordRequest = $this->get('regidium.reset_password.handler')->post($agent);
+
+        $this->get('regidium.mail.handler')->post([
+            'receivers' => [$agent->getEmail()],
+            'title' => 'Reset password request',
+            'template' => 'RegidiumMailBundle:Agent/Notification:password_reset.html.twig',
+            'data' => [
+                'resetPassword' => $resetPasswordRequest->toArray(),
+                'agent' => $agent->toArray()
+            ]
+        ]);
+
+        return $this->send(['data' => 'success']);
     }
 
     /**

@@ -68,6 +68,14 @@ class Agent
     private $status;
 
     /**
+     * Is agent activated
+     *
+     * @Assert\NotBlank
+     * @MongoDB\Int
+     */
+    private $active;
+
+    /**
      * @Assert\NotBlank
      * @MongoDB\Int
      */
@@ -145,6 +153,9 @@ class Agent
     const TYPE_OWNER         = 1;
     const TYPE_ADMINISTRATOR = 2;
     const TYPE_OPERATOR      = 3;
+
+    const STATUS_ACTIVATED     =1;
+    const STATUS_NOT_ACTIVATED =0;
 
     const BUSYNESS_HALF = 0.5;
     const BUSYNESS_FULL = 1;
@@ -730,5 +741,21 @@ class Agent
     public function decreaseBusyness($amount)
     {
         $this->busyness -= $amount;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param mixed $active
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
     }
 }
