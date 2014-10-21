@@ -6,7 +6,7 @@ parameters:
     session:
         max_age: 3600000 # 1 hour
 
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    secret: suPerSeCretToken
 
     payment:
         yd_client_id: 111122223333444
