@@ -60,13 +60,6 @@ class LoginController extends AbstractController
             return $this->sendArray(['error' => 'Agent not activated']);
         }
 
-        if ($agent->getStatus() === Agent::STATUS_ONLINE){
-            return $this->sendArray([
-                'status' => 'online',
-                'agent' => $agent->toArray()
-            ]);
-        }
-
 //         Записываем последний визит агента
         $data = $this->prepareAgentSessionData($request);
 
