@@ -34,4 +34,4 @@ codecept.phar
 
 codeception.yml
 tests/*.yml
-tests/_log/*
+tests/_log/*app/config/config.yml
